@@ -86,7 +86,7 @@ function logout() {
         </button>
       </div>
       <div class="navbar-center">
-        <div class="relative">
+        <div class="relative text-base-content!">
           <div v-if="!isQuickSearchVisible" @click="toggleQuickSearch" class=" bg-base-200 rounded-full w-72 px-4 py-2 flex items-center gap-2 cursor-pointer select-none">
             <span class="material-symbols-outlined shrink-0">search</span> <span>{{ searchConditionsText }}</span>
           </div>

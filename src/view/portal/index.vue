@@ -1,6 +1,6 @@
 <template>
 	<!-- Hero Section -->
-	<div class="relative min-h-screen flex items-center justify-center overflow-hidden  pb-4 pt-16">
+	<div class="relative min-h-[50vh] flex items-center justify-center overflow-hidden  pb-4 pt-16 mt-[218px]">
 		<!-- Background Image with Overlay -->
 		<div class="absolute inset-0 z-0 bg-slate-900">
 			<div v-for="(img, index) in shuffledImages" :key="img"
@@ -14,10 +14,10 @@
 					transition: 'opacity 2s ease-in-out'
 				}"></div>
 			<div
-				class="absolute inset-0 bg-linear-to-r from-slate-900/90 via-slate-900/70 to-slate-900/40 z-10 pointer-events-none">
+				class="absolute inset-0 bg-linear-to-r from-slate-900/70 via-slate-900/50 to-slate-900/20 z-10 pointer-events-none">
 			</div>
 			<div
-				class="absolute inset-0 bg-linear-to-t from-base-50 via-transparent to-transparent opacity-90 z-10 pointer-events-none">
+				class="absolute inset-0 bg-linear-to-t from-base-30 via-transparent to-transparent opacity-90 z-10 pointer-events-none">
 			</div>
 		</div>
 
@@ -39,11 +39,6 @@
 						</p>
 					</div>
 
-				</div>
-
-				<!-- Quick Search Component -->
-				<div class="w-full max-w-5xl animate-fade-in-up [animation-delay:800ms]">
-					<QuickSearch />
 				</div>
 			</div>
 		</div>
@@ -126,7 +121,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import QuickSearch from "../../components/quickSearch.vue";
 import mockNews from "@/mocks/news.json";
 import { publicImageUrl } from '@/utils/assets'
 
