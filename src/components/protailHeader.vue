@@ -11,6 +11,19 @@ const authStore = useAuthStore()
 const isMenuOpen = ref(false)
 const showQuickSearch = ref(false)
 const isScrolled = ref(false)
+const isHomePage = computed(() => route.path === '/')
+const shouldPinQuickSearch = computed(() => isHomePage.value && !isScrolled.value)
+const isQuickSearchVisible = computed(() => shouldPinQuickSearch.value || showQuickSearch.value)
+
+function toggleQuickSearch() {
+  if (shouldPinQuickSearch.value) return
+  showQuickSearch.value = !showQuickSearch.value
+}
+
+function closeQuickSearch() {
+  if (shouldPinQuickSearch.value) return
+  showQuickSearch.value = false
+}
 
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 0
@@ -60,8 +73,11 @@ function logout() {
 </script>
 
 <template>
-  <div class="w-full rounded-none fixed z-40 transition-all duration-300 text-primary-content p-4"
-    :class="{ 'bg-base-100/35 backdrop-blur-md shadow-sm text-base-content! p-0!': isScrolled }">
+  <div class="w-full rounded-none fixed transition-all duration-300 text-primary-content p-4 z-50" :class="{
+    'bg-base-100 backdrop-blur-md shadow-sm text-base-content!': isScrolled || isQuickSearchVisible,
+    'p-0!': isScrolled,
+    'pb-4!': isScrolled && isQuickSearchVisible,
+  }">
     <div class="navbar">
       <div class="navbar-start">
         <button class="btn btn-ghost text-xl">
@@ -71,31 +87,25 @@ function logout() {
       </div>
       <div class="navbar-center">
         <div class="relative">
-          <button class="btn rounded-full btn-outline w-64 flex-nowrap" @click="showQuickSearch = !showQuickSearch">
-            <span class="material-symbols-outlined shrink-0">search</span>
-            <span class="truncate">{{ searchConditionsText }}</span>
-          </button>
-
-          <!-- 背景遮罩，點擊收合 -->
-          <div v-if="showQuickSearch" class="fixed inset-0 z-40" @click="showQuickSearch = false"></div>
-
-          <!-- 展開的搜尋框 -->
-          <div v-if="showQuickSearch"
-            class="absolute top-full mt-4 left-1/2 -translate-x-1/2 w-[calc(100vw-2rem)] md:w-[760px] lg:w-[820px] z-50">
-            <QuickSearch @search="showQuickSearch = false" />
+          <div v-if="!isQuickSearchVisible" @click="toggleQuickSearch" class=" bg-base-200 rounded-full w-72 px-4 py-2 flex items-center gap-2 cursor-pointer select-none">
+            <span class="material-symbols-outlined shrink-0">search</span> <span>{{ searchConditionsText }}</span>
+          </div>
+          <div v-else class="bg-base-200 rounded-full w-72 px-4 py-2 inset-shadow-sm flex items-center gap-2 cursor-pointer select-none"  @click="closeQuickSearch">
+            <span v-if="isHomePage">首頁搜尋條件展開中</span>
+            <span v-else>搜尋條件展開中</span>
           </div>
         </div>
       </div>
       <div class="navbar-end">
-        <ul class="menu menu-lg menu-horizontal gap-4 hidden lg:flex mr-6">
+        <ul class="menu menu-lg menu-horizontal gap-2 hidden lg:flex mr-6">
           <li><router-link to="/">首頁</router-link></li>
           <li><router-link to="/venues">場館資訊</router-link></li>
           <li><router-link to="/news">最新消息</router-link></li>
           <li><router-link to="/faq">常見問題</router-link></li>
 
           <template v-if="!authStore.isLoggedIn">
-            <li> <router-link to="/login" class="btn btn-neutral">登入</router-link></li>
-            <li><router-link to="/register" class="btn btn-neutral">註冊</router-link></li>
+            <li> <router-link to="/login" class="btn btn-primary">登入</router-link></li>
+            <!-- <li><router-link to="/register" class="btn btn-neutral">註冊</router-link></li> -->
           </template>
           <template v-else>
             <li>
@@ -148,10 +158,18 @@ function logout() {
         </template>
         <template v-else>
           <li><router-link to="/login">登入</router-link></li>
-          <li><router-link to="/register">註冊</router-link></li>
+          <!-- <li><router-link to="/register">註冊</router-link></li> -->
         </template>
       </ul>
     </div>
+    <!-- 背景遮罩，點擊收合 -->
+
+    <!-- 展開的搜尋框 -->
+    <div v-if="isQuickSearchVisible" class=" lg:max-w-1/2 mx-auto">
+      <QuickSearch @search="closeQuickSearch" />
+    </div>
   </div>
+  <div v-if="showQuickSearch && !shouldPinQuickSearch" class="fixed inset-0 z-40 w-full h-full bg-black/50"
+    @click="closeQuickSearch"></div>
 
 </template>
