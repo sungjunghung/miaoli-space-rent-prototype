@@ -81,7 +81,7 @@ function logout() {
 
           <!-- 展開的搜尋框 -->
           <div v-if="showQuickSearch"
-            class="absolute top-full mt-4 left-1/2 -translate-x-1/2 w-[calc(100vw-2rem)] md:w-auto md:min-w-[450px] z-50">
+            class="absolute top-full mt-4 left-1/2 -translate-x-1/2 w-[calc(100vw-2rem)] md:w-[760px] lg:w-[820px] z-50">
             <QuickSearch @search="showQuickSearch = false" />
           </div>
         </div>

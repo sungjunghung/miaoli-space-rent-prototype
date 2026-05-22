@@ -23,9 +23,9 @@
 
 		<!-- Hero Content -->
 		<div class="container mx-auto px-4 z-10 relative">
-			<div class="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-20">
+			<div class="flex flex-col items-center justify-center gap-10">
 				<!-- Text Content -->
-				<div class="flex-1 text-center lg:text-left space-y-8 max-w-2xl">
+				<div class="text-center space-y-8 max-w-3xl">
 					<div class="space-y-4">
 						<h1
 							class="text-4xl sm:text-5xl lg:text-7xl font-heading font-extrabold text-white leading-[1.1] tracking-tight animate-fade-in-up [animation-delay:200ms]">
@@ -34,7 +34,7 @@
 								class="text-transparent bg-clip-text bg-linear-to-r from-primary-400 to-secondary-400">最佳活動空間</span>
 						</h1>
 						<p
-							class="text-lg lg:text-xl text-slate-300 font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed animate-fade-in-up [animation-delay:400ms]">
+							class="text-lg lg:text-xl text-slate-300 font-medium max-w-xl mx-auto leading-relaxed animate-fade-in-up [animation-delay:400ms]">
 							無論是國際賽事、商務會議還是親子活動，我們提供多元專業的場地選擇，滿足您的一站式租借需求。
 						</p>
 					</div>
@@ -42,7 +42,7 @@
 				</div>
 
 				<!-- Quick Search Component -->
-				<div class="flex-1 w-full max-w-md animate-fade-in-up [animation-delay:800ms]">
+				<div class="w-full max-w-5xl animate-fade-in-up [animation-delay:800ms]">
 					<QuickSearch />
 				</div>
 			</div>
