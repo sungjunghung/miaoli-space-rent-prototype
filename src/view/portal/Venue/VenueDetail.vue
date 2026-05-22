@@ -6,6 +6,7 @@ import allBookings from '@/mocks/generateBookings'
 import calendarNotes from '@/mocks/calendarNotes.json'
 import WeekCalendar from "@/components/calendar/WeekCalendar.vue";
 import MonthCalendar from "@/components/calendar/MonthCalendar.vue";
+import { publicImageUrl } from '@/utils/assets'
 
 const route = useRoute()
 const router = useRouter()
@@ -24,6 +25,7 @@ const hasWeekView = computed(() => {
 const rentalMode = ref<'hourly' | 'daily'>(hasWeekView.value ? 'hourly' : 'daily')
 const hoursExpanded = ref(false)
 const lightboxImage = ref<string | null>(null)
+const heroImage = computed(() => venue.value ? publicImageUrl(venue.value.mainImageUrl) : '')
 
 const closedWeekdays = computed(() => venue.value?.closedWeekdays ?? [])
 const closedDates = computed(() => venue.value?.closedDates ?? [])
@@ -71,7 +73,9 @@ const sessionDefs = computed(() => (venue.value?.rentalModes.session?.sessions ?
 
 const galleryImages = computed(() => {
   if (!venue.value) return []
-  return Array.from(new Set([venue.value.mainImageUrl, ...(venue.value.gallery ?? [])].filter(Boolean)))
+  return Array.from(
+    new Set([venue.value.mainImageUrl, ...(venue.value.gallery ?? [])].filter(Boolean).map(publicImageUrl)),
+  )
 })
 
 const pricedRentalItems = computed(() =>
@@ -205,7 +209,7 @@ function formatMoney(value: number | null | undefined) {
 
   <main v-else class="bg-base-200/60">
     <section class="relative min-h-[560px] lg:min-h-[620px] overflow-hidden bg-neutral">
-      <img :src="venue.mainImageUrl" :alt="venue.name" class="absolute inset-0 w-full h-full object-cover" />
+      <img :src="heroImage" :alt="venue.name" class="absolute inset-0 w-full h-full object-cover" />
       <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/10"></div>
       <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-base-200/95 to-transparent"></div>
 

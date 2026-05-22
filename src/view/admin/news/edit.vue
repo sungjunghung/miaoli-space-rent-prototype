@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import mockNews from '@/mocks/news.json'
+import { publicImageUrl } from '@/utils/assets'
 
 const route = useRoute()
 
@@ -90,7 +91,7 @@ function handleSave() {
             placeholder="https://..." />
         </div>
         <div v-if="formData.imageUrl" class="mt-3">
-          <img :src="formData.imageUrl" alt="preview" class="rounded-lg max-h-48 object-cover w-full" />
+          <img :src="publicImageUrl(formData.imageUrl)" alt="preview" class="rounded-lg max-h-48 object-cover w-full" />
         </div>
         <div v-else
           class="mt-3 bg-base-200/50 rounded-lg border border-dashed border-base-300 p-8 text-center text-base-content/30">

@@ -1,12 +1,16 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { StyleValue } from 'vue'
+import { publicCssImageUrl } from '@/utils/assets'
 
-defineProps<{
+const props = defineProps<{
   title: string
   description?: string
   bgImage?: string
   bgStyle?: StyleValue
 }>()
+
+const resolvedBgImage = computed(() => publicCssImageUrl(props.bgImage))
 </script>
 
 <template>
@@ -14,7 +18,7 @@ defineProps<{
     class="page-header-basic"
     :style="[
       bgStyle,
-      bgImage ? { backgroundImage: `url(${bgImage})` } : undefined,
+      resolvedBgImage ? { backgroundImage: resolvedBgImage } : undefined,
     ]"
   >
     <div class="page-header-basic__content">

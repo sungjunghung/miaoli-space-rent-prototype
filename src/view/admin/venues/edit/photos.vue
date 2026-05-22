@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { inject, ref, type Ref } from 'vue';
+import { publicImageUrl } from '@/utils/assets';
 
 interface Venue {
   mainImageUrl: string;
@@ -94,7 +95,7 @@ function onDragEnd() {
         }"
         draggable="true" @dragstart="onDragStart(index)" @dragover.prevent="onDragOver(index)" @dragleave="onDragLeave(index)"
         @drop="onDrop(index)" @dragend="onDragEnd">
-        <img :src="url" :alt="`圖片 ${index + 1}`" class="w-full h-full object-cover" />
+        <img :src="publicImageUrl(url)" :alt="`圖片 ${index + 1}`" class="w-full h-full object-cover" />
         <div v-if="dragOverIndex === index"
           class="absolute inset-0 border-2 border-dashed border-primary/80 bg-primary/10 pointer-events-none"></div>
         <div v-if="url === formData.mainImageUrl" class="absolute top-2 left-2">

@@ -15,7 +15,7 @@
       <section class="relative bg-neutral pt-28 pb-16 overflow-hidden">
         <img
           v-if="item.imageUrl"
-          :src="item.imageUrl"
+          :src="publicImageUrl(item.imageUrl)"
           :alt="item.title"
           class="absolute inset-0 w-full h-full object-cover opacity-45"
         />
@@ -50,7 +50,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_20rem] gap-8 items-start">
           <article class="bg-base-100 border border-base-200 rounded-box shadow-sm overflow-hidden">
             <figure v-if="item.imageUrl" class="aspect-video bg-base-300">
-              <img :src="item.imageUrl" :alt="item.title" class="w-full h-full object-cover" />
+              <img :src="publicImageUrl(item.imageUrl)" :alt="item.title" class="w-full h-full object-cover" />
             </figure>
 
             <div class="p-6 md:p-10">
@@ -128,7 +128,7 @@
               <figure class="aspect-video bg-base-300 relative overflow-hidden">
                 <img
                   v-if="news.imageUrl"
-                  :src="news.imageUrl"
+                  :src="publicImageUrl(news.imageUrl)"
                   :alt="news.title"
                   class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
@@ -155,6 +155,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import mockNews from '../../../mocks/news.json'
+import { publicImageUrl } from '@/utils/assets'
 
 const route = useRoute()
 const id = computed(() => Number(route.params.id))

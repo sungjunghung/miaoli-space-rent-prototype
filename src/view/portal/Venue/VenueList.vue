@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import allVenues from '@/mocks/venues.json'
 import PageHeaderBasic from '@/components/PageHeaderBasic.vue'
+import { publicImageUrl } from '@/utils/assets'
 
 const router = useRouter()
 
@@ -71,7 +72,7 @@ function lowestPrice(venue: any) {
         >
           <figure class="relative aspect-[4/3] bg-base-300 overflow-hidden">
             <img
-              :src="venue.mainImageUrl"
+              :src="publicImageUrl(venue.mainImageUrl)"
               :alt="venue.name"
               class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />

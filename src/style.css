@@ -220,7 +220,7 @@
 
 .admin-login {
   @apply min-h-screen flex items-center justify-center px-4 bg-cover bg-center bg-no-repeat;
-  background-image: url('/assets/images/bg_admin_login.jpg');
+  background-image: var(--app-admin-bg-image);
 
   &::before {
     content: "";
@@ -234,7 +234,7 @@
 
 .user-login {
   @apply flex items-center justify-center px-4 py-12 ;
-  background-image: url('/assets/images/bg_admin_login.jpg');
+  background-image: var(--app-admin-bg-image);
  &::before {
     content: "";
     @apply absolute inset-0 bg-black/25 backdrop-blur-sm;
@@ -244,7 +244,7 @@
 
 .page-header-basic {
   @apply w-full bg-linear-65 from-primary-400 to-secondary-400 flex items-center justify-center pt-24 pb-10 min-h-64 relative;
-  background-image: url('/assets/images/bg_admin_login.jpg');
+  background-image: var(--app-admin-bg-image);
   &::before {
     content: "";
     @apply absolute inset-0 bg-linear-65 from-primary-500/35 to-secondary-500/50 backdrop-blur-xs;

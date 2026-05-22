@@ -31,7 +31,7 @@
             <td>
               <div class="flex items-center gap-3">
                 <figure v-if="item.imageUrl" class="shrink-0">
-                  <img :src="item.imageUrl" :alt="item.title" class="w-10 h-10 object-cover rounded-lg" />
+                  <img :src="publicImageUrl(item.imageUrl)" :alt="item.title" class="w-10 h-10 object-cover rounded-lg" />
                 </figure>
                 <div v-else class="w-10 h-10 rounded-lg bg-base-200 flex items-center justify-center shrink-0">
                   <span class="material-symbols-outlined text-base-content/30">image</span>
@@ -75,6 +75,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import mockNews from '../../../mocks/news.json'
+import { publicImageUrl } from '@/utils/assets'
 
 const router = useRouter()
 const search = ref('')

@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import PageHeaderBasic from '@/components/PageHeaderBasic.vue'
 import venues from '@/mocks/venues.json'
 import { useAuthStore } from '@/stores/auth'
+import { publicImageUrl } from '@/utils/assets'
 
 const route = useRoute()
 const router = useRouter()
@@ -124,7 +125,8 @@ function goToVenues() {
   router.push({ name: 'venue-list' })
 }
 
-const uploadedImage = ref<string>('/assets/images/digitalStudentID.png')
+const digitalStudentIdImage = publicImageUrl('digitalStudentID.png')
+const uploadedImage = ref<string>(digitalStudentIdImage)
 const fileInput = ref<HTMLInputElement | null>(null)
 
 function triggerUpload() {
@@ -226,7 +228,7 @@ function removeImage() {
                     <th class="w-32 bg-base-200/50">預約場館</th>
                     <td>
                       <div class="flex gap-4 items-center">
-                        <img :src="venue.mainImageUrl" :alt="venue.name"
+                        <img :src="publicImageUrl(venue.mainImageUrl)" :alt="venue.name"
                           class="w-12 h-12 object-cover rounded shrink-0" />
                         <div>
                           <p class="font-bold text-base-content">{{ venue.name }}</p>

@@ -129,7 +129,7 @@
       <div class="p-6">
         <div class="hover-3d max-w-md">
           <figure class="rounded-box overflow-hidden border border-base-200">
-            <img src="../../../../public/assets/images/digitalStudentID.png" alt="身份證明文件" />
+            <img :src="digitalStudentIdImage" alt="身份證明文件" />
           </figure>
           <div></div>
           <div></div>
@@ -238,6 +238,7 @@ import { useRouter } from 'vue-router'
 import PageHeaderBasic from '@/components/PageHeaderBasic.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRefundsStore } from '@/stores/refunds'
+import { publicImageUrl } from '@/utils/assets'
 
 const IDENTITY_MAP: Record<string, string> = {
   general: '一般民眾',
@@ -250,6 +251,7 @@ const IDENTITY_MAP: Record<string, string> = {
 const authStore = useAuthStore()
 const refundsStore = useRefundsStore()
 const router = useRouter()
+const digitalStudentIdImage = publicImageUrl('digitalStudentID.png')
 const user = computed(() => authStore.user)
 const retainedDeposit = computed(() => user.value?.retainedDeposit ?? 0)
 const displayName = computed(() => user.value?.name ?? '會員')

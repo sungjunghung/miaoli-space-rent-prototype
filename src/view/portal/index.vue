@@ -90,7 +90,7 @@
 				<router-link v-for="item in latestNews" :key="item.id" :to="`/news/${item.id}`"
 					class="card bg-base-100 shadow hover:shadow-md transition-shadow cursor-pointer group">
 					<figure v-if="item.imageUrl" class="aspect-video">
-						<img :src="item.imageUrl" :alt="item.title"
+						<img :src="publicImageUrl(item.imageUrl)" :alt="item.title"
 							class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
 					</figure>
 					<div class="card-body">
@@ -128,6 +128,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import QuickSearch from "../../components/quickSearch.vue";
 import mockNews from "@/mocks/news.json";
+import { publicImageUrl } from '@/utils/assets'
 
 // 載入所有圖片資源
 const imageModules = import.meta.glob('@/assets/images/*.{jpg,jpeg,png}', { eager: true });

@@ -26,7 +26,7 @@
             <figure class="relative aspect-video bg-base-300 overflow-hidden">
               <img
                 v-if="item.imageUrl"
-                :src="item.imageUrl"
+                :src="publicImageUrl(item.imageUrl)"
                 :alt="item.title"
                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
@@ -69,6 +69,7 @@
 import { computed } from 'vue'
 import PageHeaderBasic from '@/components/PageHeaderBasic.vue'
 import mockNews from '../../../mocks/news.json'
+import { publicImageUrl } from '@/utils/assets'
 
 const newsList = computed(() =>
   [...mockNews].sort((a, b) => {

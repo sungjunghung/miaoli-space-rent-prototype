@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import mockBookings from '../mocks/generateBookings'
 import mockVenues from '../mocks/venues.json'
+import { publicImageUrl } from '../utils/assets'
 
 export interface RentalItemSelection {
   label: string
@@ -169,7 +170,7 @@ export const useBookingsStore = defineStore('bookings', () => {
       })() as Booking['status'],
       venueName: venue?.name ?? '',
       venueLocation: venue?.location ?? '',
-      venueImage: venue?.mainImageUrl ?? '',
+      venueImage: publicImageUrl(venue?.mainImageUrl ?? ''),
       cancelDeadline: raw.cancelDeadline,
       peopleCount: raw.peopleCount,
       note: raw.note,

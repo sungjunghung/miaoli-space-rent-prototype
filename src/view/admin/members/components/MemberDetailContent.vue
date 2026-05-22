@@ -3,6 +3,7 @@ import { ref, computed, watch } from 'vue'
 import mockUsers from '@/mocks/users.json'
 import mockBookings from '@/mocks/generateBookings'
 import mockVenues from '@/mocks/venues.json'
+import { publicImageUrl } from '@/utils/assets'
 
 const props = defineProps<{
   id: string
@@ -50,7 +51,8 @@ function emptyMember(): Member {
   }
 }
 
-const uploadedImage = ref<string>('/assets/images/digitalStudentID.png')
+const digitalStudentIdImage = publicImageUrl('digitalStudentID.png')
+const uploadedImage = ref<string>(digitalStudentIdImage)
 const fileInput = ref<HTMLInputElement | null>(null)
 const formData = ref<Member>(emptyMember())
 
@@ -119,7 +121,7 @@ const memberBookings = computed(() =>
 
 watch(() => props.id, id => {
   activeTab.value = 'basic'
-  uploadedImage.value = '/assets/images/digitalStudentID.png'
+  uploadedImage.value = digitalStudentIdImage
 
   if (id === 'new') {
     formData.value = emptyMember()

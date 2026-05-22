@@ -47,7 +47,7 @@
                   <div v-else class="w-7 shrink-0"></div>
                   <div class="avatar">
                     <div class="w-10 h-10 rounded-lg">
-                      <img :src="venue.mainImageUrl" :alt="venue.name" class="object-cover" />
+                      <img :src="publicImageUrl(venue.mainImageUrl)" :alt="venue.name" class="object-cover" />
                     </div>
                   </div>
                   <div>
@@ -91,7 +91,7 @@
                   <div class="flex items-center gap-3 pl-10">
                     <div class="avatar">
                       <div class="w-8 h-8 rounded-lg">
-                        <img :src="child.mainImageUrl" :alt="child.name" class="object-cover" />
+                        <img :src="publicImageUrl(child.mainImageUrl)" :alt="child.name" class="object-cover" />
                       </div>
                     </div>
                     <div>
@@ -141,6 +141,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import mockVenues from '../../../mocks/venues.json'
+import { publicImageUrl } from '@/utils/assets'
 
 const search = ref('')
 const filterType = ref('')
