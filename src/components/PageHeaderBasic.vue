@@ -8,6 +8,7 @@ const props = defineProps<{
   description?: string
   bgImage?: string
   bgStyle?: StyleValue
+  solid?: boolean
 }>()
 
 const resolvedBgImage = computed(() => publicCssImageUrl(props.bgImage))
@@ -16,14 +17,18 @@ const resolvedBgImage = computed(() => publicCssImageUrl(props.bgImage))
 <template>
   <div
     class="page-header-basic"
+    :class="{ 'page-header-basic--solid': solid }"
     :style="[
       bgStyle,
-      resolvedBgImage ? { backgroundImage: resolvedBgImage } : undefined,
+      !solid && resolvedBgImage ? { backgroundImage: resolvedBgImage } : undefined,
     ]"
   >
     <div class="page-header-basic__content">
       <h1 class="page-header-basic__title">{{ title }}</h1>
       <p v-if="description" class="page-header-basic__description">{{ description }}</p>
+      <div v-if="$slots.default" class="page-header-basic__meta">
+        <slot />
+      </div>
     </div>
   </div>
 </template>

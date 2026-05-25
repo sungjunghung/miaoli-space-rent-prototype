@@ -258,4 +258,29 @@
   .page-header-basic__description {
     @apply text-base;
   }
+
+  .page-header-basic__meta {
+    @apply mt-2 flex flex-wrap items-center justify-center gap-2 text-sm;
+  }
+}
+
+.page-header-basic--solid {
+  @apply bg-base-100 border-b border-base-200 min-h-0 pt-12 pb-8;
+  background-image: none;
+
+  &::before {
+    @apply hidden;
+  }
+
+  .page-header-basic__content {
+    @apply text-base-content;
+  }
+
+  .page-header-basic__title {
+    @apply text-3xl md:text-4xl font-black tracking-tight;
+  }
+
+  .page-header-basic__description {
+    @apply text-base-content/70;
+  }
 }
