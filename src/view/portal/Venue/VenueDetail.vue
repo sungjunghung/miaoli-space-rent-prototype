@@ -223,10 +223,10 @@ function formatMoney(value: number | null | undefined) {
       ></div>
 
       <div
-        class="container mx-auto px-4 relative z-10 pt-28 pb-14 flex flex-col justify-end"
+        class="container mx-auto px-8 relative z-10 pt-28 pb-14 flex flex-col justify-end"
       >
         <button
-          class="btn btn-sm btn-ghost text-white/90 w-fit mb-8"
+          class="btn btn-sm btn-ghost text-white/90 w-fit"
           @click="goBack"
         >
           <span class="material-symbols-outlined text-base">arrow_back</span>
@@ -234,13 +234,7 @@ function formatMoney(value: number | null | undefined) {
         </button>
 
         <div class="max-w-4xl text-white">
-          <div class="flex items-center gap-2 flex-wrap mb-4">
-            <span class="badge badge-primary">{{ availabilityLabel }}</span>
-            <span class="badge badge-outline border-white/40 text-white">{{
-              venue.type
-            }}</span>
-          </div>
-
+ 
           <h1 class="text-3xl md:text-5xl font-bold leading-tight">
             {{ venue.name }}
           </h1>
@@ -270,7 +264,7 @@ function formatMoney(value: number | null | undefined) {
       </div>
     </section>
 
-    <div class="container mx-auto px-4 py-10">
+    <div class="container mx-auto py-10">
       <div class="flex flex-col lg:flex-row gap-10 mb-8">
         <div class="flex-1 space-y-6">
           <section

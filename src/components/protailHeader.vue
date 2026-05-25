@@ -80,9 +80,9 @@ function logout() {
   }">
     <div class="navbar">
       <div class="navbar-start">
-        <button class="btn btn-ghost text-xl">
+        <button class="btn btn-ghost text-2xl normal-case text-primary" @click="$router.push('/')">
           <img src="../assets/images/logo.svg" alt="" class="w-10">
-          <span class="hidden md:block font-semibold">苗栗縣體育場館預約系統</span>
+          <span class="hidden md:block font-semibold mb-1">苗栗縣體育場館預約系統</span>
         </button>
       </div>
       <div class="navbar-center">

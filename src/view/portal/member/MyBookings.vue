@@ -34,10 +34,6 @@
                 {{ booking.reservationId }}
               </span>
               <div class="flex items-center gap-1.5">
-                <span v-if="booking.refund && booking.refund.status !== 'none'" class="badge badge-outline badge-ghost">
-                  {{ REFUND_TYPE_LABELS[booking.refund.refundType] ?? '退費' }}·{{
-                    REFUND_STATUS_LABELS[booking.refund.status]?.label ?? booking.refund.status }}
-                </span>
                 <span v-if="activeStageLabel(booking)" class="badge badge-outline badge-warning">
                   {{ activeStageLabel(booking) }}
                 </span>
@@ -133,7 +129,6 @@ import { useAuthStore } from '../../../stores/auth'
 import { useBookingsStore, type Booking } from '../../../stores/bookings'
 import BookingProgress from '../../../components/BookingProgress.vue'
 import { toZhDate, formatBookingDate, formatBookingTime } from '../../../composables/useBookingFormat'
-import { REFUND_STATUS_LABELS, REFUND_TYPE_LABELS } from '../../../composables/useBookingStatus'
 
 const router = useRouter()
 const authStore = useAuthStore()

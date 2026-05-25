@@ -5,30 +5,7 @@
   />
 
   <main class="container lg:max-w-5xl mx-auto py-10 px-4 space-y-6">
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="stat bg-base-100 border border-base-200 rounded-box">
-        <div class="stat-title">退款申請</div>
-        <div class="stat-value text-2xl">{{ memberRefunds.length }}</div>
-        <div class="stat-desc">含訂單取消與預留保證金</div>
-      </div>
-      <div class="stat bg-base-100 border border-base-200 rounded-box">
-        <div class="stat-title">處理中</div>
-        <div class="stat-value text-2xl">{{ pendingCount }}</div>
-        <div class="stat-desc">等待承辦、會計或出納</div>
-      </div>
-      <div class="stat bg-base-100 border border-base-200 rounded-box">
-        <div class="stat-title">可申請保證金</div>
-        <div class="stat-value text-2xl">NT$ {{ retainedDeposit.toLocaleString() }}</div>
-        <div class="stat-desc">以目前會員資料顯示</div>
-      </div>
-    </section>
-
     <section class="space-y-4">
-      <div class="flex items-center justify-between">
-        <h2 class="text-xl font-bold">退款紀錄</h2>
-        <span class="text-sm text-base-content/50">目前會員：{{ currentUser.name }}</span>
-      </div>
-
       <div v-if="memberRefunds.length === 0" class="card bg-base-100 border border-base-200">
         <div class="card-body items-center text-center py-12">
           <span class="material-symbols-outlined text-5xl text-base-content/30">receipt_long</span>

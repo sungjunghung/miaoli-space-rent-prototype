@@ -144,24 +144,6 @@ function iconForSection(title: string) {
           </div>
         </section>
       </div>
-
-      <section class="bg-base-100 border border-base-200 rounded-box shadow-sm overflow-hidden">
-        <div class="p-6 md:p-8 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto] gap-6 lg:items-center">
-          <div class="flex items-start gap-4">
-            <div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
-              <span class="material-symbols-outlined text-2xl">support_agent</span>
-            </div>
-            <div>
-              <h2 class="text-2xl font-bold">找不到您的問題？</h2>
-              <p class="text-base-content/60 mt-2">可直接聯繫服務人員，協助確認場館租借、付款或取消規定。</p>
-            </div>
-          </div>
-          <a href="tel:037-320-025" class="btn btn-primary btn-lg">
-            <span class="material-symbols-outlined">call</span>
-            <span class="font-mono">037-320-025</span>
-          </a>
-        </div>
-      </section>
     </div>
   </main>
 </template>

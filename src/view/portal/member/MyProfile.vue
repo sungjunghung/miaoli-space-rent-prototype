@@ -1,83 +1,58 @@
 <template>
-  <PageHeaderBasic
-    title="我的帳戶"
-    description="管理會員資料、身份文件、密碼與留存保證金。"
-  />
+  <PageHeaderBasic title="我的帳戶" description="管理會員資料、身份文件、密碼與留存保證金。" />
 
   <main class="container lg:max-w-6xl mx-auto py-10 px-4 space-y-6">
-    <section class="bg-base-100 border border-base-200 rounded-box shadow-sm">
-      <div class="p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-6">
-        <div class="avatar avatar-placeholder shrink-0">
-          <div class="bg-primary text-primary-content w-20 rounded-full">
-            <span class="text-3xl font-bold">{{ userInitial }}</span>
-          </div>
-        </div>
+    <div class="flex gap-6">
+      <div class="flex-1 space-y-6">
 
-        <div class="min-w-0 flex-1">
-          <div class="flex items-center gap-2 flex-wrap">
-            <h2 class="text-2xl font-bold truncate">{{ displayName }}</h2>
-            <span class="badge badge-primary badge-outline">{{ identityLabel }}</span>
-          </div>
-          <p class="text-base-content/60 mt-1 truncate">{{ displayEmail }}</p>
-          <div class="flex gap-2 flex-wrap mt-4">
-            <router-link to="/member/bookings" class="btn btn-outline btn-sm">
-              <span class="material-symbols-outlined text-base">event_note</span>
-              我的預訂
-            </router-link>
-            <router-link to="/member/refunds" class="btn btn-outline btn-sm">
-              <span class="material-symbols-outlined text-base">receipt_long</span>
-              我的退款
-            </router-link>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3 w-full md:w-auto md:min-w-72">
-          <div class="border border-base-200 rounded-box p-4 bg-base-200/40">
-            <p class="text-xs text-base-content/50">留存保證金</p>
-            <p class="text-xl font-bold mt-1">NT$ {{ retainedDeposit.toLocaleString() }}</p>
-          </div>
-          <div class="border border-base-200 rounded-box p-4 bg-base-200/40">
-            <p class="text-xs text-base-content/50">登入方式</p>
-            <p class="text-xl font-bold mt-1">{{ providerLabel }}</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_22rem] gap-6 items-start">
-      <section class="bg-base-100 border border-base-200 rounded-box shadow-sm">
-        <div class="p-6 border-b border-base-200 flex items-center justify-between gap-4">
-          <div>
-            <h2 class="text-lg font-bold">基本資料</h2>
-            <p class="text-sm text-base-content/50">會員聯絡資訊與身份別</p>
+        <section class="bg-base-100 border border-base-200 rounded-box shadow-sm p-6">
+          <h2 class="text-lg font-bold mb-6">基本資料</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <fieldset class="fieldset">
+              <label class="label">姓名</label>
+              <input type="text" class="input w-full" :value="user?.name" placeholder="請輸入姓名" />
+            </fieldset>
+            <fieldset class="fieldset">
+              <label class="label">聯絡電話</label>
+              <input type="tel" class="input w-full" :value="user?.phone" placeholder="請輸入電話" />
+            </fieldset>
+            <fieldset class="fieldset">
+              <label class="label">Email</label>
+              <input type="email" class="input w-full" :value="user?.email" disabled />
+            </fieldset>
+            <fieldset class="fieldset">
+              <label class="label">身份別</label>
+              <input type="text" class="input w-full" :value="identityLabel" disabled />
+            </fieldset>
           </div>
           <button class="btn btn-primary btn-sm">
             <span class="material-symbols-outlined text-base">save</span>
             儲存
           </button>
-        </div>
+        </section>
 
-        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <fieldset class="fieldset">
-            <label class="label">姓名</label>
-            <input type="text" class="input w-full" :value="user?.name" placeholder="請輸入姓名" />
-          </fieldset>
-          <fieldset class="fieldset">
-            <label class="label">聯絡電話</label>
-            <input type="tel" class="input w-full" :value="user?.phone" placeholder="請輸入電話" />
-          </fieldset>
-          <fieldset class="fieldset">
-            <label class="label">Email</label>
-            <input type="email" class="input w-full" :value="user?.email" disabled />
-          </fieldset>
-          <fieldset class="fieldset">
-            <label class="label">身份別</label>
-            <input type="text" class="input w-full" :value="identityLabel" disabled />
-          </fieldset>
-        </div>
-      </section>
+        <section v-if="user?.identityType && user.identityType !== 'general'"
+          class="bg-base-100 border border-base-200 rounded-box shadow-sm p-6">
+          <h2 class="text-lg font-bold mb-6">證明文件</h2>
 
-      <aside class="space-y-6">
+          <div class="hover-3d max-w-md">
+            <figure class="rounded-box overflow-hidden ">
+              <img :src="digitalStudentIdImage" alt="身份證明文件" />
+            </figure>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+
+        </section>
+      </div>
+
+      <aside class="space-y-6 w-80">
         <section class="bg-base-100 border border-base-200 rounded-box shadow-sm">
           <div class="p-6 space-y-4">
             <div class="flex items-center gap-3">
@@ -118,30 +93,7 @@
       </aside>
     </div>
 
-    <section
-      v-if="user?.identityType && user.identityType !== 'general'"
-      class="bg-base-100 border border-base-200 rounded-box shadow-sm"
-    >
-      <div class="p-6 border-b border-base-200">
-        <h2 class="text-lg font-bold">證明文件</h2>
-        <p class="text-sm text-base-content/50">{{ identityLabel }}</p>
-      </div>
-      <div class="p-6">
-        <div class="hover-3d max-w-md">
-          <figure class="rounded-box overflow-hidden border border-base-200">
-            <img :src="digitalStudentIdImage" alt="身份證明文件" />
-          </figure>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-      </div>
-    </section>
+
   </main>
 
   <!-- 變更密碼 Modal -->
@@ -211,7 +163,8 @@
         </fieldset>
         <fieldset class="fieldset">
           <label class="label">帳號</label>
-          <input v-model="refundForm.accountNumber" type="text" class="input w-full font-mono" placeholder="000-000000000000" />
+          <input v-model="refundForm.accountNumber" type="text" class="input w-full font-mono"
+            placeholder="000-000000000000" />
         </fieldset>
 
         <div v-if="refundError" class="md:col-span-2 alert alert-error alert-soft p-3 text-sm">
@@ -254,15 +207,7 @@ const router = useRouter()
 const digitalStudentIdImage = publicImageUrl('digitalStudentID.png')
 const user = computed(() => authStore.user)
 const retainedDeposit = computed(() => user.value?.retainedDeposit ?? 0)
-const displayName = computed(() => user.value?.name ?? '會員')
-const displayEmail = computed(() => user.value?.email ?? '尚未登入')
 const identityLabel = computed(() => IDENTITY_MAP[user.value?.identityType || 'general'])
-const userInitial = computed(() => displayName.value.charAt(0))
-const providerLabel = computed(() => {
-  if (user.value?.provider === 'google') return 'Google'
-  if (user.value?.provider === 'line') return 'LINE'
-  return 'Email'
-})
 
 const passwordModal = ref<HTMLDialogElement | null>(null)
 const pwForm = ref({ current: '', next: '', confirm: '' })
