@@ -280,7 +280,7 @@ const sessionDefs = computed(() => (venue.value?.rentalModes.session?.sessions ?
           <!-- Rental Mode Tabs -->
           <div v-if="enabledModes.length > 0" class="tabs tabs-box">
             <button v-for="mode in enabledModes" :key="mode.value" class="tab flex-1"
-              :class="{ 'tab-active': rentalMode === mode.value }" @click="switchMode(mode.value)">{{ mode.label
+              :class="{ 'tab-active bg-secondary text-secondary-content': rentalMode === mode.value }" @click="switchMode(mode.value)">{{ mode.label
               }}</button>
           </div>
           <div v-else class="alert alert-warning">
@@ -330,7 +330,7 @@ const sessionDefs = computed(() => (venue.value?.rentalModes.session?.sessions ?
 
     <!-- Sticky Footer -->
     <div
-      class="fixed bottom-0 left-0 right-0 z-50 bg-base-100 backdrop-blur-lg border-t border-base-200 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+      class="sticky  bottom-0 left-0 right-0 z-50 bg-base-100 backdrop-blur-lg border-t border-base-200 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
       <div class="max-w-5xl mx-auto px-4 py-3 pb-6 md:pb-3">
         <div class="flex items-center justify-between gap-4">
           <div class="flex-1">

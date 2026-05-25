@@ -219,7 +219,7 @@ function formatMoney(value: number | null | undefined) {
         class="absolute inset-0 bg-linear-to-r from-black/80 via-black/45 to-black/10"
       ></div>
       <div
-        class="absolute inset-x-0 bottom-0 h-40 bg-linear-to-t from-base-200/95 to-transparent"
+        class="absolute inset-x-0 bottom-0 h-3/5 bg-linear-to-t from-base-200 from-25% to-transparent"
       ></div>
 
       <div
@@ -254,7 +254,7 @@ function formatMoney(value: number | null | undefined) {
               <span class="material-symbols-outlined">arrow_forward</span>
             </button>
             <button
-              class="btn btn-outline btn-lg border-white/50 text-white hover:bg-white hover:text-base-content"
+              class="btn btn-neutral btn-outline btn-lg"
               @click="scrollToCalendar"
             >
               查看可預約時段
@@ -264,7 +264,7 @@ function formatMoney(value: number | null | undefined) {
       </div>
     </section>
 
-    <div class="container mx-auto py-10">
+    <div class="container mx-auto pb-10">
       <div class="flex flex-col lg:flex-row gap-10 mb-8">
         <div class="flex-1 space-y-6">
           <section
@@ -272,9 +272,9 @@ function formatMoney(value: number | null | undefined) {
           >
             <h2 class="text-2xl font-bold mb-4">場館概覽</h2>
             <div class="mb-6 space-y-4">
-              <p class="text-base-content/60 max-w-3xl">
+              <!-- <p class="text-base-content/60 max-w-3xl">
                 {{ venue.description }}
-              </p>
+              </p> -->
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div
                   class="bg-base-200/40 border border-base-200 rounded-box p-4"
@@ -493,16 +493,18 @@ function formatMoney(value: number | null | undefined) {
           <section
             v-if="venue.status === 'available'"
             class="bg-base-100 border border-base-200 rounded-box shadow-sm overflow-hidden w-96"
-          >
-            <div class="p-6 border-b border-base-200">
+          > 
+          
+            <!-- <div class="p-6 border-b border-base-200">
               <p class="text-sm text-base-content/50">租借費用</p>
               <p class="text-3xl font-bold mt-1">{{ lowestPriceText }}</p>
               <p class="text-sm text-base-content/50 mt-1">
                 實際金額依日期、時段與附加項目計算。
               </p>
-            </div>
+            </div> -->
 
             <div class="p-4 space-y-3">
+              <h3 class="text-lg font-bold">租借費用</h3>
               <div
                 v-if="venue.rentalModes.daily.enabled"
                 class="border border-base-200 rounded-box overflow-hidden"

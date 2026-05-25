@@ -1,5 +1,5 @@
 <template>
-  <div class="hero min-h-[calc(100dvh-8rem)]">
+  <div class=" flex-1 user-login">
     <div class="hero-content flex-col max-w-md w-full text-center">
       <div class="card w-full bg-base-100 shadow-2xl">
         <div class="card-body items-center gap-4">
@@ -19,7 +19,8 @@
             <div class="divider w-full"></div>
             <router-link to="/login" class="btn btn-neutral w-full tracking-widest">前往登入</router-link>
             <router-link to="/register" class="btn btn-link w-full">重新註冊</router-link>
-            <router-link to="/register/confirmation?verified=true" class="btn btn-outline btn-sm w-full">模擬驗證完成</router-link>
+            <router-link to="/register/confirmation?verified=true"
+              class="btn btn-outline btn-sm w-full">模擬驗證完成</router-link>
           </template>
 
           <!-- 驗證完成 -->

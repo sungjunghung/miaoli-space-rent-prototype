@@ -3,6 +3,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import mockNews from '@/mocks/news.json'
 import { publicImageUrl } from '@/utils/assets'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 const route = useRoute()
 
@@ -32,6 +34,14 @@ const formData = ref<NewsItem>({
   pinned: false,
   imageUrl: null,
 })
+
+const contentTextLength = computed(() =>
+  formData.value.content
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .length
+)
 
 onMounted(() => {
   if (!isNew.value) {
@@ -117,9 +127,15 @@ function handleSave() {
       <div class="card-body">
         <h2 class="card-title">內容</h2>
         <div class="form-control">
-          <textarea v-model="formData.content" class="textarea textarea-bordered w-full" rows="10"
-            placeholder="請輸入消息內容"></textarea>
-          <p class="text-base-content/40 mt-1">{{ formData.content.length }} 字</p>
+          <QuillEditor
+            v-model:content="formData.content"
+            content-type="html"
+            theme="snow"
+            toolbar="full"
+            class="rounded-box border border-base-300 bg-base-100"
+            style="min-height: 280px"
+          />
+          <p class="text-base-content/40 mt-2">{{ contentTextLength }} 字</p>
         </div>
       </div>
     </div>

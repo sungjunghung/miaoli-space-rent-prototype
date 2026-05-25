@@ -1,12 +1,7 @@
 <template>
-  <div class="hero min-h-[calc(100dvh-8rem)]">
+  <div class=" flex-1 user-login">
     <div class="hero-content flex-col lg:flex-row max-w-6xl gap-24">
-      <div class="text-center lg:text-left">
-        <h1 class="text-4xl font-bold">苗栗縣體育場館預約系統</h1>
-        <p class="py-6">
-          立即建立帳號，開始探索多元專業場地，輕鬆完成租借。
-        </p>
-      </div>
+
 
       <div class="card md:w-96 shrink-0 bg-base-100 shadow-2xl">
         <div class="card-body">
@@ -15,44 +10,19 @@
           <form class="space-y-5" @submit.prevent="handleRegister">
             <fieldset class="fieldset fieldset-overlay">
               <label class="label">姓名</label>
-              <input
-                v-model="form.name"
-                type="text"
-                placeholder="請輸入姓名"
-                class="input"
-                autocomplete="name"
-                required
-              />
+              <input v-model="form.name" type="text" placeholder="請輸入姓名" class="input" autocomplete="name" required />
 
               <label class="label">電子信箱</label>
-              <input
-                v-model="form.email"
-                type="email"
-                placeholder="請輸入電子信箱"
-                class="input"
-                autocomplete="email"
-                required
-              />
+              <input v-model="form.email" type="email" placeholder="請輸入電子信箱" class="input" autocomplete="email"
+                required />
 
               <label class="label">密碼</label>
-              <input
-                v-model="form.password"
-                type="password"
-                placeholder="請輸入密碼（至少 8 位）"
-                class="input"
-                autocomplete="new-password"
-                required
-              />
+              <input v-model="form.password" type="password" placeholder="請輸入密碼（至少 8 位）" class="input"
+                autocomplete="new-password" required />
 
               <label class="label">確認密碼</label>
-              <input
-                v-model="form.confirmPassword"
-                type="password"
-                placeholder="請再次輸入密碼"
-                class="input"
-                autocomplete="new-password"
-                required
-              />
+              <input v-model="form.confirmPassword" type="password" placeholder="請再次輸入密碼" class="input"
+                autocomplete="new-password" required />
             </fieldset>
 
             <div v-if="errorMsg" class="alert alert-error">

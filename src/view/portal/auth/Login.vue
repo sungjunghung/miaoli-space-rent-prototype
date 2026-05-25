@@ -22,7 +22,7 @@ function handleLogin() {
 </script>
 
 <template>
-  <div class=" flex-1 user-login">
+  <div class="flex-1 user-login">
     <div class="w-full max-w-sm">
       <div class="card w-full bg-base-100 shadow-2xl">
         <div class="card-body">
@@ -40,10 +40,11 @@ function handleLogin() {
                 <option value="zhihao@example.com">志豪</option>
               </select>
               <label class="label">帳號（電子信箱）</label>
-              <input v-model="email" type="email" placeholder="請輸入電子信箱" class="input" autocomplete="username" required />
-              <label class="label">密碼</label>
-              <input v-model="password" type="password" placeholder="請輸入密碼" class="input" autocomplete="current-password"
+              <input v-model="email" type="email" placeholder="請輸入電子信箱" class="input" autocomplete="username"
                 required />
+              <label class="label">密碼</label>
+              <input v-model="password" type="password" placeholder="請輸入密碼" class="input"
+                autocomplete="current-password" required />
               <p class="text-right">
                 <router-link to="/forgot-password" class="btn btn-link">忘記密碼？</router-link>
               </p>

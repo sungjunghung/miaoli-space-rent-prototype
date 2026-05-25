@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",
+    "@vueup/vue-quill": "^1.2.0",
     "chart.js": "^4.5.1",
     "material-symbols": "^0.44.0",
     "pinia": "^3.0.4",
+    "quill": "^2.0.3",
     "tailwindcss": "^4.2.2",
     "vue": "^3.5.32",
     "vue-chartjs": "^5.3.3",

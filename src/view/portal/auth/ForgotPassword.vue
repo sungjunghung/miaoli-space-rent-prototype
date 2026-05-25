@@ -1,8 +1,8 @@
 <template>
-  <div class="hero min-h-[calc(100dvh-8rem)]">
+  <div class=" flex-1 user-login">
     <div class="hero-content flex-col max-w-md w-full">
 
-<div class="card w-full bg-base-100 shadow-2xl">
+      <div class="card w-full bg-base-100 shadow-2xl">
         <div class="card-body">
 
           <!-- 步驟一：輸入信箱 -->
@@ -12,14 +12,7 @@
             <form class="space-y-4 mt-2" @submit.prevent="handleSendCode">
               <fieldset class="fieldset fieldset-overlay">
                 <label class="label">電子信箱</label>
-                <input
-                  v-model="email"
-                  type="email"
-                  placeholder="請輸入電子信箱"
-                  class="input"
-                  autocomplete="email"
-                  required
-                />
+                <input v-model="email" type="email" placeholder="請輸入電子信箱" class="input" autocomplete="email" required />
               </fieldset>
               <div v-if="errorMsg" class="alert alert-error"><span>{{ errorMsg }}</span></div>
               <button type="submit" class="btn btn-neutral w-full tracking-widest">發送驗證碼</button>
@@ -33,15 +26,8 @@
             <form class="space-y-4 mt-2" @submit.prevent="handleVerifyCode">
               <fieldset class="fieldset fieldset-overlay">
                 <label class="label">驗證碼</label>
-                <input
-                  v-model="code"
-                  type="text"
-                  placeholder="請輸入 6 位驗證碼"
-                  class="input tracking-widest"
-                  maxlength="6"
-                  inputmode="numeric"
-                  required
-                />
+                <input v-model="code" type="text" placeholder="請輸入 6 位驗證碼" class="input tracking-widest" maxlength="6"
+                  inputmode="numeric" required />
               </fieldset>
               <div v-if="errorMsg" class="alert alert-error"><span>{{ errorMsg }}</span></div>
               <button type="submit" class="btn btn-neutral w-full tracking-widest">確認驗證碼</button>
@@ -56,23 +42,11 @@
             <form class="space-y-4 mt-2" @submit.prevent="handleResetPassword">
               <fieldset class="fieldset fieldset-overlay">
                 <label class="label">新密碼</label>
-                <input
-                  v-model="newPassword"
-                  type="password"
-                  placeholder="請輸入新密碼（至少 8 位）"
-                  class="input"
-                  autocomplete="new-password"
-                  required
-                />
+                <input v-model="newPassword" type="password" placeholder="請輸入新密碼（至少 8 位）" class="input"
+                  autocomplete="new-password" required />
                 <label class="label">確認新密碼</label>
-                <input
-                  v-model="confirmPassword"
-                  type="password"
-                  placeholder="請再次輸入新密碼"
-                  class="input"
-                  autocomplete="new-password"
-                  required
-                />
+                <input v-model="confirmPassword" type="password" placeholder="請再次輸入新密碼" class="input"
+                  autocomplete="new-password" required />
               </fieldset>
               <div v-if="errorMsg" class="alert alert-error"><span>{{ errorMsg }}</span></div>
               <button type="submit" class="btn btn-neutral w-full tracking-widest">確認重設</button>
