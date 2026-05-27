@@ -95,48 +95,11 @@ const pricedRentalItems = computed(
   () => venue.value?.rentalItems?.filter((item) => item.amount > 0) ?? [],
 );
 
-const lowestPriceText = computed(() => {
-  if (!venue.value) return "—";
-  const prices: number[] = [];
-  const pricing = venue.value.pricing as any;
-  const rentalModes = venue.value.rentalModes as any;
-
-  if (rentalModes.daily?.enabled) {
-    if (pricing.daily?.weekday) prices.push(pricing.daily.weekday);
-    if (pricing.daily?.weekend) prices.push(pricing.daily.weekend);
-  }
-  if (rentalModes.session?.enabled) {
-    for (const session of rentalModes.session.sessions ?? []) {
-      if (session.weekday) prices.push(session.weekday);
-      if (session.weekend) prices.push(session.weekend);
-    }
-  }
-  if (rentalModes.hourly?.enabled) {
-    if (pricing.hourly?.weekday) prices.push(pricing.hourly.weekday);
-    if (pricing.hourly?.weekend) prices.push(pricing.hourly.weekend);
-  }
-
-  return prices.length ? `NT$ ${Math.min(...prices).toLocaleString()}` : "洽詢";
-});
-
-const todayHoursSummary = computed(() => {
-  if (isWeeklyClosedDay(todayKey)) return "固定休館";
-  return getHours(todayKey) ?? "休館";
-});
-
-const availabilityLabel = computed(() =>
-  venue.value?.status === "available" ? "開放預約" : "維護中",
-);
-
 function selectDate(_day: unknown) {
   // 日期選擇處理
 }
 
 type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
-
-const todayKey = (
-  ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as DayKey[]
-)[new Date().getDay()];
 
 const weekDays: { label: string; key: DayKey; isWeekend: boolean }[] = [
   { label: "週一", key: "mon", isWeekend: false },

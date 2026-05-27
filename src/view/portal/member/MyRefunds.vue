@@ -106,16 +106,11 @@ const refundsStore = useRefundsStore()
 
 const demoUser = mockUsers[0]
 const currentUser = computed(() => authStore.user ?? demoUser)
-const retainedDeposit = computed(() => currentUser.value.retainedDeposit ?? 0)
 
 const memberRefunds = computed(() =>
   refundsStore.getByMemberId(currentUser.value.id)
     .slice()
     .sort((a, b) => b.requestedAt.localeCompare(a.requestedAt))
-)
-
-const pendingCount = computed(() =>
-  memberRefunds.value.filter(refund => !['completed', 'rejected'].includes(refund.status)).length
 )
 
 function formatDate(date: string | null) {
