@@ -1,11 +1,14 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 
 import protalLayout from '../layout/protalLayout.vue'
 import adminLayout from '../layout/adminLayout.vue'
 import FullScreenLayout from '../layout/FullScreenLayout.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history:
+    import.meta.env.PROD && import.meta.env.BASE_URL !== '/'
+      ? createWebHashHistory(import.meta.env.BASE_URL)
+      : createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior(_to, _from, savedPosition) {
     if (savedPosition) {
       return savedPosition
