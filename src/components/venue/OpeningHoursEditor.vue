@@ -35,6 +35,9 @@ const hasLunchBreak = ref(false);
 const lunchBreakStart = ref("12:00");
 const lunchBreakEnd = ref("13:00");
 
+let lastEmitted: string | null = null;
+let suppressEmit = false;
+
 function initSchedule() {
   const defaultSchedule: Record<string, DaySchedule> = {};
   const existingLunchBreak = Object.values(props.modelValue ?? {}).find(
@@ -58,17 +61,30 @@ function initSchedule() {
     }
   });
 
+  suppressEmit = true;
   schedule.value = defaultSchedule;
   hasLunchBreak.value = !!existingLunchBreak;
   lunchBreakStart.value = existingLunchBreak?.lunchBreakStart ?? "12:00";
   lunchBreakEnd.value = existingLunchBreak?.lunchBreakEnd ?? "13:00";
 }
 
-watch(() => props.modelValue, initSchedule, { immediate: true, deep: true });
+watch(
+  () => props.modelValue,
+  (val) => {
+    // 若 modelValue 變更是來自我們自己的 emit，跳過 re-init，避免循環
+    if (val && JSON.stringify(val) === lastEmitted) return;
+    initSchedule();
+  },
+  { immediate: true, deep: true },
+);
 
 watch(
   [schedule, hasLunchBreak, lunchBreakStart, lunchBreakEnd],
   (newSchedule) => {
+    if (suppressEmit) {
+      suppressEmit = false;
+      return;
+    }
     const result: Record<string, { open: string; close: string; lunchBreakStart?: string; lunchBreakEnd?: string }> = {};
 
     Object.entries(newSchedule[0]).forEach(([day, config]) => {
@@ -84,6 +100,7 @@ watch(
       }
     });
 
+    lastEmitted = JSON.stringify(result);
     emit("update:modelValue", result);
   },
   { deep: true },
