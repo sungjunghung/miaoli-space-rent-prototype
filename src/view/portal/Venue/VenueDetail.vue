@@ -182,21 +182,21 @@ function formatMoney(value: number | null | undefined) {
         class="absolute inset-0 bg-linear-to-r from-black/80 via-black/45 to-black/10"
       ></div>
       <div
-        class="absolute inset-x-0 bottom-0 h-3/5 bg-linear-to-t from-base-200 from-25% to-transparent"
+        class="absolute inset-x-0 bottom-0 h-full lg:h-3/5 bg-linear-to-t from-base-200 from-10% lg:from-0% to-transparent to-50% lg:to-80%"
       ></div>
 
       <div
-        class="container mx-auto px-8 relative z-10 pt-28 pb-14 flex flex-col justify-end"
+        class="container mx-auto px-8 relative z-10 pt-8 lg:pt-28 pb-8 lg:pb-14 flex flex-col justify-between lg:justify-end min-h-[calc(100vh-9rem)] lg:min-h-auto lg:h-[50vh]"
       >
-        <button
-          class="btn btn-sm btn-ghost text-white/90 w-fit"
-          @click="goBack"
-        >
-          <span class="material-symbols-outlined text-base">arrow_back</span>
-          場館列表
-        </button>
-
-        <div class="max-w-4xl text-white">
+      
+      <div class="max-w-4xl text-white">
+          <button
+            class="btn btn-sm btn-ghost text-white/90 w-fit"
+            @click="goBack"
+          >
+            <span class="material-symbols-outlined text-base">arrow_back</span>
+            場館列表
+          </button>
  
           <h1 class="text-3xl md:text-5xl font-bold leading-tight">
             {{ venue.name }}
@@ -207,22 +207,22 @@ function formatMoney(value: number | null | undefined) {
             {{ venue.description }}
           </p>
 
-          <div class="mt-8 flex flex-wrap gap-3">
-            <button
-              v-if="venue.status === 'available'"
-              class="btn btn-primary btn-lg"
-              @click="goToBooking"
-            >
-              立即預約
-              <span class="material-symbols-outlined">arrow_forward</span>
-            </button>
-            <button
-              class="btn btn-neutral btn-outline btn-lg"
-              @click="scrollToCalendar"
-            >
-              查看可預約時段
-            </button>
-          </div>
+        </div>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <button
+            v-if="venue.status === 'available'"
+            class="btn btn-primary btn-lg"
+            @click="goToBooking"
+          >
+            立即預約
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+          <button
+            class="btn btn-neutral btn-outline btn-lg"
+            @click="scrollToCalendar"
+          >
+            查看可預約時段
+          </button>
         </div>
       </div>
     </section>
