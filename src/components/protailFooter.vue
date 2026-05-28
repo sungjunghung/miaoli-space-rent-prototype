@@ -1,5 +1,5 @@
 <template>
-  <footer  class="footer sm:footer-horizontal bg-neutral text-neutral-content items-center p-4 justify-center z-50">
+  <footer  class="footer sm:footer-horizontal bg-neutral text-neutral-content items-center p-4 justify-center z-40">
     <aside>
       <p>
         Copyright © {{ new Date().getFullYear() }} 苗栗縣立體育場

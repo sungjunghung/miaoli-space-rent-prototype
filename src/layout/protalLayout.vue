@@ -11,6 +11,7 @@ import protailFooter from '../components/protailFooter.vue'
     </main>
     <protailFooter />
   </div>
+
 </template>
 
 <style scoped></style>

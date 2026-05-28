@@ -31,12 +31,13 @@ const getDateAfterDays = (days: number): string => {
 const todayDate = getTodayString();
 const sevenDaysLater = getDateAfterDays(7);
 
-const searchMode = ref<"daily" | "multi">("daily");
+// 租借方式由父層(protailHeader)的 tabs 控制,透過 v-model:mode 雙向綁定
+const searchMode = defineModel<"daily" | "multi">("mode", { default: "daily" });
 const searchDate = ref(todayDate);
 const searchStartTime = ref("");
 const searchStartDate = ref(sevenDaysLater);
 const searchEndDate = ref(getDateAfterDays(8));
-const activeCalendar = ref<"single" | "range" | null>(null);
+const activeCalendar = ref<"single" | "start" | "end" | null>(null);
 
 const hourOptions = [
   "06:00",
@@ -108,7 +109,7 @@ function formatDateLabel(dateStr: string): string {
   return dateStr.replaceAll("-", "/");
 }
 
-function toggleCalendar(calendar: "single" | "range"): void {
+function toggleCalendar(calendar: "single" | "start" | "end"): void {
   activeCalendar.value = activeCalendar.value === calendar ? null : calendar;
 }
 
@@ -163,104 +164,105 @@ const handleSearch = (): void => {
 </script>
 
 <template>
-  <div class="p-4 sm:p-5 bg-base-100 rounded-lg shadow-lg border border-base-300">
 
-      <div class="grid gap-3 md:grid-cols-[14rem_minmax(0,1fr)_9rem] md:items-end">
-        <label class="form-control gap-1">
-          <span class="label text-sm font-medium">租借方式</span>
-          <select v-model="searchMode" class="select w-full h-12" aria-label="租借方式">
-            <option value="daily">時段租借</option>
-            <option value="multi">多日租借</option>
-          </select>
-        </label>
 
+      <div class="flex flex-col gap-3 md:flex-row md:items-end">
         <!-- Daily Mode -->
-        <div v-if="searchMode === 'daily'" key="daily" class="relative grid grid-cols-1 sm:grid-cols-2 gap-3 min-w-0">
-          <label class="form-control gap-1">
-            <span class="label text-sm font-medium">預約日期</span>
+        <div v-if="searchMode === 'daily'" key="daily" class="grid grid-cols-1 sm:grid-cols-2 gap-3 min-w-0 flex-1">
+          <label class="form-control gap-1 relative">
             <button
               id="search-date"
               type="button"
-              class="input w-full h-12 justify-between text-left"
+              class="input w-full h-12"
               :class="{ 'input-primary': activeCalendar === 'single' }"
               @click="toggleCalendar('single')"
             >
+            <span class="material-symbols-outlined text-base-content/50 text-xl">calendar_month</span>
               <span>{{ formatDateLabel(searchDate) }}</span>
-              <span class="material-symbols-outlined text-base-content/50">calendar_month</span>
             </button>
+            <div
+              v-if="activeCalendar === 'single'"
+              class="absolute left-0 right-0 top-full z-50 mt-2 rounded-box border border-base-300 bg-base-100 p-3 shadow-xl sm:right-auto sm:w-80"
+            >
+              <MonthCalendar
+                :selected-start="searchDate"
+                :view-date="searchDate"
+                :show-legend="false"
+                @select-date="selectSingleDate"
+              />
+            </div>
           </label>
 
-          <label class="form-control gap-1">
-            <span class="label text-sm font-medium">開始時間</span>
-            <select id="search-start-time" v-model="searchStartTime" class="select w-full h-12">
+          <label class="select w-full h-12">
+            <span class="material-symbols-outlined text-base-content/50 z-10 text-xl">schedule</span>
+            <select id="search-start-time" v-model="searchStartTime" >
               <option value="" disabled>選擇開始時間</option>
               <option v-for="option in availableTimeOptions" :key="`start-${option}`" :value="option">
                 {{ option }}
               </option>
             </select>
           </label>
-
-          <div
-            v-if="activeCalendar === 'single'"
-            class="absolute left-0 right-0 top-full z-50 mt-2 rounded-box border border-base-300 bg-base-100 p-3 shadow-xl sm:right-auto sm:w-80"
-          >
-            <MonthCalendar
-              :selected-start="searchDate"
-              :show-legend="false"
-              @select-date="selectSingleDate"
-            />
-          </div>
         </div>
 
         <!-- Multi Mode -->
-        <div v-else key="multi" class="relative grid grid-cols-1 sm:grid-cols-2 gap-3 min-w-0">
-          <label class="form-control gap-1">
-            <span class="label text-sm font-medium">開始日期</span>
+        <div v-else key="multi" class="grid grid-cols-1 sm:grid-cols-2 gap-3 min-w-0 flex-1">
+          <label class="form-control gap-1 relative">
             <button
               id="search-start-date"
               type="button"
-              class="input w-full h-12 justify-between text-left"
-              :class="{ 'input-primary': activeCalendar === 'range' }"
-              @click="toggleCalendar('range')"
+              class="input w-full h-12"
+              :class="{ 'input-primary': activeCalendar === 'start' }"
+              @click="toggleCalendar('start')"
             >
+            <span class="material-symbols-outlined text-base-content/50 text-xl">calendar_month</span>
               <span>{{ formatDateLabel(searchStartDate) }}</span>
-              <span class="material-symbols-outlined text-base-content/50">calendar_month</span>
             </button>
+            <div
+              v-if="activeCalendar === 'start'"
+              class="absolute left-0 right-0 top-full z-50 mt-2 rounded-box border border-base-300 bg-base-100 p-3 shadow-xl sm:right-auto sm:w-80"
+            >
+              <MonthCalendar
+                :selected-start="searchStartDate"
+                :selected-end="searchEndDate"
+                :view-date="searchStartDate"
+                :show-legend="false"
+                @select-date="selectRangeDate"
+              />
+            </div>
           </label>
 
-          <label class="form-control gap-1">
-            <span class="label text-sm font-medium">結束日期</span>
+          <label class="form-control gap-1 relative">
             <button
               id="search-end-date"
               type="button"
-              class="input w-full h-12 justify-between text-left"
-              :class="{ 'input-primary': activeCalendar === 'range' }"
-              @click="toggleCalendar('range')"
+              class="input w-full h-12"
+              :class="{ 'input-primary': activeCalendar === 'end' }"
+              @click="toggleCalendar('end')"
             >
+              <span class="material-symbols-outlined text-base-content/50 text-xl">calendar_month</span>
               <span>{{ searchEndDate ? formatDateLabel(searchEndDate) : "選擇結束日期" }}</span>
-              <span class="material-symbols-outlined text-base-content/50">calendar_month</span>
             </button>
+            <div
+              v-if="activeCalendar === 'end'"
+              class="absolute left-0 right-0 top-full z-50 mt-2 rounded-box border border-base-300 bg-base-100 p-3 shadow-xl sm:left-auto sm:right-0 sm:w-80"
+            >
+              <MonthCalendar
+                :selected-start="searchStartDate"
+                :selected-end="searchEndDate"
+                :view-date="searchEndDate || searchStartDate"
+                :show-legend="false"
+                @select-date="selectRangeDate"
+              />
+            </div>
           </label>
-
-          <div
-            v-if="activeCalendar === 'range'"
-            class="absolute left-0 right-0 top-full z-50 mt-2 rounded-box border border-base-300 bg-base-100 p-3 shadow-xl sm:right-auto sm:w-80"
-          >
-            <MonthCalendar
-              :selected-start="searchStartDate"
-              :selected-end="searchEndDate"
-              :show-legend="false"
-              @select-date="selectRangeDate"
-            />
-          </div>
         </div>
 
         <!-- Action Button -->
-        <button type="button" class="btn btn-primary w-full h-12 md:self-end" @click="handleSearch">
+        <button type="button" class="btn btn-primary lg:btn-square lg:btn-lg" @click="handleSearch">
           <span class="material-symbols-outlined text-2xl">search</span>
-          搜尋場館
+          <span class="lg:hidden">搜尋場館</span>
         </button>
       </div>
 
-  </div>
+
 </template>
