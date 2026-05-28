@@ -186,7 +186,7 @@ function formatMoney(value: number | null | undefined) {
       ></div>
 
       <div
-        class="container mx-auto px-8 relative z-10 pt-8 lg:pt-28 pb-8 lg:pb-14 flex flex-col justify-between lg:justify-end min-h-[calc(100dvh-9rem)] lg:min-h-auto lg:h-[50vh]"
+        class="container mx-auto px-8 relative z-10 pt-8 lg:pt-28 pb-8 lg:pb-14 flex flex-col justify-between lg:justify-end min-h-[calc(100dvh-9rem-4rem)] lg:min-h-auto lg:h-[50vh]"
       >
       
       <div class="max-w-4xl text-white">
