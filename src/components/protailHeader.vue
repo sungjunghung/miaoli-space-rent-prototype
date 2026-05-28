@@ -195,17 +195,17 @@ function logout() {
   </div>
   <div v-if="showQuickSearch && !shouldPinQuickSearch" class="fixed inset-0 z-40 w-full h-full bg-black/50"
     @click="closeQuickSearch"></div>
-  <div class="dock z-50 md:hidden">
+  <div class="dock dock-xl bg-neutral text-neutral-content z-50 md:hidden">
     <router-link v-for="link in navLinks" :key="link.to" :to="link.to" :class="{ 'dock-active': isNavActive(link.to) }">
-      <span class="material-symbols-outlined">{{ link.icon }}</span>
+      <span class="material-symbols-outlined text-[1.5rem]">{{ link.icon }}</span>
       <span class="dock-label">{{ link.label }}</span>
     </router-link>
     <router-link v-if="!authStore.isLoggedIn" to="/login" :class="{ 'dock-active': isNavActive('/login') }">
-      <span class="material-symbols-outlined">login</span>
+      <span class="material-symbols-outlined text-[1.5rem]">login</span>
       <span class="dock-label">登入</span>
     </router-link>
     <router-link v-else to="/member/profile" :class="{ 'dock-active': route.path.startsWith('/member') }">
-      <span class="material-symbols-outlined">account_circle</span>
+      <span class="material-symbols-outlined text-[1.5rem]">account_circle</span>
       <span class="dock-label">會員</span>
     </router-link>
   </div>
