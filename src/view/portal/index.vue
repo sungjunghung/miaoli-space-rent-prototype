@@ -1,6 +1,6 @@
 <template>
 	<!-- Hero Section -->
-	<div class="relative min-h-[50vh] flex items-center justify-center overflow-hidden  pb-4 pt-16 ">
+	<div class="relative min-h-[calc(100dvh-8rem)] lg:min-h-[50dvh] flex items-center justify-center overflow-hidden  pb-4 pt-16 ">
 		<!-- Background Image with Overlay -->
 		<div class="absolute inset-0 z-0 bg-slate-900">
 			<div v-for="(img, index) in shuffledImages" :key="img"
