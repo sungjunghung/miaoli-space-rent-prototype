@@ -151,7 +151,7 @@ function formatMoney(value: number | null | undefined) {
 <template>
   <div
     v-if="!venue"
-    class="min-h-[70vh] bg-base-200 flex items-center justify-center px-4"
+    class="min-h-[70dvh] bg-base-200 flex items-center justify-center px-4"
   >
     <div
       class="bg-base-100 border border-base-200 rounded-box shadow-sm p-8 max-w-md w-full text-center"
@@ -186,7 +186,7 @@ function formatMoney(value: number | null | undefined) {
       ></div>
 
       <div
-        class="container mx-auto px-8 relative z-10 pt-8 lg:pt-28 pb-8 lg:pb-14 flex flex-col justify-between lg:justify-end min-h-[calc(100vh-9rem)] lg:min-h-auto lg:h-[50vh]"
+        class="container mx-auto px-8 relative z-10 pt-8 lg:pt-28 pb-8 lg:pb-14 flex flex-col justify-between lg:justify-end min-h-[calc(100dvh-9rem)] lg:min-h-auto lg:h-[50vh]"
       >
       
       <div class="max-w-4xl text-white">
