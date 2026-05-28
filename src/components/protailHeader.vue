@@ -23,7 +23,6 @@ const memberLinks = [
 // dock 高亮目前所在頁(首頁需精準比對,其餘比對前綴以涵蓋子頁面)
 const isNavActive = (to: string) => (to === '/' ? route.path === '/' : route.path.startsWith(to))
 
-const isMenuOpen = ref(false)
 const showQuickSearch = ref(false)
 const isScrolled = ref(false)
 // 租借方式:由 navbar 的 tabs 控制,下傳給 QuickSearch
