@@ -24,6 +24,8 @@ interface Props {
   closedDates?: string[];
   selectedStart?: string;
   selectedEnd?: string;
+  /** 開啟時要顯示的月份(對齊點擊欄位的日期);未指定則顯示當月 */
+  viewDate?: string;
   bookings?: BookingRecord[];
   minDays?: number;
   maxDays?: number;
@@ -35,6 +37,7 @@ const props = withDefaults(defineProps<Props>(), {
   closedDates: () => [],
   selectedStart: '',
   selectedEnd: '',
+  viewDate: '',
   bookings: () => [],
   minDays: 1,
   maxDays: 999,
@@ -64,7 +67,12 @@ const emit = defineEmits<{
   (e: 'select-date', dateStr: string): void;
 }>();
 
-const currentMonth = ref(new Date());
+// YYYY-MM-DD を local date として解析(new Date(str) は UTC 扱いで月境界がずれるため)
+function parseLocalDate(str: string): Date {
+  const [y, m, d] = str.split('-').map(Number);
+  return new Date(y ?? 1970, (m ?? 1) - 1, d ?? 1);
+}
+const currentMonth = ref(props.viewDate ? parseLocalDate(props.viewDate) : new Date());
 
 function formatDate(date: Date): string {
   const y = date.getFullYear();

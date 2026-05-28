@@ -1,9 +1,9 @@
 <template>
   <PageHeaderBasic title="我的帳戶" description="管理會員資料、身份文件、密碼與留存保證金。" />
 
-  <main class="container lg:max-w-6xl mx-auto py-10 px-4 space-y-6">
-    <div class="flex gap-6">
-      <div class="flex-1 space-y-6">
+  <main class="container lg:max-w-6xl mx-auto py-6 lg:py-10 px-4 space-y-6">
+    <div class="flex flex-col lg:flex-row gap-6">
+      <div class="flex-1 min-w-0 space-y-6">
 
         <section class="bg-base-100 border border-base-200 rounded-box shadow-sm p-6">
           <h2 class="text-lg font-bold mb-6">基本資料</h2>
@@ -35,9 +35,9 @@
           class="bg-base-100 border border-base-200 rounded-box shadow-sm p-6">
           <h2 class="text-lg font-bold mb-6">證明文件</h2>
 
-          <div class="hover-3d max-w-md">
-            <figure class="rounded-box overflow-hidden ">
-              <img :src="digitalStudentIdImage" alt="身份證明文件" />
+          <div class="hover-3d max-w-md mx-auto sm:mx-0">
+            <figure class="rounded-box overflow-hidden">
+              <img :src="digitalStudentIdImage" alt="身份證明文件" class="w-full h-auto" />
             </figure>
             <div></div>
             <div></div>
@@ -52,7 +52,7 @@
         </section>
       </div>
 
-      <aside class="space-y-6 w-80">
+      <aside class="space-y-6 w-full lg:w-80 lg:shrink-0">
         <section class="bg-base-100 border border-base-200 rounded-box shadow-sm">
           <div class="p-6 space-y-4">
             <div class="flex items-center gap-3">

@@ -8,11 +8,30 @@ const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 
+// 選單單一來源:桌機橫向選單、手機 dropdown、底部 dock 共用
+const navLinks = [
+  { to: '/', label: '首頁', icon: 'home' },
+  { to: '/venues', label: '場館資訊', icon: 'stadium' },
+  { to: '/news', label: '最新消息', icon: 'newspaper' },
+  { to: '/faq', label: '常見問題', icon: 'help' },
+]
+const memberLinks = [
+  { to: '/member/profile', label: '我的帳戶' },
+  { to: '/member/bookings', label: '我的預訂' },
+  { to: '/member/refunds', label: '我的退款' },
+]
+// dock 高亮目前所在頁(首頁需精準比對,其餘比對前綴以涵蓋子頁面)
+const isNavActive = (to: string) => (to === '/' ? route.path === '/' : route.path.startsWith(to))
+
 const isMenuOpen = ref(false)
 const showQuickSearch = ref(false)
 const isScrolled = ref(false)
+// 租借方式:由 navbar 的 tabs 控制,下傳給 QuickSearch
+const searchMode = ref<'daily' | 'multi'>('daily')
+// lg 斷點(1024px)以上視為桌機;手機版不自動展開搜尋框,需手動按下搜尋鈕
+const isDesktop = ref(window.matchMedia('(min-width: 768px)').matches)
 const isHomePage = computed(() => route.path === '/')
-const shouldPinQuickSearch = computed(() => isHomePage.value && !isScrolled.value)
+const shouldPinQuickSearch = computed(() => isDesktop.value && isHomePage.value && !isScrolled.value)
 const isQuickSearchVisible = computed(() => shouldPinQuickSearch.value || showQuickSearch.value)
 
 function toggleQuickSearch() {
@@ -25,16 +44,29 @@ function closeQuickSearch() {
   showQuickSearch.value = false
 }
 
+// 搜尋後一定會前往結果頁,無論是否 pinned 都要重置展開狀態,
+// 否則離開首頁後 showQuickSearch 殘留會讓搜尋框繼續展開
+function onSearched() {
+  showQuickSearch.value = false
+}
+
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 0
 }
 
+const desktopMq = window.matchMedia('(min-width: 768px)')
+const handleMqChange = (e: MediaQueryListEvent) => {
+  isDesktop.value = e.matches
+}
+
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
+  desktopMq.addEventListener('change', handleMqChange)
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
+  desktopMq.removeEventListener('change', handleMqChange)
 })
 
 const searchConditionsText = computed(() => {
@@ -71,105 +103,111 @@ function logout() {
   router.push('/login')
 }
 </script>
-
 <template>
-  <div class="w-full rounded-none fixed transition-all duration-300 text-primary-content p-4 z-50" :class="{
-    'bg-base-100 backdrop-blur-md shadow-sm text-base-content!': isScrolled || isQuickSearchVisible,
-    'p-0!': isScrolled,
-    'pb-4!': isScrolled && isQuickSearchVisible,
+
+  <div class="w-full rounded-none sticky top-0 transition-all duration-300 z-50 bg-base-100" :class="{
+    'backdrop-blur-md shadow-xl bg-base-100/65': isScrolled || isQuickSearchVisible,
   }">
     <div class="navbar">
-      <div class="navbar-start">
-        <button class="btn btn-ghost text-2xl normal-case text-primary" @click="$router.push('/')">
+      <div class="navbar-start w-fit lg:w-1/2">
+        <button class="btn btn-ghost text-xl normal-case text-primary" @click="$router.push('/')">
           <img src="../assets/images/logo.svg" alt="" class="w-10">
-          <span class="hidden md:block font-semibold mb-1">苗栗縣體育場館預約系統</span>
+          <span class="hidden lg:block font-semibold mb-1">苗栗縣體育場館預約系統</span>
         </button>
       </div>
-      <div class="navbar-center">
-        <div class="relative text-base-content!">
-          <div v-if="!isQuickSearchVisible" @click="toggleQuickSearch" class=" bg-base-200 rounded-full w-72 px-4 py-2 flex items-center gap-2 cursor-pointer select-none">
-            <span class="material-symbols-outlined shrink-0">search</span> <span>{{ searchConditionsText }}</span>
-          </div>
-          <div v-else class="bg-base-200 rounded-full w-72 px-4 py-2 inset-shadow-sm flex items-center gap-2 cursor-pointer select-none"  @click="closeQuickSearch">
-            <span v-if="isHomePage">首頁搜尋條件展開中</span>
-            <span v-else>搜尋條件展開中</span>
-          </div>
+      <div class="navbar-center flex-1 lg:flex-none">
+        <div v-if="!isQuickSearchVisible" @click="toggleQuickSearch"
+          class=" bg-base-200 rounded-full w-full lg:w-64 px-4 py-2 flex items-center gap-2 cursor-pointer select-none">
+          <span class="material-symbols-outlined shrink-0">search</span> <span>{{ searchConditionsText }}</span>
+        </div>
+        <div v-else role="tablist" class="tabs tabs-sm md:tabs-md xl:tabs-lg tabs-box mx-auto rounded-full w-full">
+          <button
+            type="button"
+            role="tab"
+            class="tab rounded-full lg:px-8 flex-1"
+            :class="{ 'tab-active bg-secondary text-secondary-content': searchMode === 'daily' }"
+            :aria-selected="searchMode === 'daily'"
+            @click="searchMode = 'daily'"
+          >
+          <span class="material-symbols-outlined text-xl lg:text-2xl mr-1">calendar_month</span>
+          時段租借</button>
+          <button
+            type="button"
+            role="tab"
+            class="tab rounded-full lg:px-8 flex-1"
+            :class="{ 'tab-active bg-secondary text-secondary-content': searchMode === 'multi' }"
+            :aria-selected="searchMode === 'multi'"
+            @click="searchMode = 'multi'"
+          >
+          <span class="material-symbols-outlined text-xl lg:text-2xl mr-1">group</span>
+          多日租借</button>
         </div>
       </div>
-      <div class="navbar-end">
-        <ul class="menu menu-lg menu-horizontal gap-2 hidden lg:flex mr-6">
-          <li><router-link to="/">首頁</router-link></li>
-          <li><router-link to="/venues">場館資訊</router-link></li>
-          <li><router-link to="/news">最新消息</router-link></li>
-          <li><router-link to="/faq">常見問題</router-link></li>
-
-          <template v-if="!authStore.isLoggedIn">
-            <li> <router-link to="/login" class="btn btn-primary">登入</router-link></li>
-            <!-- <li><router-link to="/register" class="btn btn-neutral">註冊</router-link></li> -->
-          </template>
-          <template v-else>
-            <li>
-              <details>
-                <summary> {{ authStore.user?.name }}</summary>
-                <ul class="bg-base-100 p-2 w-52 text-base-content right-0 left-auto! shadow z-10">
-                  <li>
-                    <router-link to="/member/profile">我的帳戶</router-link>
-                  </li>
-                  <li><router-link to="/member/bookings">我的預訂</router-link></li>
-                  <li><router-link to="/member/refunds">我的退款</router-link></li>
-                  <li><a @click="logout">登出</a></li>
-                </ul>
-              </details>
-            </li>
-
-          </template>
+      <div class="navbar-end  md:flex w-fit lg:w-1/2">
+        <div class="w-18 md:hidden" v-if="isQuickSearchVisible"></div>
+        <ul class="menu menu-md xl:menu-lg xl:gap-1 xl:mr-3 text-secondary-700  menu-horizontal hidden lg:flex">
+          <li v-for="link in navLinks" :key="link.to"><router-link :to="link.to">{{ link.label }}</router-link></li>
         </ul>
-        <button class="btn btn-ghost lg:hidden" @click="isMenuOpen = !isMenuOpen">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div v-show="isMenuOpen" class="lg:hidden bg-base-100/95 backdrop-blur shadow-md w-full border-t border-base-200">
-      <template v-if="authStore.isLoggedIn">
-        <div class="flex items-center gap-2 border-b border-base-200 p-4" tabindex="0" role="button">
-          <div class="avatar avatar-placeholder">
-            <div class="bg-neutral text-neutral-content w-8 rounded-full">
-              <span class="text-xs">{{ authStore.user?.name.charAt(0) }}</span>
-            </div>
-          </div>
-          <div class="flex-1">
-            <p class="font-semibold">{{ authStore.user?.name }}</p>
-            <p class="text-base-content/60 text-xs">{{ authStore.user?.email }}</p>
-          </div>
-        </div>
-      </template>
-      <ul class="menu w-full p-2" @click="isMenuOpen = false">
-        <li><router-link to="/">首頁</router-link></li>
-        <li><router-link to="/venues">場館資訊</router-link></li>
-        <li><router-link to="/news">最新消息</router-link></li>
-        <li><router-link to="/faq">常見問題</router-link></li>
-        <template v-if="authStore.isLoggedIn">
-          <li><router-link to="/member/profile">我的帳戶</router-link></li>
-          <li><router-link to="/member/bookings">我的預訂</router-link></li>
-          <li><router-link to="/member/refunds">我的退款</router-link></li>
-          <li><a @click="logout">登出</a></li>
+        <template v-if="!authStore.isLoggedIn">
+          <router-link to="/login" class="btn btn-primary hidden lg:flex">登入</router-link>
         </template>
         <template v-else>
-          <li><router-link to="/login">登入</router-link></li>
-          <!-- <li><router-link to="/register">註冊</router-link></li> -->
-        </template>
-      </ul>
-    </div>
-    <!-- 背景遮罩，點擊收合 -->
+          <div class="dropdown dropdown-end hidden lg:block">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+              <div class="w-10 rounded-full flex items-center justify-center bg-secondary text-primary-content">
+                <span class="material-symbols-outlined text-2xl">person</span>
+              </div>
+            </div>
+            <ul tabindex="-1" class="menu dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+              <li v-for="link in memberLinks" :key="link.to"><router-link :to="link.to">{{ link.label }}</router-link>
+              </li>
+              <li><a @click="logout">登出</a></li>
+            </ul>
+          </div>
 
-    <!-- 展開的搜尋框 -->
-    <div v-if="isQuickSearchVisible" class=" lg:max-w-1/2 mx-auto">
-      <QuickSearch @search="closeQuickSearch" />
+        </template>
+        <div class="dropdown dropdown-end hidden md:flex lg:hidden">
+          <div tabindex="0" role="button" class="btn btn-lg btn-ghost">
+            <span class="material-symbols-outlined text-base">menu</span>
+          </div>
+          <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+            <li v-for="link in navLinks" :key="link.to"><router-link :to="link.to">{{ link.label }}</router-link></li>
+            <template v-if="authStore.isLoggedIn">
+              <li v-for="link in memberLinks" :key="link.to"><router-link :to="link.to">{{ link.label }}</router-link>
+              </li>
+              <li><a @click="logout">登出</a></li>
+            </template>
+            <template v-else>
+              <li><router-link to="/login">登入</router-link></li>
+            </template>
+          </ul>
+        </div>
+      </div>
     </div>
+    <!-- 展開的搜尋框 -->
+    <Transition enter-active-class="grid transition-all duration-300 ease-out"
+      enter-from-class="grid-rows-[0fr] opacity-0" enter-to-class="grid-rows-[1fr] opacity-100"
+      leave-active-class="grid transition-all duration-300 ease-in" leave-from-class="grid-rows-[1fr] opacity-100"
+      leave-to-class="grid-rows-[0fr] opacity-0">
+      <div v-if="isQuickSearchVisible" class="lg:max-w-1/2 xl:max-w-2/5 mx-auto p-4">
+        <QuickSearch v-model:mode="searchMode" @search="onSearched" />
+      </div>
+    </Transition>
   </div>
   <div v-if="showQuickSearch && !shouldPinQuickSearch" class="fixed inset-0 z-40 w-full h-full bg-black/50"
     @click="closeQuickSearch"></div>
-
+  <div class="dock z-50 md:hidden">
+    <router-link v-for="link in navLinks" :key="link.to" :to="link.to" :class="{ 'dock-active': isNavActive(link.to) }">
+      <span class="material-symbols-outlined">{{ link.icon }}</span>
+      <span class="dock-label">{{ link.label }}</span>
+    </router-link>
+    <router-link v-if="!authStore.isLoggedIn" to="/login" :class="{ 'dock-active': isNavActive('/login') }">
+      <span class="material-symbols-outlined">login</span>
+      <span class="dock-label">登入</span>
+    </router-link>
+    <router-link v-else to="/member/profile" :class="{ 'dock-active': route.path.startsWith('/member') }">
+      <span class="material-symbols-outlined">account_circle</span>
+      <span class="dock-label">會員</span>
+    </router-link>
+  </div>
 </template>
