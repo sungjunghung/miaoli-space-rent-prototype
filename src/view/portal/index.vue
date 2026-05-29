@@ -274,11 +274,11 @@ const cellEvents = computed<Record<string, { label: string; time?: string }[]>>(
     const e = new Date(`${endStr ?? startStr}T00:00:00`)
     if (isNaN(s.getTime()) || isNaN(e.getTime())) continue
     const parts = bookingParts(b)
-    // 全部場館模式:場館名在第一行,時段細節合併到第二行
-    // 特定場館模式:主要文字(整日/時段名/時間)第一行,如有額外時間放第二行
+    // 全部場館模式:場館名 + 時段時間分兩行(空間有限,場館名單獨一行較易讀)
+    // 特定場館模式:整行不斷行,label 與 time 合成單行字串顯示
     const entry = isAllVenues.value
       ? { label: venueNameOf(b.venueId), time: parts.time ? `${parts.primary} ${parts.time}` : parts.primary }
-      : { label: parts.primary, time: parts.time }
+      : { label: parts.time ? `${parts.primary} ${parts.time}` : parts.primary }
     for (const d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
       const key = toKey(d)
       if (!out[key]) out[key] = []

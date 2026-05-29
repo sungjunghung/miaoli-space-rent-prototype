@@ -55,6 +55,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 // 是否有任何事件要顯示在格子裡(影響桌機版的格子高度與排版)
 const hasCellEvents = computed(() => Object.keys(props.cellEvents).length > 0)
+// 熱度模式(有 counts) = 全部場館視圖;只有這個情境的週視圖才需要事件 pill 換行
+const isHeatmapMode = computed(() => Object.keys(props.counts).length > 0)
 
 // 依預約場館數決定背景紅色濃淡(5 階)
 function heatBgClassFor(date: Date): string {
@@ -323,8 +325,8 @@ function canSelectDate(date: Date): boolean {
           <!-- 週視圖:文字完整換行;月視圖:每行 truncate 避免格子被撐爆 -->
           <div v-if="cellEvents[formatDate(day.date)]?.length" class="hidden lg:flex flex-col gap-0.5 mt-1 w-full text-xs font-normal leading-tight">
             <div v-for="(ev, i) in cellEvents[formatDate(day.date)]" :key="i" class="rounded px-1.5 py-0.5 bg-base-100/80 text-base-content/80">
-              <div :class="view === 'week' ? 'wrap-break-word whitespace-normal' : 'truncate'">{{ ev.label }}</div>
-              <div v-if="ev.time" class="text-[11px] text-base-content/60" :class="view === 'week' ? 'wrap-break-word whitespace-normal' : 'truncate'">{{ ev.time }}</div>
+              <div :class="(view === 'week' && isHeatmapMode) ? 'wrap-break-word whitespace-normal' : 'truncate'">{{ ev.label }}</div>
+              <div v-if="ev.time" class="text-[11px] text-base-content/60" :class="(view === 'week' && isHeatmapMode) ? 'wrap-break-word whitespace-normal' : 'truncate'">{{ ev.time }}</div>
             </div>
           </div>
         </template>
