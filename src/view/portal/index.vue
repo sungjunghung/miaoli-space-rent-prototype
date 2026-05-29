@@ -44,7 +44,18 @@
 		</div>
 	</div>
 	<!-- Main Content Section -->
-	<div class="container mx-auto px-4 py-20">
+	<div class="container mx-auto px-4 py-20 space-y-24">
+
+		<!-- Booking Heatmap Calendar -->
+		<section>
+			<div class="text-center mb-12">
+				<h2 class="text-3xl font-heading font-bold text-base-content mb-2">場館預約熱度</h2>
+				<p class="text-base-content/60">紅色為已有預約的日期,規劃前可先參考</p>
+			</div>
+			<div class="max-w-3xl mx-auto bg-base-100 border border-base-200 p-6 rounded-box">
+				<MonthCalendar :bookings="bookings" />
+			</div>
+		</section>
 
 		<!-- News Section -->
 		<section>
@@ -116,7 +127,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import mockNews from "@/mocks/news.json";
+import mockBookings from "@/mocks/bookings.json";
+import MonthCalendar from '@/components/calendar/MonthCalendar.vue';
 import { publicImageUrl } from '@/utils/assets'
+
+// 月曆顯示預約熱度;JSON 型別過寬,用 any 餵給 MonthCalendar 的 BookingRecord[]
+const bookings = mockBookings as any[]
 
 // 載入所有圖片資源
 const imageModules = import.meta.glob('@/assets/images/*.{jpg,jpeg,png}', { eager: true });
