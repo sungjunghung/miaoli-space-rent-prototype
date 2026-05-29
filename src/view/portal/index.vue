@@ -48,17 +48,21 @@
 
 		<!-- Booking Heatmap Calendar -->
 		<section>
-			<div class="text-center mb-12">
-				<h2 class="text-3xl font-heading font-bold text-base-content mb-2">場館預約熱度</h2>
-				<p class="text-base-content/60">紅色為該場館已有預約的日期,規劃前可先參考</p>
+			<div class="flex justify-between mb-12 items-center">
+				<div>
+					<h2 class="text-3xl font-heading font-bold text-base-content mb-2">
+						場館預約熱度
+					</h2>
+					<p class="">紅色為該場館已有預約的日期,規劃前可先參考</p>
+				</div>
+				<select v-model.number="selectedVenueId" class="select select-bordered w-full max-w-sm">
+					<option :value="-1">全部場館(預約熱度)</option>
+					<option v-for="v in venueOptions" :key="v.id" :value="v.id">{{ v.name }}</option>
+				</select>
 			</div>
+	
 			<div class="bg-base-100 border border-base-200 p-6 rounded-box">
-				<label class="form-control mb-4 flex flex-row items-center gap-3">
-					<select v-model.number="selectedVenueId" class="select select-bordered w-full max-w-sm">
-						<option :value="-1">全部場館(預約熱度)</option>
-						<option v-for="v in venueOptions" :key="v.id" :value="v.id">{{ v.name }}</option>
-					</select>
-				</label>
+	
 				<MonthCalendar
 					:bookings="filteredBookings"
 					:counts="dailyCounts"
