@@ -122,8 +122,8 @@ function isDayRented(date: Date): boolean {
   });
 }
 
-// 顯示模式:月(預設,完整月格)或週(目前週 7 天)
-const view = ref<'month' | 'week'>('month');
+// 顯示模式:週(預設,7 天一字排開)或月(完整月格)
+const view = ref<'month' | 'week'>('week');
 
 function buildDay(date: Date): CalendarDay {
   let status: RentalStatus = 'available';
@@ -318,8 +318,9 @@ function canSelectDate(date: Date): boolean {
           <span v-else-if="!isPastDate(day.date) && counts[formatDate(day.date)]" :class="hasCellEvents ? 'lg:hidden text-xs leading-none font-bold mt-0.5' : 'text-xs leading-none font-bold mt-0.5'">{{ counts[formatDate(day.date)] }}</span>
 
           <!-- 桌機版:在格子內顯示當日全部事件(手機版隱藏,改用 modal) -->
+          <!-- 週視圖:垂直空間夠,文字完整換行;月視圖:單行省略避免格子被撐爆 -->
           <div v-if="cellEvents[formatDate(day.date)]?.length" class="hidden lg:flex flex-col gap-0.5 mt-1 w-full text-xs font-normal leading-tight">
-            <span v-for="(ev, i) in cellEvents[formatDate(day.date)]" :key="i" class="truncate rounded px-1.5 py-0.5 bg-base-100/80 text-base-content/80">
+            <span v-for="(ev, i) in cellEvents[formatDate(day.date)]" :key="i" class="rounded px-1.5 py-0.5 bg-base-100/80 text-base-content/80" :class="view === 'week' ? 'wrap-break-word whitespace-normal' : 'truncate'">
               {{ ev }}
             </span>
           </div>
