@@ -54,7 +54,6 @@
 			</div>
 			<div class="bg-base-100 border border-base-200 p-6 rounded-box">
 				<label class="form-control mb-4 flex flex-row items-center gap-3">
-					<span class="label-text text-sm font-medium text-base-content/70 shrink-0">場館</span>
 					<select v-model.number="selectedVenueId" class="select select-bordered w-full max-w-sm">
 						<option :value="-1">全部場館(預約熱度)</option>
 						<option v-for="v in venueOptions" :key="v.id" :value="v.id">{{ v.name }}</option>

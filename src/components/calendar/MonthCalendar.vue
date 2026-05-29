@@ -229,12 +229,14 @@ function canSelectDate(date: Date): boolean {
         :class="day ? [
           {
             'bg-base-200 text-base-content cursor-not-allowed': day.status === 'closed' || isPastDate(day.date),
-            'bg-error text-error-content cursor-not-allowed': day.status === 'rented' && !isPastDate(day.date),
+            // 整格紅:只有「日期選擇」用途才需要(picker 場景),如果有事件標籤就不再塗紅,讓事件 pill 自己表達
+            'bg-error text-error-content cursor-not-allowed': day.status === 'rented' && !isPastDate(day.date) && !hasCellEvents,
             'bg-base-200 text-base-content/50 cursor-not-allowed': day.status === 'available' && !isPastDate(day.date) && !canSelectDate(day.date),
             'ring-2 ring-success ring-offset-1 z-10': isToday(day.date) && day.status !== 'closed' && !isSelected(day.date),
             'bg-success text-success-content font-bold z-10': isSelected(day.date),
             'bg-success/15': isInRange(day.date) && day.status === 'available' && !isPastDate(day.date),
-            'bg-base-100 text-base-content cursor-pointer hover:bg-base-200': day.status === 'available' && !isPastDate(day.date) && !isSelected(day.date) && !isInRange(day.date) && canSelectDate(day.date),
+            // 預設可選/可檢視底色:正常 available 日,或「有事件 + rented」也用同一個底
+            'bg-base-100 text-base-content cursor-pointer hover:bg-base-200': (day.status === 'available' && !isPastDate(day.date) && !isSelected(day.date) && !isInRange(day.date) && canSelectDate(day.date)) || (day.status === 'rented' && !isPastDate(day.date) && hasCellEvents),
           },
           // 熱度模式:在「可選」狀態上疊加紅色濃淡
           day.status === 'available' && !isPastDate(day.date) && !isSelected(day.date) && !isInRange(day.date) ? heatBgClassFor(day.date) : '',
