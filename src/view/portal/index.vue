@@ -50,10 +50,16 @@
 		<section>
 			<div class="text-center mb-12">
 				<h2 class="text-3xl font-heading font-bold text-base-content mb-2">場館預約熱度</h2>
-				<p class="text-base-content/60">紅色為已有預約的日期,規劃前可先參考</p>
+				<p class="text-base-content/60">紅色為該場館已有預約的日期,規劃前可先參考</p>
 			</div>
 			<div class="bg-base-100 border border-base-200 p-6 rounded-box">
-				<MonthCalendar :bookings="bookings" />
+				<label class="form-control mb-4 flex flex-row items-center gap-3">
+					<span class="label-text text-sm font-medium text-base-content/70 shrink-0">場館</span>
+					<select v-model.number="selectedVenueId" class="select select-bordered w-full max-w-sm">
+						<option v-for="v in venueOptions" :key="v.id" :value="v.id">{{ v.name }}</option>
+					</select>
+				</label>
+				<MonthCalendar :bookings="filteredBookings" />
 			</div>
 		</section>
 
@@ -125,14 +131,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import mockNews from "@/mocks/news.json";
 import mockBookings from "@/mocks/bookings.json";
+import mockVenues from "@/mocks/venues.json";
 import MonthCalendar from '@/components/calendar/MonthCalendar.vue';
 import { publicImageUrl } from '@/utils/assets'
 
 // 月曆顯示預約熱度;JSON 型別過寬,用 any 餵給 MonthCalendar 的 BookingRecord[]
 const bookings = mockBookings as any[]
+const venueOptions = mockVenues.map(v => ({ id: v.id, name: v.name }))
+const selectedVenueId = ref<number>(venueOptions[0]?.id ?? 0)
+const filteredBookings = computed(() => bookings.filter(b => b.venueId === selectedVenueId.value))
 
 // 載入所有圖片資源
 const imageModules = import.meta.glob('@/assets/images/*.{jpg,jpeg,png}', { eager: true });
