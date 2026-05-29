@@ -252,7 +252,7 @@ function canSelectDate(date: Date): boolean {
           <span v-if="isRangeStart(day.date) && selectedEnd" class="text-[10px] leading-none font-normal mt-0.5">起</span>
           <span v-else-if="isRangeEnd(day.date)" class="text-[10px] leading-none font-normal mt-0.5">迄</span>
           <span v-else-if="day.status === 'closed'" class="text-[11px] leading-none text-base-content font-normal">休</span>
-          <span v-else-if="day.status === 'rented'" class="w-1.5 h-1.5 rounded-full bg-error-content mt-0.5"></span>
+          <span v-else-if="day.status === 'rented' && !hasCellEvents" class="w-1.5 h-1.5 rounded-full bg-error-content mt-0.5"></span>
           <span v-else-if="!isPastDate(day.date) && counts[formatDate(day.date)]" :class="hasCellEvents ? 'lg:hidden text-xs leading-none font-bold mt-0.5' : 'text-xs leading-none font-bold mt-0.5'">{{ counts[formatDate(day.date)] }}</span>
 
           <!-- 桌機版:在格子內顯示當日全部事件(手機版隱藏,改用 modal) -->
