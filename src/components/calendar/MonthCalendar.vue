@@ -205,7 +205,7 @@ function canSelectDate(date: Date): boolean {
       <button @click="previousMonth" class="btn btn-square btn-ghost">
         <span class="material-symbols-outlined text-base-content shrink-0 mt-0.5">chevron_left</span>
       </button>
-      <span class="text-lg font-medium text-base-content min-w-20 text-center">{{ monthYear }}</span>
+      <span class="text-xl font-medium text-base-content min-w-24 text-center">{{ monthYear }}</span>
       <button @click="nextMonth" class="btn btn-square btn-ghost">
         <span class="material-symbols-outlined text-base-content shrink-0 mt-0.5">chevron_right</span>
       </button>
@@ -215,7 +215,7 @@ function canSelectDate(date: Date): boolean {
       <div
         v-for="day in ['日', '一', '二', '三', '四', '五', '六']"
         :key="day"
-        class="text-center text-xs font-medium text-base-content py-2"
+        class="text-center text-sm font-medium text-base-content py-2"
       >
         {{ day }}
       </div>
@@ -225,7 +225,7 @@ function canSelectDate(date: Date): boolean {
       <div
         v-for="(day, index) in getDaysInMonth"
         :key="index"
-        class="h-12 text-sm font-medium flex flex-col items-center justify-center transition-colors relative border-b border-r border-base-200"
+        class="h-14 text-base font-medium flex flex-col items-center justify-center transition-colors relative border-b border-r border-base-200"
         :class="day ? [
           {
             'bg-base-200 text-base-content cursor-not-allowed': day.status === 'closed' || isPastDate(day.date),
@@ -243,21 +243,21 @@ function canSelectDate(date: Date): boolean {
           // 檢視模式:強制 cursor-pointer + hover 提示;Tailwind v4 使用 ! 後綴強制覆寫 cursor-not-allowed
           viewable ? 'cursor-pointer! hover:opacity-80' : '',
           // 有事件時桌機版加高、頂部對齊以容納事件清單(手機版維持 h-12)
-          hasCellEvents ? 'lg:min-h-28 lg:h-auto lg:items-stretch lg:justify-start lg:p-1.5' : '',
+          hasCellEvents ? 'lg:min-h-32 lg:h-auto lg:items-stretch lg:justify-start lg:p-2' : '',
         ] : 'invisible'"
         @click="day && (viewable || canSelectDate(day.date)) && emit('select-date', formatDate(day.date))"
       >
         <template v-if="day">
-          <span :class="hasCellEvents ? 'lg:self-start lg:px-1 lg:text-xs lg:opacity-70' : ''">{{ day.date.getDate() }}</span>
-          <span v-if="isRangeStart(day.date) && selectedEnd" class="text-[8px] leading-none font-normal mt-0.5">起</span>
-          <span v-else-if="isRangeEnd(day.date)" class="text-[8px] leading-none font-normal mt-0.5">迄</span>
-          <span v-else-if="day.status === 'closed'" class="text-[9px] leading-none text-base-content font-normal">休</span>
-          <span v-else-if="day.status === 'rented'" class="w-1 h-1 rounded-full bg-error-content mt-0.5"></span>
-          <span v-else-if="!isPastDate(day.date) && counts[formatDate(day.date)]" :class="hasCellEvents ? 'lg:hidden text-[10px] leading-none font-bold mt-0.5' : 'text-[10px] leading-none font-bold mt-0.5'">{{ counts[formatDate(day.date)] }}</span>
+          <span :class="hasCellEvents ? 'lg:self-start lg:px-1 lg:text-sm lg:opacity-80' : ''">{{ day.date.getDate() }}</span>
+          <span v-if="isRangeStart(day.date) && selectedEnd" class="text-[10px] leading-none font-normal mt-0.5">起</span>
+          <span v-else-if="isRangeEnd(day.date)" class="text-[10px] leading-none font-normal mt-0.5">迄</span>
+          <span v-else-if="day.status === 'closed'" class="text-[11px] leading-none text-base-content font-normal">休</span>
+          <span v-else-if="day.status === 'rented'" class="w-1.5 h-1.5 rounded-full bg-error-content mt-0.5"></span>
+          <span v-else-if="!isPastDate(day.date) && counts[formatDate(day.date)]" :class="hasCellEvents ? 'lg:hidden text-xs leading-none font-bold mt-0.5' : 'text-xs leading-none font-bold mt-0.5'">{{ counts[formatDate(day.date)] }}</span>
 
           <!-- 桌機版:在格子內顯示當日全部事件(手機版隱藏,改用 modal) -->
-          <div v-if="cellEvents[formatDate(day.date)]?.length" class="hidden lg:flex flex-col gap-0.5 mt-1 w-full text-[10px] font-normal leading-tight">
-            <span v-for="(ev, i) in cellEvents[formatDate(day.date)]" :key="i" class="truncate rounded px-1 py-0.5 bg-base-100/80 text-base-content/80">
+          <div v-if="cellEvents[formatDate(day.date)]?.length" class="hidden lg:flex flex-col gap-0.5 mt-1 w-full text-xs font-normal leading-tight">
+            <span v-for="(ev, i) in cellEvents[formatDate(day.date)]" :key="i" class="truncate rounded px-1.5 py-0.5 bg-base-100/80 text-base-content/80">
               {{ ev }}
             </span>
           </div>
