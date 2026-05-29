@@ -27,6 +27,8 @@ interface Props {
   /** 開啟時要顯示的月份(對齊點擊欄位的日期);未指定則顯示當月 */
   viewDate?: string;
   bookings?: BookingRecord[];
+  /** 該日有多少筆預約(熱度模式);與 bookings 互斥,通常用在「全部場館」聚合視圖 */
+  counts?: Record<string, number>;
   minDays?: number;
   maxDays?: number;
   showLegend?: boolean;
@@ -39,10 +41,22 @@ const props = withDefaults(defineProps<Props>(), {
   selectedEnd: '',
   viewDate: '',
   bookings: () => [],
+  counts: () => ({}),
   minDays: 1,
   maxDays: 999,
   showLegend: true,
 });
+
+// 依預約場館數決定背景紅色濃淡(5 階)
+function heatBgClassFor(date: Date): string {
+  const count = props.counts[formatDate(date)] ?? 0;
+  if (!count) return '';
+  if (count >= 10) return 'bg-error/80 text-error-content';
+  if (count >= 7) return 'bg-error/60 text-error-content';
+  if (count >= 4) return 'bg-error/40';
+  if (count >= 2) return 'bg-error/25';
+  return 'bg-error/15';
+}
 
 function isSelected(date: Date): boolean {
   const ds = formatDate(date);
@@ -203,15 +217,19 @@ function canSelectDate(date: Date): boolean {
         v-for="(day, index) in getDaysInMonth"
         :key="index"
         class="h-12 text-sm font-medium flex flex-col items-center justify-center transition-colors relative border-b border-r border-base-200"
-        :class="day ? {
-          'bg-base-200 text-base-content cursor-not-allowed': day.status === 'closed' || isPastDate(day.date),
-          'bg-error text-error-content cursor-not-allowed': day.status === 'rented' && !isPastDate(day.date),
-          'bg-base-200 text-base-content/50 cursor-not-allowed': day.status === 'available' && !isPastDate(day.date) && !canSelectDate(day.date),
-          'ring-2 ring-success ring-offset-1 z-10': isToday(day.date) && day.status !== 'closed' && !isSelected(day.date),
-          'bg-success text-success-content font-bold z-10': isSelected(day.date),
-          'bg-success/15': isInRange(day.date) && day.status === 'available' && !isPastDate(day.date),
-          'bg-base-100 text-base-content cursor-pointer hover:bg-base-200': day.status === 'available' && !isPastDate(day.date) && !isSelected(day.date) && !isInRange(day.date) && canSelectDate(day.date),
-        } : 'invisible'"
+        :class="day ? [
+          {
+            'bg-base-200 text-base-content cursor-not-allowed': day.status === 'closed' || isPastDate(day.date),
+            'bg-error text-error-content cursor-not-allowed': day.status === 'rented' && !isPastDate(day.date),
+            'bg-base-200 text-base-content/50 cursor-not-allowed': day.status === 'available' && !isPastDate(day.date) && !canSelectDate(day.date),
+            'ring-2 ring-success ring-offset-1 z-10': isToday(day.date) && day.status !== 'closed' && !isSelected(day.date),
+            'bg-success text-success-content font-bold z-10': isSelected(day.date),
+            'bg-success/15': isInRange(day.date) && day.status === 'available' && !isPastDate(day.date),
+            'bg-base-100 text-base-content cursor-pointer hover:bg-base-200': day.status === 'available' && !isPastDate(day.date) && !isSelected(day.date) && !isInRange(day.date) && canSelectDate(day.date),
+          },
+          // 熱度模式:在「可選」狀態上疊加紅色濃淡
+          day.status === 'available' && !isPastDate(day.date) && !isSelected(day.date) && !isInRange(day.date) ? heatBgClassFor(day.date) : '',
+        ] : 'invisible'"
         @click="day && canSelectDate(day.date) && emit('select-date', formatDate(day.date))"
       >
         <template v-if="day">
@@ -220,6 +238,7 @@ function canSelectDate(date: Date): boolean {
           <span v-else-if="isRangeEnd(day.date)" class="text-[8px] leading-none font-normal mt-0.5">迄</span>
           <span v-else-if="day.status === 'closed'" class="text-[9px] leading-none text-base-content font-normal">休</span>
           <span v-else-if="day.status === 'rented'" class="w-1 h-1 rounded-full bg-error-content mt-0.5"></span>
+          <span v-else-if="!isPastDate(day.date) && counts[formatDate(day.date)]" class="text-[10px] leading-none font-bold mt-0.5">{{ counts[formatDate(day.date)] }}</span>
         </template>
       </div>
     </div>
