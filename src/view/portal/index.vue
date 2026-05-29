@@ -60,7 +60,13 @@
 						<option v-for="v in venueOptions" :key="v.id" :value="v.id">{{ v.name }}</option>
 					</select>
 				</label>
-				<MonthCalendar :bookings="filteredBookings" :counts="dailyCounts" :show-legend="!isAllVenues" />
+				<MonthCalendar
+					:bookings="filteredBookings"
+					:counts="dailyCounts"
+					:show-legend="!isAllVenues"
+					viewable
+					@select-date="onCalendarDayClick"
+				/>
 				<!-- 熱度模式專屬圖例 -->
 				<div v-if="isAllVenues" class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-base-content/70">
 					<span>預約場館數:</span>
@@ -138,6 +144,33 @@
 			</div>
 		</section>
 	</div>
+
+	<!-- 預約清單 modal:點月曆某天時顯示當日的預約簡要列表 -->
+	<dialog ref="bookingsModal" class="modal">
+		<div class="modal-box max-w-2xl">
+			<h3 class="font-bold text-lg mb-1">{{ formatLongDate(selectedDate) }} 預約清單</h3>
+			<p class="text-sm text-base-content/60 mb-4">
+				{{ isAllVenues ? '全部場館' : venueNameOf(selectedVenueId) }} · 共 {{ bookingsOnSelectedDate.length }} 筆
+			</p>
+
+			<div v-if="bookingsOnSelectedDate.length" class="space-y-2 max-h-96 overflow-y-auto">
+				<div v-for="b in bookingsOnSelectedDate" :key="b.id"
+					class="flex flex-wrap items-center gap-3 p-3 border border-base-200 rounded-box">
+					<div class="flex-1 min-w-0">
+						<div class="font-medium truncate">{{ venueNameOf(b.venueId) }}</div>
+						<div class="text-sm text-base-content/60">{{ describeBookingTime(b) }}</div>
+					</div>
+					<span class="badge" :class="statusBadgeClass(b.status)">{{ statusLabel(b.status) }}</span>
+				</div>
+			</div>
+			<div v-else class="text-center py-10 text-base-content/50">當日無預約</div>
+
+			<div class="modal-action">
+				<button type="button" class="btn" @click="closeBookingsModal">關閉</button>
+			</div>
+		</div>
+		<form method="dialog" class="modal-backdrop"><button>close</button></form>
+	</dialog>
 </template>
 
 <script setup lang="ts">
@@ -178,6 +211,91 @@ const dailyCounts = computed<Record<string, number>>(() => {
   }
   return out
 })
+
+// ── 點日期 → 預約清單 modal ──
+const bookingsModal = ref<HTMLDialogElement | null>(null)
+const selectedDate = ref<string>('')
+const venueMap = new Map<number, string>(mockVenues.map(v => [v.id, v.name]))
+function venueNameOf(id: number): string {
+  return venueMap.get(id) ?? `#${id}`
+}
+
+const STATUS_LABEL: Record<string, string> = {
+  reserved: '已預訂',
+  document_review: '文件審核中',
+  documents_rejected: '文件退回',
+  pending_payment: '待繳費',
+  payment_review: '繳費審核',
+  confirmed: '已確認',
+  completed: '已完成',
+  cancellation_requested: '取消申請',
+  cancelled: '已取消',
+  cancelled_expired: '逾期取消',
+  cancelled_rejected: '退回取消',
+}
+const STATUS_BADGE: Record<string, string> = {
+  reserved: 'badge-info',
+  document_review: 'badge-info',
+  documents_rejected: 'badge-error',
+  pending_payment: 'badge-warning',
+  payment_review: 'badge-warning',
+  confirmed: 'badge-success',
+  completed: 'badge-success',
+  cancellation_requested: 'badge-warning',
+  cancelled: 'badge-ghost',
+  cancelled_expired: 'badge-ghost',
+  cancelled_rejected: 'badge-ghost',
+}
+function statusLabel(s: string) { return STATUS_LABEL[s] ?? s }
+function statusBadgeClass(s: string) { return STATUS_BADGE[s] ?? 'badge-ghost' }
+
+function describeBookingTime(b: any): string {
+  if (b.rentalMode === 'daily') {
+    if (b.startDate && b.endDate && b.startDate !== b.endDate) {
+      return `整日 (${b.startDate.slice(5).replace('-', '/')} ~ ${b.endDate.slice(5).replace('-', '/')})`
+    }
+    return '整日'
+  }
+  if (b.rentalMode === 'session') return b.session ?? '-'
+  if (b.rentalMode === 'hourly') return `${b.startTime ?? ''} - ${b.endTime ?? ''}`
+  return '-'
+}
+
+const bookingsOnSelectedDate = computed(() => {
+  if (!selectedDate.value) return []
+  const target = selectedDate.value
+  const pool = isAllVenues.value ? bookings : bookings.filter(b => b.venueId === selectedVenueId.value)
+  return pool
+    .filter(b => {
+      if (b.rentalMode === 'daily') {
+        const start = b.startDate ?? b.date
+        const end = b.endDate ?? b.date
+        return target >= start && target <= end
+      }
+      return b.date === target
+    })
+    .sort((a, b) => {
+      if (a.venueId !== b.venueId) return a.venueId - b.venueId
+      const aTime = a.startTime || a.session || ''
+      const bTime = b.startTime || b.session || ''
+      return aTime.localeCompare(bTime)
+    })
+})
+
+function onCalendarDayClick(dateStr: string) {
+  selectedDate.value = dateStr
+  bookingsModal.value?.showModal()
+}
+
+function closeBookingsModal() {
+  bookingsModal.value?.close()
+}
+
+function formatLongDate(dateStr: string): string {
+  if (!dateStr) return ''
+  const [y, m, d] = dateStr.split('-')
+  return `${y} 年 ${parseInt(m ?? '1')} 月 ${parseInt(d ?? '1')} 日`
+}
 
 // 載入所有圖片資源
 const imageModules = import.meta.glob('@/assets/images/*.{jpg,jpeg,png}', { eager: true });
