@@ -31,8 +31,8 @@ interface Props {
   counts?: Record<string, number>;
   /** 檢視模式:所有非空日期都可點(用於展示用途,例如點日期看當日預約清單) */
   viewable?: boolean;
-  /** 桌機版要在每格直接顯示的事件標籤;手機版會自動隱藏並透過 click 開 modal */
-  cellEvents?: Record<string, string[]>;
+  /** 桌機版要在每格直接顯示的事件標籤(label = 主要文字,time = 第二行時間);手機版會自動隱藏並透過 click 開 modal */
+  cellEvents?: Record<string, { label: string; time?: string }[]>;
   minDays?: number;
   maxDays?: number;
   showLegend?: boolean;
@@ -318,11 +318,12 @@ function canSelectDate(date: Date): boolean {
           <span v-else-if="!isPastDate(day.date) && counts[formatDate(day.date)]" :class="hasCellEvents ? 'lg:hidden text-xs leading-none font-bold mt-0.5' : 'text-xs leading-none font-bold mt-0.5'">{{ counts[formatDate(day.date)] }}</span>
 
           <!-- 桌機版:在格子內顯示當日全部事件(手機版隱藏,改用 modal) -->
-          <!-- 週視圖:垂直空間夠,文字完整換行;月視圖:單行省略避免格子被撐爆 -->
+          <!-- 週視圖:文字完整換行;月視圖:每行 truncate 避免格子被撐爆 -->
           <div v-if="cellEvents[formatDate(day.date)]?.length" class="hidden lg:flex flex-col gap-0.5 mt-1 w-full text-xs font-normal leading-tight">
-            <span v-for="(ev, i) in cellEvents[formatDate(day.date)]" :key="i" class="rounded px-1.5 py-0.5 bg-base-100/80 text-base-content/80" :class="view === 'week' ? 'wrap-break-word whitespace-normal' : 'truncate'">
-              {{ ev }}
-            </span>
+            <div v-for="(ev, i) in cellEvents[formatDate(day.date)]" :key="i" class="rounded px-1.5 py-0.5 bg-base-100/80 text-base-content/80">
+              <div :class="view === 'week' ? 'wrap-break-word whitespace-normal' : 'truncate'">{{ ev.label }}</div>
+              <div v-if="ev.time" class="text-[11px] text-base-content/60" :class="view === 'week' ? 'wrap-break-word whitespace-normal' : 'truncate'">{{ ev.time }}</div>
+            </div>
           </div>
         </template>
       </div>
