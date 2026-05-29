@@ -154,11 +154,16 @@
 			</p>
 
 			<div v-if="bookingsOnSelectedDate.length" class="space-y-2 max-h-96 overflow-y-auto">
-				<div v-for="b in bookingsOnSelectedDate" :key="b.id"
-					class="p-3 border border-base-200 rounded-box">
-					<div class="font-medium truncate">{{ venueNameOf(b.venueId) }}</div>
-					<div class="text-sm text-base-content/60">{{ describeBookingTime(b) }}</div>
-				</div>
+				<router-link v-for="b in bookingsOnSelectedDate" :key="b.id"
+					:to="`/venues/${venueDetailId(b.venueId)}`"
+					@click="closeBookingsModal"
+					class="flex items-center justify-between gap-3 p-3 border border-base-200 rounded-box hover:bg-base-200/60 hover:border-base-300 transition-colors">
+					<div class="min-w-0">
+						<div class="font-medium truncate">{{ venueNameOf(b.venueId) }}</div>
+						<div class="text-sm text-base-content/60">{{ describeBookingTime(b) }}</div>
+					</div>
+					<span class="material-symbols-outlined text-base-content/40 shrink-0">chevron_right</span>
+				</router-link>
 			</div>
 			<div v-else class="text-center py-10 text-base-content/50">當日無預約</div>
 
@@ -215,6 +220,15 @@ const selectedDate = ref<string>('')
 const venueMap = new Map<number, string>(mockVenues.map(v => [v.id, v.name]))
 function venueNameOf(id: number): string {
   return venueMap.get(id) ?? `#${id}`
+}
+
+// 子場館(parentId 非空)→ 連回母場館詳情頁
+const venueParentMap = new Map<number, number>()
+for (const v of mockVenues as any[]) {
+  if (v.parentId) venueParentMap.set(v.id, v.parentId)
+}
+function venueDetailId(id: number): number {
+  return venueParentMap.get(id) ?? id
 }
 
 // 預載每個場館的時段名稱 → 時間區,讓 session 預約顯示「上午 08:00-12:00」之類
