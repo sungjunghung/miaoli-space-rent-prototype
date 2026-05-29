@@ -52,56 +52,31 @@
 				<h2 class="text-3xl font-heading font-bold text-base-content mb-2">場館預約熱度</h2>
 				<p class="text-base-content/60">紅色為該場館已有預約的日期,規劃前可先參考</p>
 			</div>
-			<div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
-				<!-- 月曆主體 -->
-				<div class="bg-base-100 border border-base-200 p-6 rounded-box">
-					<label class="form-control mb-4 flex flex-row items-center gap-3">
-						<span class="label-text text-sm font-medium text-base-content/70 shrink-0">場館</span>
-						<select v-model.number="selectedVenueId" class="select select-bordered w-full max-w-sm">
-							<option :value="-1">全部場館(預約熱度)</option>
-							<option v-for="v in venueOptions" :key="v.id" :value="v.id">{{ v.name }}</option>
-						</select>
-					</label>
-					<MonthCalendar
-						:bookings="filteredBookings"
-						:counts="dailyCounts"
-						:show-legend="!isAllVenues"
-						viewable
-						@select-date="onCalendarDayClick"
-					/>
-					<!-- 熱度模式專屬圖例 -->
-					<div v-if="isAllVenues" class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-base-content/70">
-						<span>預約場館數:</span>
-						<span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded bg-error/15 border border-error/20"></span>1</span>
-						<span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded bg-error/25 border border-error/30"></span>2-3</span>
-						<span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded bg-error/40 border border-error/50"></span>4-6</span>
-						<span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded bg-error/60 border border-error/70"></span>7-9</span>
-						<span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded bg-error/80 border border-error/90"></span>10+</span>
-					</div>
+			<div class="bg-base-100 border border-base-200 p-6 rounded-box">
+				<label class="form-control mb-4 flex flex-row items-center gap-3">
+					<span class="label-text text-sm font-medium text-base-content/70 shrink-0">場館</span>
+					<select v-model.number="selectedVenueId" class="select select-bordered w-full max-w-sm">
+						<option :value="-1">全部場館(預約熱度)</option>
+						<option v-for="v in venueOptions" :key="v.id" :value="v.id">{{ v.name }}</option>
+					</select>
+				</label>
+				<MonthCalendar
+					:bookings="filteredBookings"
+					:counts="dailyCounts"
+					:cell-events="cellEvents"
+					:show-legend="!isAllVenues"
+					viewable
+					@select-date="onCalendarDayClick"
+				/>
+				<!-- 熱度模式專屬圖例 -->
+				<div v-if="isAllVenues" class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-base-content/70">
+					<span>預約場館數:</span>
+					<span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded bg-error/15 border border-error/20"></span>1</span>
+					<span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded bg-error/25 border border-error/30"></span>2-3</span>
+					<span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded bg-error/40 border border-error/50"></span>4-6</span>
+					<span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded bg-error/60 border border-error/70"></span>7-9</span>
+					<span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded bg-error/80 border border-error/90"></span>10+</span>
 				</div>
-
-				<!-- 桌機側欄:當日預約清單(< lg 隱藏,手機/平板改開 modal) -->
-				<aside class="hidden lg:flex lg:flex-col bg-base-100 border border-base-200 p-6 rounded-box">
-					<h3 class="font-bold text-base mb-1">當日預約清單</h3>
-					<template v-if="selectedDate">
-						<p class="text-sm text-base-content/60 mb-4">
-							{{ formatLongDate(selectedDate) }} · 共 {{ bookingsOnSelectedDate.length }} 筆
-						</p>
-						<div v-if="bookingsOnSelectedDate.length" class="space-y-2 overflow-y-auto pr-1 -mr-1 max-h-112">
-							<div v-for="b in bookingsOnSelectedDate" :key="b.id"
-								class="p-3 border border-base-200 rounded-box">
-								<div class="font-medium text-sm truncate">{{ venueNameOf(b.venueId) }}</div>
-								<div class="text-xs text-base-content/60">{{ describeBookingTime(b) }}</div>
-							</div>
-						</div>
-						<div v-else class="flex-1 flex items-center justify-center text-base-content/50 text-sm">
-							當日無預約
-						</div>
-					</template>
-					<div v-else class="flex-1 flex items-center justify-center text-base-content/50 text-sm text-center">
-						點月曆任一天<br />查看當日預約
-					</div>
-				</aside>
 			</div>
 		</section>
 
@@ -197,7 +172,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import mockNews from "@/mocks/news.json";
 import mockBookings from "@/mocks/generateBookings";
 import mockVenues from "@/mocks/venues.json";
@@ -255,6 +230,37 @@ for (const v of mockVenues) {
   sessionTimesByVenue.set(v.id, map)
 }
 
+// 桌機格子內顯示用的短標籤(空間有限,省去多餘字)
+function shortBookingTime(b: any): string {
+  if (b.rentalMode === 'daily') return '整日'
+  if (b.rentalMode === 'session') return b.session ?? '-'
+  if (b.rentalMode === 'hourly') return `${b.startTime ?? ''}-${b.endTime ?? ''}`
+  return ''
+}
+
+// 每天的事件標籤陣列(全部場館模式帶場館名;特定場館模式只顯示時段)
+const cellEvents = computed<Record<string, string[]>>(() => {
+  const out: Record<string, string[]> = {}
+  const toKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  const pool = isAllVenues.value ? bookings : bookings.filter(b => b.venueId === selectedVenueId.value)
+  for (const b of pool) {
+    const startStr = b.startDate ?? b.date
+    const endStr = b.endDate ?? b.date
+    if (!startStr) continue
+    const s = new Date(`${startStr}T00:00:00`)
+    const e = new Date(`${endStr ?? startStr}T00:00:00`)
+    if (isNaN(s.getTime()) || isNaN(e.getTime())) continue
+    const time = shortBookingTime(b)
+    const label = isAllVenues.value ? `${venueNameOf(b.venueId)} · ${time}` : time
+    for (const d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
+      const key = toKey(d)
+      if (!out[key]) out[key] = []
+      out[key].push(label)
+    }
+  }
+  return out
+})
+
 function describeBookingTime(b: any): string {
   if (b.rentalMode === 'daily') {
     if (b.startDate && b.endDate && b.startDate !== b.endDate) {
@@ -292,21 +298,10 @@ const bookingsOnSelectedDate = computed(() => {
     })
 })
 
-// 桌機以上(lg ≥ 1024px)在側欄直接顯示;以下才開 modal
-const desktopMq = window.matchMedia('(min-width: 1024px)')
-const isLgDesktop = ref(desktopMq.matches)
-function handleDesktopMqChange(e: MediaQueryListEvent) {
-  isLgDesktop.value = e.matches
-}
-
-// 縮窗到桌機時,如果 modal 還開著就關掉(資訊已轉移到側欄)
-watch(isLgDesktop, (val) => {
-  if (val && bookingsModal.value?.open) bookingsModal.value.close()
-})
-
+// 桌機在格子內直接顯示前 2 筆;點任一天則都開 modal 看完整清單(任意尺寸)
 function onCalendarDayClick(dateStr: string) {
   selectedDate.value = dateStr
-  if (!isLgDesktop.value) bookingsModal.value?.showModal()
+  bookingsModal.value?.showModal()
 }
 
 function closeBookingsModal() {
@@ -339,8 +334,6 @@ function formatDate(date: string) {
 }
 
 onMounted(() => {
-	desktopMq.addEventListener('change', handleDesktopMqChange);
-
 	if (images.length > 0) {
 		// 隨機打亂陣列
 		shuffledImages.value = [...images].sort(() => Math.random() - 0.5);
@@ -358,7 +351,6 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-	desktopMq.removeEventListener('change', handleDesktopMqChange);
 	if (intervalId) clearInterval(intervalId);
 });
 </script>

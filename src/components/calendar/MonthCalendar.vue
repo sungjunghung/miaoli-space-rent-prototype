@@ -31,6 +31,8 @@ interface Props {
   counts?: Record<string, number>;
   /** 檢視模式:所有非空日期都可點(用於展示用途,例如點日期看當日預約清單) */
   viewable?: boolean;
+  /** 桌機版要在每格直接顯示的事件標籤;手機版會自動隱藏並透過 click 開 modal */
+  cellEvents?: Record<string, string[]>;
   minDays?: number;
   maxDays?: number;
   showLegend?: boolean;
@@ -45,10 +47,14 @@ const props = withDefaults(defineProps<Props>(), {
   bookings: () => [],
   counts: () => ({}),
   viewable: false,
+  cellEvents: () => ({}),
   minDays: 1,
   maxDays: 999,
   showLegend: true,
 });
+
+// 是否有任何事件要顯示在格子裡(影響桌機版的格子高度與排版)
+const hasCellEvents = computed(() => Object.keys(props.cellEvents).length > 0)
 
 // 依預約場館數決定背景紅色濃淡(5 階)
 function heatBgClassFor(date: Date): string {
@@ -234,16 +240,28 @@ function canSelectDate(date: Date): boolean {
           day.status === 'available' && !isPastDate(day.date) && !isSelected(day.date) && !isInRange(day.date) ? heatBgClassFor(day.date) : '',
           // 檢視模式:強制 cursor-pointer + hover 提示;Tailwind v4 使用 ! 後綴強制覆寫 cursor-not-allowed
           viewable ? 'cursor-pointer! hover:opacity-80' : '',
+          // 有事件時桌機版加高、頂部對齊以容納事件清單(手機版維持 h-12)
+          hasCellEvents ? 'lg:min-h-28 lg:h-auto lg:items-stretch lg:justify-start lg:p-1.5' : '',
         ] : 'invisible'"
         @click="day && (viewable || canSelectDate(day.date)) && emit('select-date', formatDate(day.date))"
       >
         <template v-if="day">
-          <span>{{ day.date.getDate() }}</span>
+          <span :class="hasCellEvents ? 'lg:self-start lg:px-1 lg:text-xs lg:opacity-70' : ''">{{ day.date.getDate() }}</span>
           <span v-if="isRangeStart(day.date) && selectedEnd" class="text-[8px] leading-none font-normal mt-0.5">起</span>
           <span v-else-if="isRangeEnd(day.date)" class="text-[8px] leading-none font-normal mt-0.5">迄</span>
           <span v-else-if="day.status === 'closed'" class="text-[9px] leading-none text-base-content font-normal">休</span>
           <span v-else-if="day.status === 'rented'" class="w-1 h-1 rounded-full bg-error-content mt-0.5"></span>
-          <span v-else-if="!isPastDate(day.date) && counts[formatDate(day.date)]" class="text-[10px] leading-none font-bold mt-0.5">{{ counts[formatDate(day.date)] }}</span>
+          <span v-else-if="!isPastDate(day.date) && counts[formatDate(day.date)]" :class="hasCellEvents ? 'lg:hidden text-[10px] leading-none font-bold mt-0.5' : 'text-[10px] leading-none font-bold mt-0.5'">{{ counts[formatDate(day.date)] }}</span>
+
+          <!-- 桌機版:在格子內顯示前 2 筆事件 + 「+N 更多」(手機版隱藏,改用 modal) -->
+          <div v-if="cellEvents[formatDate(day.date)]?.length" class="hidden lg:flex flex-col gap-0.5 mt-1 w-full overflow-hidden text-[10px] font-normal leading-tight">
+            <span v-for="(ev, i) in cellEvents[formatDate(day.date)].slice(0, 2)" :key="i" class="truncate rounded px-1 py-0.5 bg-base-100/80 text-base-content/80">
+              {{ ev }}
+            </span>
+            <span v-if="cellEvents[formatDate(day.date)].length > 2" class="text-[9px] text-base-content/60 px-1 truncate">
+              + {{ cellEvents[formatDate(day.date)].length - 2 }} 更多
+            </span>
+          </div>
         </template>
       </div>
     </div>
