@@ -55,10 +55,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 // 是否有任何事件要顯示在格子裡(影響桌機版的格子高度與排版)
 const hasCellEvents = computed(() => Object.keys(props.cellEvents).length > 0)
-// 熱度模式(全部場館)cell 自己已經是紅底,pill 要白底才看得清;
-// 非熱度模式(特定場館)cell 是 base-100,pill 要淡紅才區分得出來
-const isHeatmapMode = computed(() => Object.keys(props.counts).length > 0)
-const eventPillBgClass = computed(() => isHeatmapMode.value ? 'bg-base-100/80' : 'bg-error/15')
 
 // 依預約場館數決定背景紅色濃淡(5 階)
 function heatBgClassFor(date: Date): string {
@@ -301,8 +297,10 @@ function canSelectDate(date: Date): boolean {
             'ring-2 ring-success ring-offset-1 z-10': isToday(day.date) && day.status !== 'closed' && !isSelected(day.date),
             'bg-success text-success-content font-bold z-10': isSelected(day.date),
             'bg-success/15': isInRange(day.date) && day.status === 'available' && !isPastDate(day.date),
-            // 預設可選/可檢視底色:正常 available 日,或「有事件 + rented」也用同一個底
-            'bg-base-100 text-base-content cursor-pointer hover:bg-base-200': (day.status === 'available' && !isPastDate(day.date) && !isSelected(day.date) && !isInRange(day.date) && canSelectDate(day.date)) || (day.status === 'rented' && !isPastDate(day.date) && hasCellEvents),
+            // 預設可選底色:正常 available 日
+            'bg-base-100 text-base-content cursor-pointer hover:bg-base-200': day.status === 'available' && !isPastDate(day.date) && !isSelected(day.date) && !isInRange(day.date) && canSelectDate(day.date),
+            // 有事件 + rented(特定場館視圖):整格淡紅底色,而不是 picker 的整格實心紅
+            'bg-error/15 text-base-content cursor-pointer hover:bg-error/25': day.status === 'rented' && !isPastDate(day.date) && hasCellEvents,
           },
           // 熱度模式:在「可選」狀態上疊加紅色濃淡
           day.status === 'available' && !isPastDate(day.date) && !isSelected(day.date) && !isInRange(day.date) ? heatBgClassFor(day.date) : '',
@@ -324,7 +322,7 @@ function canSelectDate(date: Date): boolean {
           <!-- 桌機版:在格子內顯示當日全部事件(手機版隱藏,改用 modal) -->
           <!-- 週視圖:文字完整換行;月視圖:每行 truncate 避免格子被撐爆 -->
           <div v-if="cellEvents[formatDate(day.date)]?.length" class="hidden lg:flex flex-col gap-0.5 mt-1 w-full text-xs font-normal leading-tight">
-            <div v-for="(ev, i) in cellEvents[formatDate(day.date)]" :key="i" class="rounded px-1.5 py-0.5 text-base-content/80" :class="eventPillBgClass">
+            <div v-for="(ev, i) in cellEvents[formatDate(day.date)]" :key="i" class="rounded px-1.5 py-0.5 bg-base-100/80 text-base-content/80">
               <div :class="view === 'week' ? 'wrap-break-word whitespace-normal' : 'truncate'">{{ ev.label }}</div>
               <div v-if="ev.time" class="text-[11px] text-base-content/60" :class="view === 'week' ? 'wrap-break-word whitespace-normal' : 'truncate'">{{ ev.time }}</div>
             </div>
