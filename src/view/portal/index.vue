@@ -48,14 +48,14 @@
 
 		<!-- Booking Heatmap Calendar -->
 		<section>
-			<div class="flex justify-between mb-12 items-center">
+			<div class="flex flex-col gap-4 mb-12 sm:flex-row sm:items-center sm:justify-between">
 				<div>
 					<h2 class="text-3xl font-heading font-bold text-base-content mb-2">
 						場館預約熱度
 					</h2>
 					<p class="">紅色為該場館已有預約的日期,規劃前可先參考</p>
 				</div>
-				<select v-model.number="selectedVenueId" class="select select-bordered w-full max-w-sm">
+				<select v-model.number="selectedVenueId" class="select select-bordered w-full sm:max-w-xs">
 					<option :value="-1">全部場館(預約熱度)</option>
 					<option v-for="v in venueOptions" :key="v.id" :value="v.id">{{ v.name }}</option>
 				</select>
@@ -85,14 +85,14 @@
 
 		<!-- News Section -->
 		<section>
-			<div class="flex items-end justify-between mb-12">
+			<div class="flex flex-col gap-3 mb-12 sm:flex-row sm:items-end sm:justify-between">
 				<div>
 					<h2 class="text-3xl font-heading font-bold text-base-content mb-2">
 						最新消息
 					</h2>
 					<p class="">場館公告、活動資訊與維護通知</p>
 				</div>
-				<router-link to="/news" class="btn btn-ghost">
+				<router-link to="/news" class="btn btn-ghost self-start sm:self-auto">
 					查看全部
 					<span class="material-symbols-outlined">arrow_forward</span>
 				</router-link>
