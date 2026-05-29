@@ -207,11 +207,11 @@ export function generateBookings(): RawBooking[] {
   const bookings: RawBooking[] = []
   let nextId = 1
 
-  // Determine date ranges: past (Jan-Mar) + current/future (April-May)
+  // Determine date ranges: past (Jan-Mar) + current/future (April-October)
   const pastStartDate = '2026-01-01'
   const pastEndDate = '2026-03-31'
   const futureStartDate = '2026-04-10'
-  const futureEndDate = '2026-05-30'
+  const futureEndDate = '2026-10-31'
 
   // Build time slots to prevent conflicts
   type Slot = { venueId: number; date: string; session?: string; startTime?: string; endTime?: string }
@@ -451,9 +451,9 @@ export function generateBookings(): RawBooking[] {
   mainVenues.forEach(v => generateForVenue(v, rand(4, 7), true))
   subVenues.forEach(v => generateForVenue(v, rand(2, 4), true))
 
-  // Future bookings (April-May)
-  mainVenues.forEach(v => generateForVenue(v, rand(5, 10), false))
-  subVenues.forEach(v => generateForVenue(v, rand(3, 5), false))
+  // Future bookings (April-October) — 約 7 個月區間,按比例放大筆數
+  mainVenues.forEach(v => generateForVenue(v, rand(25, 45), false))
+  subVenues.forEach(v => generateForVenue(v, rand(12, 22), false))
 
   // Sort by date
   bookings.sort((a, b) => a.date.localeCompare(b.date) || a.venueId - b.venueId)

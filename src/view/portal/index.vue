@@ -143,7 +143,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import mockNews from "@/mocks/news.json";
-import mockBookings from "@/mocks/bookings.json";
+import mockBookings from "@/mocks/generateBookings";
 import mockVenues from "@/mocks/venues.json";
 import MonthCalendar from '@/components/calendar/MonthCalendar.vue';
 import { publicImageUrl } from '@/utils/assets'
