@@ -29,6 +29,8 @@ interface Props {
   bookings?: BookingRecord[];
   /** 該日有多少筆預約(熱度模式);與 bookings 互斥,通常用在「全部場館」聚合視圖 */
   counts?: Record<string, number>;
+  /** 檢視模式:所有非空日期都可點(用於展示用途,例如點日期看當日預約清單) */
+  viewable?: boolean;
   minDays?: number;
   maxDays?: number;
   showLegend?: boolean;
@@ -42,6 +44,7 @@ const props = withDefaults(defineProps<Props>(), {
   viewDate: '',
   bookings: () => [],
   counts: () => ({}),
+  viewable: false,
   minDays: 1,
   maxDays: 999,
   showLegend: true,
@@ -229,8 +232,10 @@ function canSelectDate(date: Date): boolean {
           },
           // 熱度模式:在「可選」狀態上疊加紅色濃淡
           day.status === 'available' && !isPastDate(day.date) && !isSelected(day.date) && !isInRange(day.date) ? heatBgClassFor(day.date) : '',
+          // 檢視模式:強制 cursor-pointer + hover 提示;Tailwind v4 使用 ! 後綴強制覆寫 cursor-not-allowed
+          viewable ? 'cursor-pointer! hover:opacity-80' : '',
         ] : 'invisible'"
-        @click="day && canSelectDate(day.date) && emit('select-date', formatDate(day.date))"
+        @click="day && (viewable || canSelectDate(day.date)) && emit('select-date', formatDate(day.date))"
       >
         <template v-if="day">
           <span>{{ day.date.getDate() }}</span>
