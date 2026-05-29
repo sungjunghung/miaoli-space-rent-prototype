@@ -56,10 +56,20 @@
 				<label class="form-control mb-4 flex flex-row items-center gap-3">
 					<span class="label-text text-sm font-medium text-base-content/70 shrink-0">場館</span>
 					<select v-model.number="selectedVenueId" class="select select-bordered w-full max-w-sm">
+						<option :value="-1">全部場館(預約熱度)</option>
 						<option v-for="v in venueOptions" :key="v.id" :value="v.id">{{ v.name }}</option>
 					</select>
 				</label>
-				<MonthCalendar :bookings="filteredBookings" />
+				<MonthCalendar :bookings="filteredBookings" :counts="dailyCounts" :show-legend="!isAllVenues" />
+				<!-- 熱度模式專屬圖例 -->
+				<div v-if="isAllVenues" class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-base-content/70">
+					<span>預約場館數:</span>
+					<span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded bg-error/15 border border-error/20"></span>1</span>
+					<span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded bg-error/25 border border-error/30"></span>2-3</span>
+					<span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded bg-error/40 border border-error/50"></span>4-6</span>
+					<span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded bg-error/60 border border-error/70"></span>7-9</span>
+					<span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded bg-error/80 border border-error/90"></span>10+</span>
+				</div>
 			</div>
 		</section>
 
@@ -141,8 +151,33 @@ import { publicImageUrl } from '@/utils/assets'
 // 月曆顯示預約熱度;JSON 型別過寬,用 any 餵給 MonthCalendar 的 BookingRecord[]
 const bookings = mockBookings as any[]
 const venueOptions = mockVenues.map(v => ({ id: v.id, name: v.name }))
-const selectedVenueId = ref<number>(venueOptions[0]?.id ?? 0)
-const filteredBookings = computed(() => bookings.filter(b => b.venueId === selectedVenueId.value))
+// -1 = 全部場館(熱度模式),其他為特定場館 ID
+const selectedVenueId = ref<number>(-1)
+const isAllVenues = computed(() => selectedVenueId.value === -1)
+
+const filteredBookings = computed(() =>
+  isAllVenues.value ? [] : bookings.filter(b => b.venueId === selectedVenueId.value)
+)
+
+// 熱度模式:聚合每天有多少筆預約跨越該日(daily 含 start~end 區間,hourly 取當日)
+const dailyCounts = computed<Record<string, number>>(() => {
+  if (!isAllVenues.value) return {}
+  const out: Record<string, number> = {}
+  const toKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  for (const b of bookings) {
+    const startStr: string | undefined = b.startDate ?? b.date
+    const endStr: string | undefined = b.endDate ?? b.date
+    if (!startStr) continue
+    const s = new Date(`${startStr}T00:00:00`)
+    const e = new Date(`${endStr ?? startStr}T00:00:00`)
+    if (isNaN(s.getTime()) || isNaN(e.getTime())) continue
+    for (const d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
+      const key = toKey(d)
+      out[key] = (out[key] ?? 0) + 1
+    }
+  }
+  return out
+})
 
 // 載入所有圖片資源
 const imageModules = import.meta.glob('@/assets/images/*.{jpg,jpeg,png}', { eager: true });
