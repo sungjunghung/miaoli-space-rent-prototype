@@ -243,21 +243,27 @@ for (const v of mockVenues) {
   sessionTimesByVenue.set(v.id, map)
 }
 
-// 桌機格子內顯示用的短標籤(空間有限,省去多餘字;session 帶上時間區避免只看到「上午」)
-function shortBookingTime(b: any): string {
-  if (b.rentalMode === 'daily') return '整日'
-  if (b.rentalMode === 'session') {
-    if (!b.session) return '-'
-    const range = sessionTimesByVenue.get(b.venueId)?.[b.session]
-    return range ? `${b.session} ${range.startTime}-${range.endTime}` : b.session
+// 拆成 { primary, time } 兩段,讓格子可以「主要文字一行 + 時間一行」呈現
+type BookingParts = { primary: string; time?: string }
+function bookingParts(b: any): BookingParts {
+  if (b.rentalMode === 'daily') {
+    if (b.startDate && b.endDate && b.startDate !== b.endDate) {
+      return { primary: '整日', time: `${b.startDate.slice(5).replace('-', '/')} ~ ${b.endDate.slice(5).replace('-', '/')}` }
+    }
+    return { primary: '整日' }
   }
-  if (b.rentalMode === 'hourly') return `${b.startTime ?? ''}-${b.endTime ?? ''}`
-  return ''
+  if (b.rentalMode === 'session') {
+    if (!b.session) return { primary: '-' }
+    const range = sessionTimesByVenue.get(b.venueId)?.[b.session]
+    return range ? { primary: b.session, time: `${range.startTime}-${range.endTime}` } : { primary: b.session }
+  }
+  if (b.rentalMode === 'hourly') return { primary: `${b.startTime ?? ''}-${b.endTime ?? ''}` }
+  return { primary: '' }
 }
 
-// 每天的事件標籤陣列(全部場館模式帶場館名;特定場館模式只顯示時段)
-const cellEvents = computed<Record<string, string[]>>(() => {
-  const out: Record<string, string[]> = {}
+// 每天的事件清單(全部場館:label=場館名,time=時段;特定場館:label=時段,time=細節時間)
+const cellEvents = computed<Record<string, { label: string; time?: string }[]>>(() => {
+  const out: Record<string, { label: string; time?: string }[]> = {}
   const toKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
   const pool = isAllVenues.value ? bookings : bookings.filter(b => b.venueId === selectedVenueId.value)
   for (const b of pool) {
@@ -267,12 +273,16 @@ const cellEvents = computed<Record<string, string[]>>(() => {
     const s = new Date(`${startStr}T00:00:00`)
     const e = new Date(`${endStr ?? startStr}T00:00:00`)
     if (isNaN(s.getTime()) || isNaN(e.getTime())) continue
-    const time = shortBookingTime(b)
-    const label = isAllVenues.value ? `${venueNameOf(b.venueId)} · ${time}` : time
+    const parts = bookingParts(b)
+    // 全部場館模式:場館名在第一行,時段細節合併到第二行
+    // 特定場館模式:主要文字(整日/時段名/時間)第一行,如有額外時間放第二行
+    const entry = isAllVenues.value
+      ? { label: venueNameOf(b.venueId), time: parts.time ? `${parts.primary} ${parts.time}` : parts.primary }
+      : { label: parts.primary, time: parts.time }
     for (const d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
       const key = toKey(d)
       if (!out[key]) out[key] = []
-      out[key].push(label)
+      out[key].push(entry)
     }
   }
   return out
