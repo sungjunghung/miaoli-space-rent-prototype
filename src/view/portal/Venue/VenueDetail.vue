@@ -96,7 +96,85 @@ const pricedRentalItems = computed(
 );
 
 function selectDate(_day: unknown) {
-  // 日期選擇處理
+  // WeekCalendar 用的日期選擇處理(目前為 no-op)
+}
+
+// ── 與首頁同樣的「點日期 → modal」體驗 ──
+function bookingPartsForVenue(b: any): { primary: string; time?: string } {
+  if (b.rentalMode === "daily") {
+    if (b.startDate && b.endDate && b.startDate !== b.endDate) {
+      return {
+        primary: "整日",
+        time: `${b.startDate.slice(5).replace("-", "/")} ~ ${b.endDate.slice(5).replace("-", "/")}`,
+      };
+    }
+    return { primary: "整日" };
+  }
+  if (b.rentalMode === "session" && b.session) {
+    const def = sessionDefs.value.find((s) => s.name === b.session);
+    return def
+      ? { primary: b.session, time: `${def.startTime}-${def.endTime}` }
+      : { primary: b.session };
+  }
+  if (b.rentalMode === "hourly") {
+    return { primary: `${b.startTime ?? ""}-${b.endTime ?? ""}` };
+  }
+  return { primary: b.purpose ?? "預約" };
+}
+
+function describeBookingFor(b: any): string {
+  const parts = bookingPartsForVenue(b);
+  return parts.time ? `${parts.primary} ${parts.time}` : parts.primary;
+}
+
+// 特定場館視圖:label + time 合成單行(與首頁的特定場館模式一致)
+const cellEvents = computed<Record<string, { label: string; time?: string }[]>>(() => {
+  const out: Record<string, { label: string; time?: string }[]> = {};
+  const toKey = (d: Date) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  for (const b of venueBookings.value) {
+    const startStr = (b as any).startDate ?? (b as any).date;
+    const endStr = (b as any).endDate ?? (b as any).date;
+    if (!startStr) continue;
+    const s = new Date(`${startStr}T00:00:00`);
+    const e = new Date(`${endStr ?? startStr}T00:00:00`);
+    if (isNaN(s.getTime()) || isNaN(e.getTime())) continue;
+    const entry = { label: describeBookingFor(b) };
+    for (const d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
+      const key = toKey(d);
+      if (!out[key]) out[key] = [];
+      out[key].push(entry);
+    }
+  }
+  return out;
+});
+
+const bookingsModal = ref<HTMLDialogElement | null>(null);
+const selectedDate = ref("");
+const bookingsOnSelectedDate = computed(() => {
+  if (!selectedDate.value) return [];
+  const target = selectedDate.value;
+  return venueBookings.value.filter((b: any) => {
+    if (b.rentalMode === "daily") {
+      const start = b.startDate ?? b.date;
+      const end = b.endDate ?? b.date;
+      return target >= start && target <= end;
+    }
+    return b.date === target;
+  });
+});
+
+function onCalendarDayClick(dateStr: string) {
+  selectedDate.value = dateStr;
+  bookingsModal.value?.showModal();
+}
+function closeBookingsModal() {
+  bookingsModal.value?.close();
+}
+function formatLongDate(s: string): string {
+  if (!s) return "";
+  const [y, m, d] = s.split("-");
+  return `${y} 年 ${parseInt(m ?? "1")} 月 ${parseInt(d ?? "1")} 日`;
 }
 
 type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
@@ -355,7 +433,9 @@ function formatMoney(value: number | null | undefined) {
                   :closed-weekdays="closedWeekdays"
                   :closed-dates="closedDates"
                   :bookings="venueBookings"
-                  @select-date="selectDate"
+                  :cell-events="cellEvents"
+                  viewable
+                  @select-date="onCalendarDayClick"
                 />
               </div>
             </div>
@@ -691,4 +771,26 @@ function formatMoney(value: number | null | undefined) {
       </div>
     </Teleport>
   </main>
+
+  <!-- 預約清單 modal:點月曆某天時顯示當日預約 -->
+  <dialog ref="bookingsModal" class="modal">
+    <div class="modal-box max-w-2xl">
+      <h3 class="font-bold text-lg mb-1">{{ formatLongDate(selectedDate) }} 預約清單</h3>
+      <p class="text-sm text-base-content/60 mb-4">
+        {{ venue?.name }} · 共 {{ bookingsOnSelectedDate.length }} 筆
+      </p>
+      <div v-if="bookingsOnSelectedDate.length" class="space-y-2 max-h-96 overflow-y-auto">
+        <div v-for="b in bookingsOnSelectedDate" :key="b.id"
+          class="p-3 border border-base-200 rounded-box">
+          <div class="font-medium">{{ describeBookingFor(b) }}</div>
+          <div v-if="b.purpose" class="text-sm text-base-content/60">{{ b.purpose }}</div>
+        </div>
+      </div>
+      <div v-else class="text-center py-10 text-base-content/50">當日無預約</div>
+      <div class="modal-action">
+        <button type="button" class="btn" @click="closeBookingsModal">關閉</button>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop"><button>close</button></form>
+  </dialog>
 </template>
