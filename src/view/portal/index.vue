@@ -89,12 +89,9 @@
 						</p>
 						<div v-if="bookingsOnSelectedDate.length" class="space-y-2 overflow-y-auto pr-1 -mr-1 max-h-112">
 							<div v-for="b in bookingsOnSelectedDate" :key="b.id"
-								class="flex flex-wrap items-center gap-2 p-3 border border-base-200 rounded-box">
-								<div class="flex-1 min-w-0">
-									<div class="font-medium text-sm truncate">{{ venueNameOf(b.venueId) }}</div>
-									<div class="text-xs text-base-content/60">{{ describeBookingTime(b) }}</div>
-								</div>
-								<span class="badge badge-sm" :class="statusBadgeClass(b.status)">{{ statusLabel(b.status) }}</span>
+								class="p-3 border border-base-200 rounded-box">
+								<div class="font-medium text-sm truncate">{{ venueNameOf(b.venueId) }}</div>
+								<div class="text-xs text-base-content/60">{{ describeBookingTime(b) }}</div>
 							</div>
 						</div>
 						<div v-else class="flex-1 flex items-center justify-center text-base-content/50 text-sm">
@@ -184,12 +181,9 @@
 
 			<div v-if="bookingsOnSelectedDate.length" class="space-y-2 max-h-96 overflow-y-auto">
 				<div v-for="b in bookingsOnSelectedDate" :key="b.id"
-					class="flex flex-wrap items-center gap-3 p-3 border border-base-200 rounded-box">
-					<div class="flex-1 min-w-0">
-						<div class="font-medium truncate">{{ venueNameOf(b.venueId) }}</div>
-						<div class="text-sm text-base-content/60">{{ describeBookingTime(b) }}</div>
-					</div>
-					<span class="badge" :class="statusBadgeClass(b.status)">{{ statusLabel(b.status) }}</span>
+					class="p-3 border border-base-200 rounded-box">
+					<div class="font-medium truncate">{{ venueNameOf(b.venueId) }}</div>
+					<div class="text-sm text-base-content/60">{{ describeBookingTime(b) }}</div>
 				</div>
 			</div>
 			<div v-else class="text-center py-10 text-base-content/50">當日無預約</div>
@@ -248,35 +242,6 @@ const venueMap = new Map<number, string>(mockVenues.map(v => [v.id, v.name]))
 function venueNameOf(id: number): string {
   return venueMap.get(id) ?? `#${id}`
 }
-
-const STATUS_LABEL: Record<string, string> = {
-  reserved: '已預訂',
-  document_review: '文件審核中',
-  documents_rejected: '文件退回',
-  pending_payment: '待繳費',
-  payment_review: '繳費審核',
-  confirmed: '已確認',
-  completed: '已完成',
-  cancellation_requested: '取消申請',
-  cancelled: '已取消',
-  cancelled_expired: '逾期取消',
-  cancelled_rejected: '退回取消',
-}
-const STATUS_BADGE: Record<string, string> = {
-  reserved: 'badge-info',
-  document_review: 'badge-info',
-  documents_rejected: 'badge-error',
-  pending_payment: 'badge-warning',
-  payment_review: 'badge-warning',
-  confirmed: 'badge-success',
-  completed: 'badge-success',
-  cancellation_requested: 'badge-warning',
-  cancelled: 'badge-ghost',
-  cancelled_expired: 'badge-ghost',
-  cancelled_rejected: 'badge-ghost',
-}
-function statusLabel(s: string) { return STATUS_LABEL[s] ?? s }
-function statusBadgeClass(s: string) { return STATUS_BADGE[s] ?? 'badge-ghost' }
 
 function describeBookingTime(b: any): string {
   if (b.rentalMode === 'daily') {
