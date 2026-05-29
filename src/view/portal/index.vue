@@ -61,32 +61,46 @@
 				</router-link>
 			</div>
 
-			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+			<!-- 列表版型與 NewsList 內頁一致 -->
+			<div class="bg-base-100 border border-base-200 divide-y divide-base-200 overflow-hidden">
 				<router-link v-for="item in latestNews" :key="item.id" :to="`/news/${item.id}`"
-					class="card bg-base-100 shadow hover:shadow-md transition-shadow cursor-pointer group">
-					<figure v-if="item.imageUrl" class="aspect-video">
-						<img :src="publicImageUrl(item.imageUrl)" :alt="item.title"
-							class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-					</figure>
-					<div class="card-body">
-						<!-- Meta details -->
-						<div class="flex flex-wrap items-center gap-2 mb-2 text-sm ">
-							<span v-if="item.pinned" class="badge badge-warning badge-sm gap-1">
-								<span class="material-symbols-outlined text-[14px]">push_pin</span>
-								置頂
-							</span>
-							<span class="badge badge-outline badge-sm">{{ item.category }}</span>
-							<span class="ml-auto flex items-center gap-1">
-								<span class="material-symbols-outlined text-[14px]">calendar_today</span>
-								{{ item.publishedAt }}
-							</span>
+					class="group block transition-colors hover:bg-base-200/40">
+					<article
+						class="grid gap-4 p-4 md:p-5 lg:grid-cols-[10rem_minmax(0,1fr)_8.5rem] lg:gap-6 lg:items-center">
+						<div class="flex flex-row lg:flex-col lg:items-start items-center gap-3 lg:gap-2 min-w-0">
+							<div class="flex items-center gap-2 shrink-0">
+								<span v-if="item.pinned" class="badge badge-warning badge-sm">置頂</span>
+								<span class="badge badge-neutral badge-sm">{{ item.category }}</span>
+							</div>
+							<div class="min-w-0">
+								<p class="text-xs uppercase tracking-[0.24em] text-base-content/40">News</p>
+								<p class="text-sm text-base-content/60 mt-1">{{ formatDate(item.publishedAt) }}</p>
+							</div>
 						</div>
-						<!-- Title & summary -->
-						<h3 class="card-title text-lg group-hover: transition-colors line-clamp-2">
-							{{ item.title }}
-						</h3>
-						<p class=" text-sm line-clamp-3 mt-2">{{ item.summary }}</p>
-					</div>
+
+						<div class="min-w-0">
+							<h3
+								class="text-lg md:text-xl font-bold leading-snug group-hover:text-primary transition-colors">
+								{{ item.title }}
+							</h3>
+							<p class="mt-2 text-sm md:text-base text-base-content/60 leading-relaxed line-clamp-2">
+								{{ item.summary }}
+							</p>
+							<div class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary">
+								閱讀全文
+								<span
+									class="material-symbols-outlined text-base transition-transform group-hover:translate-x-1">arrow_forward</span>
+							</div>
+						</div>
+
+						<div class="lg:justify-self-end w-full max-w-36 aspect-4/3 overflow-hidden bg-base-200">
+							<img v-if="item.imageUrl" :src="publicImageUrl(item.imageUrl)" :alt="item.title"
+								class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+							<div v-else class="flex h-full w-full items-center justify-center">
+								<span class="material-symbols-outlined text-4xl text-base-content/20">campaign</span>
+							</div>
+						</div>
+					</article>
 				</router-link>
 			</div>
 
@@ -118,6 +132,10 @@ const latestNews = [...mockNews].sort((a, b) => {
 	if (a.pinned !== b.pinned) return a.pinned ? -1 : 1
 	return b.publishedAt.localeCompare(a.publishedAt)
 }).slice(0, 3)
+
+function formatDate(date: string) {
+	return date.replaceAll('-', '/')
+}
 
 onMounted(() => {
 	if (images.length > 0) {
