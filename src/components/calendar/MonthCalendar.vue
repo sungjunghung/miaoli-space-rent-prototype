@@ -253,13 +253,10 @@ function canSelectDate(date: Date): boolean {
           <span v-else-if="day.status === 'rented'" class="w-1 h-1 rounded-full bg-error-content mt-0.5"></span>
           <span v-else-if="!isPastDate(day.date) && counts[formatDate(day.date)]" :class="hasCellEvents ? 'lg:hidden text-[10px] leading-none font-bold mt-0.5' : 'text-[10px] leading-none font-bold mt-0.5'">{{ counts[formatDate(day.date)] }}</span>
 
-          <!-- 桌機版:在格子內顯示前 2 筆事件 + 「+N 更多」(手機版隱藏,改用 modal) -->
-          <div v-if="cellEvents[formatDate(day.date)]?.length" class="hidden lg:flex flex-col gap-0.5 mt-1 w-full overflow-hidden text-[10px] font-normal leading-tight">
-            <span v-for="(ev, i) in cellEvents[formatDate(day.date)].slice(0, 2)" :key="i" class="truncate rounded px-1 py-0.5 bg-base-100/80 text-base-content/80">
+          <!-- 桌機版:在格子內顯示當日全部事件(手機版隱藏,改用 modal) -->
+          <div v-if="cellEvents[formatDate(day.date)]?.length" class="hidden lg:flex flex-col gap-0.5 mt-1 w-full text-[10px] font-normal leading-tight">
+            <span v-for="(ev, i) in cellEvents[formatDate(day.date)]" :key="i" class="truncate rounded px-1 py-0.5 bg-base-100/80 text-base-content/80">
               {{ ev }}
-            </span>
-            <span v-if="cellEvents[formatDate(day.date)].length > 2" class="text-[9px] text-base-content/60 px-1 truncate">
-              + {{ cellEvents[formatDate(day.date)].length - 2 }} 更多
             </span>
           </div>
         </template>
