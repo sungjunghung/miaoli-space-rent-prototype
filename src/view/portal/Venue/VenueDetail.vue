@@ -450,7 +450,7 @@ function formatMoney(value: number | null | undefined) {
                 <div
                   v-for="doc in allRequiredDocuments"
                   :key="doc.key"
-                  class="flex items-start gap-3 rounded-box border border-base-200 bg-base-200/40 p-4"
+                  class="flex items-center gap-3 rounded-box border border-base-200 bg-base-200/40 p-4"
                 >
                   <span class="material-symbols-outlined text-xl text-secondary"
                     >assignment</span
@@ -464,8 +464,8 @@ function formatMoney(value: number | null | undefined) {
                       {{ doc.hint }}
                     </p>
                   </div>
-                  <button class="btn btn-ghost btn-square btn-sm">
-                    <span class="material-symbols-outlined">download</span>
+                  <button class="btn btn-ghost btn-square">
+                    <span class="material-symbols-outlined text-2xl">download</span>
                   </button>
                 </div>
               </div>
