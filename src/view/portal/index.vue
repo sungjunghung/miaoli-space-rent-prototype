@@ -243,10 +243,14 @@ for (const v of mockVenues) {
   sessionTimesByVenue.set(v.id, map)
 }
 
-// 桌機格子內顯示用的短標籤(空間有限,省去多餘字)
+// 桌機格子內顯示用的短標籤(空間有限,省去多餘字;session 帶上時間區避免只看到「上午」)
 function shortBookingTime(b: any): string {
   if (b.rentalMode === 'daily') return '整日'
-  if (b.rentalMode === 'session') return b.session ?? '-'
+  if (b.rentalMode === 'session') {
+    if (!b.session) return '-'
+    const range = sessionTimesByVenue.get(b.venueId)?.[b.session]
+    return range ? `${b.session} ${range.startTime}-${range.endTime}` : b.session
+  }
   if (b.rentalMode === 'hourly') return `${b.startTime ?? ''}-${b.endTime ?? ''}`
   return ''
 }
