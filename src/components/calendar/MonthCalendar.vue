@@ -275,7 +275,51 @@ function canSelectDate(date: Date): boolean {
       </div>
     </div>
 
-    <div class="grid grid-cols-7 gap-1 mb-2">
+    <!-- 手機 + 週視圖:直式列表(每天一橫列),桌機與月視圖隱藏此區 -->
+    <div v-if="view === 'week'" class="lg:hidden divide-y divide-base-200 border-y border-base-200">
+      <div
+        v-for="(day, index) in getDays"
+        :key="`vlist-${index}`"
+        v-show="day"
+        class="flex items-start gap-3 px-3 py-3 transition-colors"
+        :class="day ? [
+          {
+            'bg-base-200/70 text-base-content/60': day.status === 'closed' || isPastDate(day.date),
+            'bg-error/15': day.status === 'rented' && !isPastDate(day.date) && hasCellEvents,
+          },
+          viewable || canSelectDate(day.date) ? 'cursor-pointer active:bg-base-200' : '',
+        ] : ''"
+        @click="day && (viewable || canSelectDate(day.date)) && emit('select-date', formatDate(day.date))"
+      >
+        <template v-if="day">
+          <div class="w-12 shrink-0 text-center">
+            <div class="text-xs text-base-content/60">{{ ['日','一','二','三','四','五','六'][day.date.getDay()] }}</div>
+            <div
+              class="text-2xl font-bold leading-none mt-1"
+              :class="isToday(day.date) ? 'text-success' : ''"
+            >{{ day.date.getDate() }}</div>
+          </div>
+          <div class="flex-1 min-w-0 pt-0.5">
+            <template v-if="cellEvents[formatDate(day.date)]?.length">
+              <div
+                v-for="(ev, ei) in cellEvents[formatDate(day.date)]"
+                :key="ei"
+                class="rounded px-2 py-1 mb-1 last:mb-0 bg-base-100/80 text-sm"
+              >
+                <div>{{ ev.label }}</div>
+                <div v-if="ev.time" class="text-xs text-base-content/60">{{ ev.time }}</div>
+              </div>
+            </template>
+            <div v-else class="text-sm text-base-content/40 pt-1">
+              {{ day.status === 'closed' ? '休館' : '無預約' }}
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- 桌機 + 全部視圖:既有的 grid(週視圖在手機被上方列表取代,所以這層加 hidden lg:block) -->
+    <div :class="view === 'week' ? 'hidden lg:grid' : 'grid'" class="grid-cols-7 gap-1 mb-2">
       <div
         v-for="day in ['日', '一', '二', '三', '四', '五', '六']"
         :key="day"
@@ -285,7 +329,7 @@ function canSelectDate(date: Date): boolean {
       </div>
     </div>
 
-    <div class="grid grid-cols-7 gap-0 border-t border-l border-base-300">
+    <div :class="view === 'week' ? 'hidden lg:grid' : 'grid'" class="grid-cols-7 gap-0 border-t border-l border-base-300">
       <div
         v-for="(day, index) in getDays"
         :key="index"
