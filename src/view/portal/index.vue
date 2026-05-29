@@ -243,6 +243,18 @@ function venueNameOf(id: number): string {
   return venueMap.get(id) ?? `#${id}`
 }
 
+// 預載每個場館的時段名稱 → 時間區,讓 session 預約顯示「上午 08:00-12:00」之類
+const sessionTimesByVenue = new Map<number, Record<string, { startTime: string; endTime: string }>>()
+for (const v of mockVenues) {
+  const sessions = (v as any).rentalModes?.session?.sessions
+  if (!Array.isArray(sessions)) continue
+  const map: Record<string, { startTime: string; endTime: string }> = {}
+  for (const s of sessions) {
+    if (s?.name) map[s.name] = { startTime: s.startTime, endTime: s.endTime }
+  }
+  sessionTimesByVenue.set(v.id, map)
+}
+
 function describeBookingTime(b: any): string {
   if (b.rentalMode === 'daily') {
     if (b.startDate && b.endDate && b.startDate !== b.endDate) {
@@ -250,7 +262,11 @@ function describeBookingTime(b: any): string {
     }
     return '整日'
   }
-  if (b.rentalMode === 'session') return b.session ?? '-'
+  if (b.rentalMode === 'session') {
+    if (!b.session) return '-'
+    const range = sessionTimesByVenue.get(b.venueId)?.[b.session]
+    return range ? `${b.session} ${range.startTime}-${range.endTime}` : b.session
+  }
   if (b.rentalMode === 'hourly') return `${b.startTime ?? ''} - ${b.endTime ?? ''}`
   return '-'
 }
