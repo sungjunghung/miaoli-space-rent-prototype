@@ -122,42 +122,84 @@ function isDayRented(date: Date): boolean {
   });
 }
 
-const getDaysInMonth = computed<(CalendarDay | null)[]>(() => {
+// 顯示模式:月(預設,完整月格)或週(目前週 7 天)
+const view = ref<'month' | 'week'>('month');
+
+function buildDay(date: Date): CalendarDay {
+  let status: RentalStatus = 'available';
+  if (isDayClosed(date)) status = 'closed';
+  else if (isDayRented(date)) status = 'rented';
+  return { date, status };
+}
+
+// 當前錨點日期所在週的週日;用來定位週視圖起點與標題
+function weekStartOf(d: Date): Date {
+  const start = new Date(d);
+  start.setDate(d.getDate() - d.getDay());
+  start.setHours(0, 0, 0, 0);
+  return start;
+}
+
+const getDays = computed<(CalendarDay | null)[]>(() => {
+  if (view.value === 'week') {
+    const start = weekStartOf(currentMonth.value);
+    const days: CalendarDay[] = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(start);
+      date.setDate(start.getDate() + i);
+      days.push(buildDay(date));
+    }
+    return days;
+  }
+  // month
   const year = currentMonth.value.getFullYear();
   const month = currentMonth.value.getMonth();
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const days: (CalendarDay | null)[] = [];
-
-  for (let i = 0; i < firstDay.getDay(); i++) {
-    days.push(null);
-  }
-  for (let d = 1; d <= lastDay.getDate(); d++) {
-    const date = new Date(year, month, d);
-    let status: RentalStatus = 'available';
-    if (isDayClosed(date)) status = 'closed';
-    else if (isDayRented(date)) status = 'rented';
-    days.push({ date, status });
-  }
+  for (let i = 0; i < firstDay.getDay(); i++) days.push(null);
+  for (let d = 1; d <= lastDay.getDate(); d++) days.push(buildDay(new Date(year, month, d)));
   return days;
 });
 
-const monthYear = computed(() => {
+const headerTitle = computed(() => {
+  if (view.value === 'week') {
+    const start = weekStartOf(currentMonth.value);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    const sameMonth = start.getMonth() === end.getMonth();
+    if (sameMonth) {
+      return `${start.getFullYear()}年${start.getMonth() + 1}月 ${start.getDate()}–${end.getDate()}日`;
+    }
+    return `${start.getMonth() + 1}/${start.getDate()} – ${end.getMonth() + 1}/${end.getDate()}`;
+  }
   const year = currentMonth.value.getFullYear();
   const month = currentMonth.value.getMonth() + 1;
   return `${year}年${month}月`;
 });
 
-const previousMonth = (): void => {
-  const year = currentMonth.value.getFullYear();
-  const month = currentMonth.value.getMonth();
-  currentMonth.value = new Date(year, month - 1, 1);
+const goPrev = (): void => {
+  if (view.value === 'week') {
+    const d = new Date(currentMonth.value);
+    d.setDate(d.getDate() - 7);
+    currentMonth.value = d;
+  } else {
+    const y = currentMonth.value.getFullYear();
+    const m = currentMonth.value.getMonth();
+    currentMonth.value = new Date(y, m - 1, 1);
+  }
 };
 
-const nextMonth = (): void => {
-  const year = currentMonth.value.getFullYear();
-  const month = currentMonth.value.getMonth();
-  currentMonth.value = new Date(year, month + 1, 1);
+const goNext = (): void => {
+  if (view.value === 'week') {
+    const d = new Date(currentMonth.value);
+    d.setDate(d.getDate() + 7);
+    currentMonth.value = d;
+  } else {
+    const y = currentMonth.value.getFullYear();
+    const m = currentMonth.value.getMonth();
+    currentMonth.value = new Date(y, m + 1, 1);
+  }
 };
 
 const isToday = (date: Date): boolean =>
@@ -201,14 +243,34 @@ function canSelectDate(date: Date): boolean {
 
 <template>
   <div>
-    <div class="flex justify-center items-center gap-2 mb-4">
-      <button @click="previousMonth" class="btn btn-square btn-ghost">
-        <span class="material-symbols-outlined text-base-content shrink-0 mt-0.5">chevron_left</span>
-      </button>
-      <span class="text-xl font-medium text-base-content min-w-24 text-center">{{ monthYear }}</span>
-      <button @click="nextMonth" class="btn btn-square btn-ghost">
-        <span class="material-symbols-outlined text-base-content shrink-0 mt-0.5">chevron_right</span>
-      </button>
+    <div class="flex items-center justify-between gap-2 mb-4">
+      <div class="flex items-center gap-2">
+        <button @click="goPrev" class="btn btn-square btn-ghost">
+          <span class="material-symbols-outlined text-base-content shrink-0 mt-0.5">chevron_left</span>
+        </button>
+        <span class="text-xl font-medium text-base-content min-w-32 text-center">{{ headerTitle }}</span>
+        <button @click="goNext" class="btn btn-square btn-ghost">
+          <span class="material-symbols-outlined text-base-content shrink-0 mt-0.5">chevron_right</span>
+        </button>
+      </div>
+      <div role="tablist" class="tabs tabs-box tabs-sm">
+        <button
+          type="button"
+          role="tab"
+          class="tab"
+          :class="{ 'tab-active': view === 'week' }"
+          :aria-selected="view === 'week'"
+          @click="view = 'week'"
+        >週</button>
+        <button
+          type="button"
+          role="tab"
+          class="tab"
+          :class="{ 'tab-active': view === 'month' }"
+          :aria-selected="view === 'month'"
+          @click="view = 'month'"
+        >月</button>
+      </div>
     </div>
 
     <div class="grid grid-cols-7 gap-1 mb-2">
@@ -223,7 +285,7 @@ function canSelectDate(date: Date): boolean {
 
     <div class="grid grid-cols-7 gap-0 border-t border-l border-base-300">
       <div
-        v-for="(day, index) in getDaysInMonth"
+        v-for="(day, index) in getDays"
         :key="index"
         class="h-14 text-base font-medium flex flex-col items-center justify-center transition-colors relative border-b border-r border-base-200"
         :class="day ? [
