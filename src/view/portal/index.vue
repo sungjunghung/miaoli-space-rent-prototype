@@ -46,25 +46,6 @@
 	<!-- Main Content Section -->
 	<div class="container mx-auto px-4 py-20">
 
-		<!-- Purpose Selection -->
-		<section class="mb-24">
-			<div class="text-center mb-16">
-				<h2 class="text-3xl lg:text-4xl font-bold mb-4">依照您的需求挑選場地</h2>
-				<p class=" text-lg max-w-2xl mx-auto">我們將場地依照用途分類，讓您能更快速找到最適合的活動空間</p>
-			</div>
-
-			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-				<div v-for="p in purposes" :key="p.id" class="card bg-base-100 shadow" :class="p.cardHoverClass">
-					<div class="card-body items-center text-center">
-						<span class="material-symbols-outlined text-6xl group-hover:scale-110 transition-transform"
-							:class="p.textClass">{{ p.icon }}</span>
-						<h3 class="card-title" :class="p.textClass">{{ p.title }}</h3>
-						<p class=" text-sm">{{ p.desc }}</p>
-					</div>
-				</div>
-			</div>
-		</section>
-
 		<!-- News Section -->
 		<section>
 			<div class="flex items-end justify-between mb-12">
@@ -131,33 +112,6 @@ const currentImageIndex = ref(0);
 const previousImageIndex = ref(-1);
 const shuffledImages = ref<string[]>([]);
 let intervalId: any = null;
-
-const purposes = [
-	{
-		id: 'sports', title: '運動賽事', desc: '籃球、羽球、田徑場地，符合國際賽事標準',
-		icon: 'sports_basketball',
-		cardHoverClass: 'hover:border-info',
-		textClass: 'text-info'
-	},
-	{
-		id: 'events', title: '活動展演', desc: '專業舞台、音響設備，適合演出與大型展覽',
-		icon: 'theater_comedy',
-		cardHoverClass: 'hover:border-secondary',
-		textClass: 'text-secondary'
-	},
-	{
-		id: 'business', title: '會議課程', desc: '多功能會議室、講座廳，完善投影設備',
-		icon: 'business_center',
-		cardHoverClass: 'hover:border-warning',
-		textClass: 'text-warning'
-	},
-	{
-		id: 'family', title: '親子體驗', desc: '安全舒適的戶外空間，適合家庭休閒活動',
-		icon: 'family_restroom',
-		cardHoverClass: 'hover:border-error',
-		textClass: 'text-error'
-	},
-]
 
 // 取前三筆最新消息：優先置頂，再依日期排序
 const latestNews = [...mockNews].sort((a, b) => {
