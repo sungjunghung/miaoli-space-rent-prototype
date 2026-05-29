@@ -52,7 +52,7 @@
 				<h2 class="text-3xl font-heading font-bold text-base-content mb-2">場館預約熱度</h2>
 				<p class="text-base-content/60">紅色為已有預約的日期,規劃前可先參考</p>
 			</div>
-			<div class="max-w-3xl mx-auto bg-base-100 border border-base-200 p-6 rounded-box">
+			<div class="bg-base-100 border border-base-200 p-6 rounded-box">
 				<MonthCalendar :bookings="bookings" />
 			</div>
 		</section>
