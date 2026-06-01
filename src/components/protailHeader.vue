@@ -50,7 +50,7 @@ function onSearched() {
 }
 
 const handleScroll = () => {
-  isScrolled.value = window.scrollY > 0
+  isScrolled.value = window.scrollY >= 120
 }
 
 const desktopMq = window.matchMedia('(min-width: 768px)')
@@ -100,6 +100,53 @@ const searchConditionsText = computed(() => {
 function logout() {
   authStore.logout()
   router.push('/login')
+}
+
+const SEARCH_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)'
+function onSearchBeforeEnter(el: Element) {
+  const node = el as HTMLElement
+  node.style.transition = 'none'
+  node.style.height = '0'
+  node.style.opacity = '0'
+  node.style.overflow = 'hidden'
+}
+function onSearchEnter(el: Element, done: () => void) {
+  const node = el as HTMLElement
+  // 讀 scrollHeight 會強制 reflow,等同於 commit beforeEnter 的起點
+  const target = node.scrollHeight
+  node.style.transition = `height 460ms ${SEARCH_EASE}, opacity 320ms ease-out`
+  node.style.height = `${target}px`
+  node.style.opacity = '1'
+  const onEnd = (e: TransitionEvent) => {
+    if (e.propertyName !== 'height') return
+    node.removeEventListener('transitionend', onEnd)
+    node.style.transition = ''
+    node.style.height = ''
+    node.style.opacity = ''
+    node.style.overflow = ''
+    done()
+  }
+  node.addEventListener('transitionend', onEnd)
+}
+function onSearchLeave(el: Element, done: () => void) {
+  const node = el as HTMLElement
+  // 用固定 height 鎖住當前高度(不是 max-height!),內部子元素之後如何縮放都不影響外殼
+  node.style.transition = 'none'
+  node.style.height = `${node.scrollHeight}px`
+  node.style.opacity = '1'
+  node.style.overflow = 'hidden'
+  // 強制 reflow:把上面的起點寫入計算樣式
+  void node.offsetHeight
+  // 套上 transition + 終點
+  node.style.transition = `height 320ms ${SEARCH_EASE}, opacity 220ms ease-in`
+  node.style.height = '0'
+  node.style.opacity = '0'
+  const onEnd = (e: TransitionEvent) => {
+    if (e.propertyName !== 'height') return
+    node.removeEventListener('transitionend', onEnd)
+    done()
+  }
+  node.addEventListener('transitionend', onEnd)
 }
 </script>
 <template>
@@ -184,12 +231,16 @@ function logout() {
       </div>
     </div>
     <!-- 展開的搜尋框 -->
-    <Transition enter-active-class="grid transition-all duration-300 ease-out"
-      enter-from-class="grid-rows-[0fr] opacity-0" enter-to-class="grid-rows-[1fr] opacity-100"
-      leave-active-class="grid transition-all duration-300 ease-in" leave-from-class="grid-rows-[1fr] opacity-100"
-      leave-to-class="grid-rows-[0fr] opacity-0">
-      <div v-if="isQuickSearchVisible" class="lg:max-w-1/2 xl:max-w-2/5 mx-auto p-4">
-        <QuickSearch v-model:mode="searchMode" @search="onSearched" />
+    <Transition
+      :css="false"
+      @before-enter="onSearchBeforeEnter"
+      @enter="onSearchEnter"
+      @leave="onSearchLeave"
+    >
+      <div v-if="isQuickSearchVisible">
+        <div class="lg:max-w-1/2 xl:max-w-2/5 mx-auto p-4">
+          <QuickSearch v-model:mode="searchMode" @search="onSearched" />
+        </div>
       </div>
     </Transition>
   </div>
@@ -210,3 +261,4 @@ function logout() {
     </router-link>
   </div>
 </template>
+

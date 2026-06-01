@@ -2,17 +2,19 @@
 	<!-- Hero Section -->
 	<div class="relative min-h-[calc(100dvh-8rem)] lg:min-h-[50dvh] flex items-center justify-center overflow-hidden  pb-4 pt-16 ">
 		<!-- Background Image with Overlay -->
-		<div class="absolute inset-0 z-0 bg-slate-900">
-			<div v-for="(img, index) in shuffledImages" :key="img"
-				class="absolute inset-0 w-full h-full bg-cover bg-center scale-105 transition-transform duration-[20s]"
-				:class="{
-					'opacity-100 z-0': index === currentImageIndex,
-					'opacity-0 -z-10': index !== currentImageIndex,
-					'animate-ken-burns': index === currentImageIndex || index === previousImageIndex
-				}" :style="{
-					backgroundImage: `url('${img}')`,
-					transition: 'opacity 2s ease-in-out'
-				}"></div>
+		<div class="absolute inset-0 z-0 bg-slate-900 overflow-hidden">
+			<div class="absolute -inset-y-[35%] inset-x-0 will-change-transform" :style="heroParallaxStyle">
+				<div v-for="(img, index) in shuffledImages" :key="img"
+					class="absolute inset-0 w-full h-full bg-cover bg-center scale-105 transition-transform duration-[20s]"
+					:class="{
+						'opacity-100 z-0': index === currentImageIndex,
+						'opacity-0 -z-10': index !== currentImageIndex,
+						'animate-ken-burns': index === currentImageIndex || index === previousImageIndex
+					}" :style="{
+						backgroundImage: `url('${img}')`,
+						transition: 'opacity 2s ease-in-out'
+					}"></div>
+			</div>
 			<div
 				class="absolute inset-0 bg-linear-to-r from-slate-900/70 via-slate-900/50 to-slate-900/20 z-10 pointer-events-none">
 			</div>
@@ -157,12 +159,12 @@
 				{{ isAllVenues ? '全部場館' : venueNameOf(selectedVenueId) }} · 共 {{ bookingsOnSelectedDate.length }} 筆
 			</p>
 
-			<div v-if="bookingsOnSelectedDate.length" class="space-y-2 max-h-96 overflow-y-auto">
+			<div v-if="bookingsOnSelectedDate.length" class="space-y-2 max-h-96 overflow-y-auto" data-lenis-prevent>
 				<router-link v-for="b in bookingsOnSelectedDate" :key="b.id"
 					:to="`/venues/${venueDetailId(b.venueId)}`"
 					@click="closeBookingsModal"
 					class="flex items-center justify-between gap-3 p-3 border border-base-200 rounded-box hover:bg-base-200/60 hover:border-base-300 transition-colors">
-					<div class="min-w-0">
+					<div class="min-w-0 flex justify-between items-center gap-4 flex-1">
 						<div class="font-medium truncate">{{ venueNameOf(b.venueId) }}</div>
 						<div class="text-sm text-base-content/60">{{ describeBookingTime(b) }}</div>
 					</div>
@@ -364,6 +366,20 @@ function formatDate(date: string) {
 	return date.replaceAll('-', '/')
 }
 
+const heroParallaxOffset = ref(0);
+let heroParallaxTicking = false;
+function onHeroParallaxScroll() {
+	if (heroParallaxTicking) return;
+	heroParallaxTicking = true;
+	requestAnimationFrame(() => {
+		heroParallaxOffset.value = window.scrollY * 0.35;
+		heroParallaxTicking = false;
+	});
+}
+const heroParallaxStyle = computed(() => ({
+	transform: `translate3d(0, ${heroParallaxOffset.value}px, 0)`,
+}));
+
 onMounted(() => {
 	if (images.length > 0) {
 		// 隨機打亂陣列
@@ -379,9 +395,11 @@ onMounted(() => {
 			currentImageIndex.value = nextIndex;
 		}, 5000); // 每 5 秒切換一次
 	}
+	window.addEventListener('scroll', onHeroParallaxScroll, { passive: true });
 });
 
 onUnmounted(() => {
 	if (intervalId) clearInterval(intervalId);
+	window.removeEventListener('scroll', onHeroParallaxScroll);
 });
 </script>

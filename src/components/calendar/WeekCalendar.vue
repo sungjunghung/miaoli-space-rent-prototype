@@ -353,7 +353,7 @@ onMounted(() => {
     </div>
 
     <!-- 時段格 -->
-    <div class="flex overflow-x-auto border border-base-300">
+    <div class="flex overflow-x-auto border border-base-300" data-lenis-prevent>
 
       <!-- 時間標籤欄 -->
       <div class="w-14 shrink-0 border-r border-base-300">

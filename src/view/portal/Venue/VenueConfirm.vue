@@ -220,7 +220,7 @@ function removeImage() {
               場館預約明細
             </h2>
             <h3 class="font-bold text-base-content/80 mt-2">場館資訊</h3>
-            <div class="overflow-x-auto border border-base-200 rounded-lg">
+            <div class="overflow-x-auto border border-base-200 rounded-lg" data-lenis-prevent>
               <table class="table">
                 <tbody>
                   <!-- 場館 -->

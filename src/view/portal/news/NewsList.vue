@@ -7,16 +7,37 @@
   />
 
   <main class="bg-base-200/60 min-h-screen">
-    <div class="container max-w-5xl mx-auto px-4 py-10 space-y-8">
-      <section class="space-y-4">
-    
+    <div class="container max-w-6xl mx-auto px-4 py-10">
+      <div class="grid gap-8 lg:grid-cols-[12rem_minmax(0,1fr)]">
 
-        <div v-if="newsList.length" class="bg-base-100 border border-base-200 divide-y divide-base-200 overflow-hidden">
+        <!-- 左側目錄篩選 -->
+        <aside class="lg:sticky lg:top-24 lg:self-start">
+          <p class="uppercase tracking-[0.24em] text-base-content/40 mb-3">分類</p>
+          <div class="divider"></div>
+          <ul class="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible -mx-4 px-4 lg:mx-0 lg:px-0">
+            <li v-for="cat in categoryOptions" :key="cat.value">
+              <button
+                type="button"
+                class="w-full text-left whitespace-nowrap px-3 py-2 rounded-md text-sm transition-colors"
+                :class="selectedCategory === cat.value
+                  ? 'bg-primary text-primary-content font-semibold'
+                  : 'hover:bg-base-200 text-base-content/70'"
+                @click="selectedCategory = cat.value"
+              >
+                {{ cat.label }}
+                <span class="ml-1 text-xs opacity-70">({{ cat.count }})</span>
+              </button>
+            </li>
+          </ul>
+        </aside>
+
+        <!-- 右側消息列表:一則一個獨立橫幅 -->
+        <section class="space-y-4">
           <router-link
-            v-for="item in newsList"
+            v-for="item in filteredNews"
             :key="item.id"
             :to="`/news/${item.id}`"
-            class="group block transition-colors hover:bg-base-200/40"
+            class="group block bg-base-100 border border-base-200 hover:border-primary hover:shadow-md transition-all"
           >
             <article class="grid gap-4 p-4 md:p-5 lg:grid-cols-[10rem_minmax(0,1fr)_8.5rem] lg:gap-6 lg:items-center">
               <div class="flex flex-row lg:flex-col lg:items-start items-center gap-3 lg:gap-2 min-w-0">
@@ -56,29 +77,46 @@
               </div>
             </article>
           </router-link>
-        </div>
 
-        <div v-else class="bg-base-100 border border-base-200 p-10 text-center">
-          <span class="material-symbols-outlined text-5xl text-base-content/25">campaign</span>
-          <p class="font-semibold mt-3">目前沒有消息</p>
-        </div>
-      </section>
+          <div v-if="filteredNews.length === 0" class="bg-base-100 border border-base-200 p-10 text-center">
+            <span class="material-symbols-outlined text-5xl text-base-content/25">campaign</span>
+            <p class="font-semibold mt-3">此分類目前沒有消息</p>
+          </div>
+        </section>
+      </div>
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import PageHeaderBasic from '@/components/PageHeaderBasic.vue'
 import mockNews from '../../../mocks/news.json'
 import { publicImageUrl } from '@/utils/assets'
 
-const newsList = computed(() =>
+const selectedCategory = ref<string>('all')
+
+const sortedNews = computed(() =>
   [...mockNews].sort((a, b) => {
     if (a.pinned !== b.pinned) return a.pinned ? -1 : 1
     return b.publishedAt.localeCompare(a.publishedAt)
   })
 )
+
+const categoryOptions = computed(() => {
+  const counts = new Map<string, number>()
+  for (const n of sortedNews.value) {
+    counts.set(n.category, (counts.get(n.category) ?? 0) + 1)
+  }
+  const all = { value: 'all', label: '全部', count: sortedNews.value.length }
+  const cats = [...counts.entries()].map(([value, count]) => ({ value, label: value, count }))
+  return [all, ...cats]
+})
+
+const filteredNews = computed(() => {
+  if (selectedCategory.value === 'all') return sortedNews.value
+  return sortedNews.value.filter(n => n.category === selectedCategory.value)
+})
 
 function formatDate(date: string) {
   return date.replaceAll('-', '/')

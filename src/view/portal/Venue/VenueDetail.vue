@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import venues from "@/mocks/venues.json";
 import allBookings from "@/mocks/generateBookings";
@@ -29,6 +29,22 @@ const lightboxImage = ref<string | null>(null);
 const heroImage = computed(() =>
   venue.value ? publicImageUrl(venue.value.mainImageUrl) : "",
 );
+
+const parallaxOffset = ref(0);
+let parallaxTicking = false;
+function onParallaxScroll() {
+  if (parallaxTicking) return;
+  parallaxTicking = true;
+  requestAnimationFrame(() => {
+    parallaxOffset.value = window.scrollY * 0.35;
+    parallaxTicking = false;
+  });
+}
+onMounted(() => window.addEventListener("scroll", onParallaxScroll, { passive: true }));
+onBeforeUnmount(() => window.removeEventListener("scroll", onParallaxScroll));
+const heroParallaxStyle = computed(() => ({
+  transform: `translate3d(0, ${parallaxOffset.value}px, 0) scale(1.15)`,
+}));
 
 const closedWeekdays = computed(() => venue.value?.closedWeekdays ?? []);
 const closedDates = computed(() => venue.value?.closedDates ?? []);
@@ -250,11 +266,12 @@ function formatMoney(value: number | null | undefined) {
   </div>
 
   <main v-else class="bg-base-200/60">
-    <section class="relative overflow-hidden bg-neutral">
+    <section class="relative overflow-hidden bg-neutral pb-16">
       <img
         :src="heroImage"
         :alt="venue.name"
-        class="absolute inset-0 w-full h-full object-cover"
+        :style="heroParallaxStyle"
+        class="absolute inset-0 w-full h-full object-cover will-change-transform"
       />
       <div
         class="absolute inset-0 bg-linear-to-r from-black/80 via-black/45 to-black/10"
@@ -305,7 +322,7 @@ function formatMoney(value: number | null | undefined) {
       </div>
     </section>
 
-    <div class="container mx-auto pb-10">
+    <div class="container mx-auto pb-10 -mt-20 z-40 relative">
       <div class="flex flex-col lg:flex-row gap-10 mb-8">
         <div class="flex-1 space-y-6">
           <section
@@ -779,7 +796,7 @@ function formatMoney(value: number | null | undefined) {
       <p class="text-sm text-base-content/60 mb-4">
         {{ venue?.name }} · 共 {{ bookingsOnSelectedDate.length }} 筆
       </p>
-      <div v-if="bookingsOnSelectedDate.length" class="space-y-2 max-h-96 overflow-y-auto">
+      <div v-if="bookingsOnSelectedDate.length" class="space-y-2 max-h-96 overflow-y-auto" data-lenis-prevent>
         <div v-for="b in bookingsOnSelectedDate" :key="b.id"
           class="p-3 border border-base-200 rounded-box">
           <div class="font-medium">{{ describeBookingFor(b) }}</div>

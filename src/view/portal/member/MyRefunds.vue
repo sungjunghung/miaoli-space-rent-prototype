@@ -56,7 +56,7 @@
             <span>{{ refund.rejectedReason ?? '此退款申請已駁回。' }}</span>
           </div>
 
-          <div class="overflow-x-auto">
+          <div class="overflow-x-auto" data-lenis-prevent>
             <table class="table">
               <tbody>
                 <tr>

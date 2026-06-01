@@ -10,8 +10,17 @@ const router = createRouter({
       ? createWebHashHistory(import.meta.env.BASE_URL)
       : createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior(_to, _from, savedPosition) {
+    const lenis = (window as any).__lenis as { scrollTo: (target: number, opts?: any) => void } | undefined
     if (savedPosition) {
+      if (lenis) {
+        lenis.scrollTo(savedPosition.top, { immediate: true })
+        return false
+      }
       return savedPosition
+    }
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true })
+      return false
     }
     return { top: 0 }
   },

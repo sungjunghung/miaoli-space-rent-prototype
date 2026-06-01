@@ -1,43 +1,105 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import allVenues from '@/mocks/venues.json'
 import PageHeaderBasic from '@/components/PageHeaderBasic.vue'
 import { publicImageUrl } from '@/utils/assets'
 
 const router = useRouter()
+const route = useRoute()
 
-const availableVenues = computed(() => allVenues.filter(venue => venue.status === 'available'))
+const WEEKDAY_KEYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const
+
+function pad(n: number) {
+  return String(n).padStart(2, '0')
+}
+function formatYmd(d: Date) {
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+}
+function eachDate(start: string, end: string) {
+  const out: string[] = []
+  const s = new Date(start)
+  const e = new Date(end)
+  for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
+    out.push(formatYmd(d))
+  }
+  return out
+}
+function isVenueOpenOnDate(venue: any, dateStr: string) {
+  const weekday = new Date(dateStr).getDay()
+  if ((venue.closedWeekdays ?? []).includes(weekday)) return false
+  if ((venue.closedDates ?? []).includes(dateStr)) return false
+  return true
+}
+function timeInOpeningHours(venue: any, dateStr: string, time: string) {
+  const weekdayKey = WEEKDAY_KEYS[new Date(dateStr).getDay()]
+  const hours = venue.openingHours?.[weekdayKey]
+  if (!hours) return false
+  const [start, end] = String(hours).split(/\s*-\s*/)
+  return start <= time && time < end
+}
+
+const searchCriteria = computed(() => {
+  const q = route.query
+  return {
+    mode: typeof q.mode === 'string' ? q.mode : null,
+    date: typeof q.date === 'string' ? q.date : null,
+    time: typeof q.time === 'string' ? q.time : null,
+    startDate: typeof q.startDate === 'string' ? q.startDate : null,
+    endDate: typeof q.endDate === 'string' ? q.endDate : null,
+  }
+})
+
+const filteredVenues = computed(() => {
+  const base = allVenues.filter(v => v.status === 'available')
+  const c = searchCriteria.value
+
+  if (c.mode === 'hourly' && c.date) {
+    return base.filter(v => {
+      if (!v.rentalModes?.hourly?.enabled) return false
+      if (!isVenueOpenOnDate(v, c.date!)) return false
+      if (c.time && !timeInOpeningHours(v, c.date!, c.time)) return false
+      return true
+    })
+  }
+
+  if (c.mode === 'daily' && c.startDate) {
+    const end = c.endDate || c.startDate
+    const dates = eachDate(c.startDate, end)
+    return base.filter(v => {
+      if (!v.rentalModes?.daily?.enabled) return false
+      return dates.every(d => isVenueOpenOnDate(v, d))
+    })
+  }
+
+  return base
+})
+
+const searchSummary = computed(() => {
+  const c = searchCriteria.value
+  if (c.mode === 'hourly' && c.date) {
+    const d = new Date(c.date)
+    const text = `${d.getMonth() + 1}月${d.getDate()}日`
+    return c.time ? `${text} ${c.time} · 小時租借` : `${text} · 小時租借`
+  }
+  if (c.mode === 'daily' && c.startDate) {
+    const s = new Date(c.startDate)
+    const startText = `${s.getMonth() + 1}月${s.getDate()}日`
+    if (c.endDate && c.endDate !== c.startDate) {
+      const e = new Date(c.endDate)
+      return `${startText} - ${e.getMonth() + 1}月${e.getDate()}日 · 多日租借`
+    }
+    return `${startText} · 多日租借`
+  }
+  return null
+})
+
+function clearSearch() {
+  router.push({ name: 'venue-list' })
+}
 
 function goToDetail(id: number) {
   router.push({ name: 'venue-detail', params: { id } })
-}
-
-function modeLabels(venue: any) {
-  const labels = []
-  if (venue.rentalModes?.hourly?.enabled) labels.push('小時')
-  if (venue.rentalModes?.session?.enabled) labels.push('時段')
-  if (venue.rentalModes?.daily?.enabled) labels.push('整日')
-  return labels
-}
-
-function lowestPrice(venue: any) {
-  const prices: number[] = []
-  if (venue.rentalModes?.hourly?.enabled) {
-    if (venue.pricing?.hourly?.weekday) prices.push(venue.pricing.hourly.weekday)
-    if (venue.pricing?.hourly?.weekend) prices.push(venue.pricing.hourly.weekend)
-  }
-  if (venue.rentalModes?.session?.enabled) {
-    for (const session of venue.rentalModes.session.sessions ?? []) {
-      if (session.weekday) prices.push(session.weekday)
-      if (session.weekend) prices.push(session.weekend)
-    }
-  }
-  if (venue.rentalModes?.daily?.enabled) {
-    if (venue.pricing?.daily?.weekday) prices.push(venue.pricing.daily.weekday)
-    if (venue.pricing?.daily?.weekend) prices.push(venue.pricing.daily.weekend)
-  }
-  return prices.length ? `NT$ ${Math.min(...prices).toLocaleString()}` : '洽詢'
 }
 </script>
 
@@ -48,73 +110,90 @@ function lowestPrice(venue: any) {
     bg-image="/assets/images/bg_admin_login.jpg"
   />
 
-  <main class="bg-base-200/60 min-h-screen">
-    <div class="container mx-auto px-4 py-10 space-y-8">
-      <section class="flex items-center justify-between gap-4 flex-wrap">
+  <main class="bg-base-100 min-h-screen">
+    <div class="container mx-auto px-4 lg:px-12 py-16 lg:py-24">
+
+      <section v-if="searchSummary" class="mb-8 flex items-center justify-between gap-4 flex-wrap border-l-4 border-primary pl-4">
         <div>
-          <h2 class="text-2xl font-bold">場館結果</h2>
-          <p class="text-sm text-base-content/50 mt-1">共 {{ availableVenues.length }} 個可租借場地</p>
+          <p class="text-xs text-base-content/50 tracking-widest font-semibold">搜尋條件</p>
+          <p class="text-base md:text-lg font-bold mt-1">{{ searchSummary }}</p>
+          <p class="text-sm text-base-content/60 mt-1">符合 {{ filteredVenues.length }} 個場地</p>
         </div>
+        <button @click="clearSearch" class="btn btn-ghost btn-sm gap-1">
+          <span class="material-symbols-outlined text-base">close</span>
+          清除搜尋
+        </button>
       </section>
 
-      <section v-if="availableVenues.length === 0" class="bg-base-100 border border-base-200 rounded-box shadow-sm p-10 text-center">
+      <section v-if="filteredVenues.length === 0" class="border border-base-200 rounded-box p-10 text-center">
         <span class="material-symbols-outlined text-6xl text-base-content/25">event_busy</span>
-        <h3 class="text-xl font-bold mt-4">目前沒有可租借場地</h3>
-        <p class="text-base-content/60 mt-2">請稍後再回來查看。</p>
+        <h3 class="text-xl font-bold mt-4">{{ searchSummary ? '找不到符合條件的場地' : '目前沒有可租借場地' }}</h3>
+        <p class="text-base-content/60 mt-2">{{ searchSummary ? '試試其他日期或租借方式。' : '請稍後再回來查看。' }}</p>
       </section>
 
-      <section v-else class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-16 gap-x-8">
         <article
-          v-for="venue in availableVenues"
+          v-for="venue in filteredVenues"
           :key="venue.id"
-          class="group bg-base-100 border border-base-200 rounded-box shadow-sm overflow-hidden hover:border-primary hover:shadow-md transition-all cursor-pointer"
-          @click="goToDetail(venue.id)"
+          class="m-post group relative"
         >
-          <figure class="relative aspect-[4/3] bg-base-300 overflow-hidden">
+          <!-- 整張卡的點擊區(蓋滿,任何位置都可點) -->
+          <router-link
+            :to="{ name: 'venue-detail', params: { id: venue.id } }"
+            class="m-post__link absolute inset-0 z-20"
+            :aria-label="venue.name"
+          ></router-link>
+
+          <!-- 圖片 -->
+          <div class="eyecatch relative aspect-4/3 overflow-hidden rounded-md bg-base-300">
             <img
               :src="publicImageUrl(venue.mainImageUrl)"
               :alt="venue.name"
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
             />
-            <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 to-transparent"></div>
-            <div class="absolute left-3 top-3 flex gap-2 flex-wrap">
-              <span class="badge badge-primary">{{ venue.status === 'available' ? '可租借' : '維護中' }}</span>
-              <span class="badge badge-neutral">{{ venue.type }}</span>
-            </div>
-            <div class="absolute left-4 bottom-4 text-white">
-              <h3 class="text-xl font-bold leading-tight">{{ venue.name }}</h3>
-              <p class="text-sm text-white/80 mt-1">{{ lowestPrice(venue) }} 起</p>
-            </div>
-          </figure>
+            <div class="post-link absolute inset-0 transition-[backdrop-filter] duration-300 group-hover:backdrop-blur-[3px]"></div>
+          </div>
 
-          <div class="p-5 space-y-4">
-            <div class="space-y-2 text-sm text-base-content/70">
-              <p class="flex items-start gap-2">
-                <span class="material-symbols-outlined text-lg text-base-content/40 mt-0.5">location_on</span>
-                <span>{{ venue.location }}</span>
-              </p>
-              <p class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-lg text-base-content/40">groups</span>
-                {{ venue.capacity.toLocaleString() }} 人
-              </p>
-            </div>
-
-            <div class="flex gap-2 flex-wrap">
-              <span v-for="mode in modeLabels(venue)" :key="mode" class="badge badge-outline badge-sm">{{ mode }}</span>
-              <span v-for="facility in venue.facilities.slice(0, 3)" :key="facility" class="badge badge-ghost badge-sm">{{ facility }}</span>
-              <span v-if="venue.facilities.length > 3" class="badge badge-ghost badge-sm">+{{ venue.facilities.length - 3 }}</span>
-            </div>
-
-            <div class="pt-2 flex items-center justify-between border-t border-base-200">
-              <span class="text-sm text-base-content/50 line-clamp-1">{{ venue.description }}</span>
-              <span class="btn btn-ghost btn-sm shrink-0">
-                詳情
-                <span class="material-symbols-outlined text-base transition-transform group-hover:translate-x-1">arrow_forward</span>
+          <!-- 標籤(桌機:右下凹陷白卡;手機:圖片下方一般排版) -->
+          <div
+            class="info mt-3 md:mt-0 md:absolute md:right-0 md:bottom-0 md:max-w-[calc(100%-4rem)] md:bg-base-100 md:rounded-tl-[10px] md:pl-8 md:pr-6 md:pt-4 md:pb-4 md:transition-[padding] md:duration-300 md:ease-out md:group-hover:pl-10 md:group-hover:pr-10 md:group-hover:pt-8 md:group-hover:pb-10"
+          >
+            <div class="meta flex items-baseline gap-3 flex-wrap">
+              <span class="tag inline-flex items-center border border-base-content/25 px-2 py-0.5 text-xs leading-none">
+                {{ venue.type }}
               </span>
             </div>
+            <h2 class="title text-xl md:text-2xl font-bold leading-snug mt-2 text-base-content">
+              {{ venue.name }}
+            </h2>
           </div>
         </article>
-      </section>
+      </div>
     </div>
   </main>
 </template>
+
+<style scoped>
+/* misakigumi 的右下角凹陷 SVG 偽元素(只在桌機顯示) */
+@media (min-width: 768px) {
+  .m-post .info::before,
+  .m-post .info::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-image: url("data:image/svg+xml;base64,PHN2ZyBmaWxsPSJub25lIiBoZWlnaHQ9IjEwIiB2aWV3Qm94PSIwIDAgMTAgMTAiIHdpZHRoPSIxMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMTAgMTBoLTEwYzUuNTIyODUgMCAxMC00LjQ3NzE1IDEwLTEweiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  .m-post .info::before {
+    right: 0;
+    top: -10px;
+  }
+  .m-post .info::after {
+    left: -10px;
+    bottom: 0;
+  }
+}
+</style>
