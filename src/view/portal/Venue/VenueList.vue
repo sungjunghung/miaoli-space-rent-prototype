@@ -49,6 +49,18 @@ const searchCriteria = computed(() => {
   }
 })
 
+// 帶往預約頁的搜尋日期:讓預約頁日曆跳到使用者搜尋的那天(無搜尋則為空,不附加 query)
+const bookingQuery = computed<Record<string, string>>(() => {
+  const c = searchCriteria.value
+  if (c.mode === 'daily' && c.startDate) {
+    return { startDate: c.startDate, ...(c.endDate ? { endDate: c.endDate } : {}) }
+  }
+  if (c.mode === 'hourly' && c.date) {
+    return { date: c.date, ...(c.time ? { time: c.time } : {}) }
+  }
+  return {}
+})
+
 const filteredVenues = computed(() => {
   const base = allVenues.filter(v => v.status === 'available')
   const c = searchCriteria.value
@@ -166,6 +178,23 @@ function clearSearch() {
             <h2 class="title text-xl md:text-2xl font-bold leading-snug mt-2 text-base-content">
               {{ venue.name }}
             </h2>
+
+            <!-- 操作按鈕:行動版直接顯示;桌機版預設收起,hover 才展開(收起時不可點,讓整卡連結生效) -->
+            <div
+              class="actions relative z-30 flex gap-2 mt-3
+                     md:mt-0 md:max-h-0 md:opacity-0 md:overflow-hidden md:pointer-events-none
+                     md:transition-all md:duration-300 md:ease-out
+                     md:group-hover:mt-3 md:group-hover:max-h-12 md:group-hover:opacity-100 md:group-hover:pointer-events-auto"
+            >
+              <router-link
+                :to="{ name: 'venue-booking', params: { id: venue.id }, query: bookingQuery }"
+                class="btn btn-primary flex-1"
+              >立即租借</router-link>
+              <router-link
+                :to="{ name: 'venue-detail', params: { id: venue.id } }"
+                class="btn btn-outline flex-1"
+              >場館詳情</router-link>
+            </div>
           </div>
         </article>
       </div>

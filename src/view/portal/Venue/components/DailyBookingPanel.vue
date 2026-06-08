@@ -52,8 +52,8 @@ function onCalendarSelectDate(dateStr: string) {
       </div>
       <div class="bg-base-200 rounded-box p-4 border border-base-200">
         <MonthCalendar :closed-weekdays="closedWeekdays" :closed-dates="closedDates" :bookings="bookings"
-          :selected-start="selectedStartDate" :selected-end="selectedEndDate" :min-days="minDays"
-          :max-days="maxDays" @select-date="onCalendarSelectDate" />
+          :selected-start="selectedStartDate" :selected-end="selectedEndDate" :view-date="selectedStartDate"
+          :min-days="minDays" :max-days="maxDays" @select-date="onCalendarSelectDate" />
       </div>
     </section>
 

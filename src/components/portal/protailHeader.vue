@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
 import QuickSearch from "./quickSearch.vue";
@@ -32,6 +32,16 @@ const isDesktop = ref(window.matchMedia('(min-width: 768px)').matches)
 const isHomePage = computed(() => route.path === '/')
 const shouldPinQuickSearch = computed(() => isDesktop.value && isHomePage.value && !isScrolled.value)
 const isQuickSearchVisible = computed(() => shouldPinQuickSearch.value || showQuickSearch.value)
+
+// 搜尋以覆蓋層展開時(= 有深色 backdrop;已排除首頁桌機 pinned)鎖住背景捲動
+const isSearchOverlay = computed(() => showQuickSearch.value && !shouldPinQuickSearch.value)
+function setScrollLock(locked: boolean) {
+  const lenis = (window as any).__lenis as { stop: () => void; start: () => void } | undefined
+  document.body.style.overflow = locked ? 'hidden' : ''
+  if (locked) lenis?.stop()
+  else lenis?.start()
+}
+watch(isSearchOverlay, setScrollLock)
 
 function toggleQuickSearch() {
   if (shouldPinQuickSearch.value) return
@@ -66,6 +76,7 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
   desktopMq.removeEventListener('change', handleMqChange)
+  setScrollLock(false) // 離開頁面時務必解除鎖定,避免殘留
 })
 
 const searchConditionsText = computed(() => {

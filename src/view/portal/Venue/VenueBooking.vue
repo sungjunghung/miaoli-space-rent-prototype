@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import PageHeaderBasic from '@/components/portal/PageHeaderBasic.vue'
 import venues from '@/mocks/venues.json'
 import venueRentalModes from '@/mocks/venue-edit/venueRentalModes.json'
 import allBookings from '@/mocks/generateBookings'
@@ -42,6 +41,33 @@ const startTime = ref('')
 const endTime = ref('')
 const selectedSession = ref<string | null>(null)
 const feeQuantities = ref<Record<string, number>>({})
+
+// 從場館列表的搜尋帶入日期:在 setup 階段(子日曆 mount 前)預填,
+// 讓月曆/週曆直接跳到使用者搜尋的那天
+function applySearchPrefill() {
+  const q = route.query
+  const date = typeof q.date === 'string' ? q.date : ''
+  const startDate = typeof q.startDate === 'string' ? q.startDate : ''
+  const endDate = typeof q.endDate === 'string' ? q.endDate : ''
+  const hasMode = (m: RentalMode) => enabledModes.value.some(e => e.value === m)
+
+  if (startDate) {
+    // 多日搜尋 → 對應全日租借
+    if (hasMode('daily')) {
+      rentalMode.value = 'daily'
+      selectedStartDate.value = startDate
+      selectedEndDate.value = endDate
+    }
+    return
+  }
+  if (date) {
+    // 單日搜尋 → 優先小時、其次時段,皆無則用全日的起始日
+    if (hasMode('hourly')) { rentalMode.value = 'hourly'; selectedDate.value = date }
+    else if (hasMode('session')) { rentalMode.value = 'session'; selectedDate.value = date }
+    else if (hasMode('daily')) { rentalMode.value = 'daily'; selectedStartDate.value = date }
+  }
+}
+applySearchPrefill()
 
 const additionalFeesTotal = computed(() => {
   if (!venue.value?.rentalItems) return 0
@@ -271,7 +297,7 @@ const sessionDefs = computed(() => (venue.value?.rentalModes.session?.sessions ?
   </div>
 
   <template v-else>
-    <PageHeaderBasic title="場地預約" />
+    <!-- <PageHeaderBasic title="場地預約" /> -->
     <!-- Booking Content -->
     <main class="container mx-auto px-4 max-w-5xl pt-8 pb-14">
       <div class="card bg-base-100 shadow-xl border border-base-200">

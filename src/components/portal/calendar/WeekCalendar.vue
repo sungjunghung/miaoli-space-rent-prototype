@@ -136,10 +136,15 @@ function generateSlots(date: Date, dayClosed: boolean): TimeSlot[] {
 }
 
 const initializeWeek = (): void => {
-  const today = new Date();
-  const day = today.getDay();
-  const weekStart = new Date(today);
-  weekStart.setDate(today.getDate() - day);
+  // 有指定 selectedDate 就錨定它所在的那一週,否則用今天(YYYY-MM-DD 以 local 解析避免時區位移)
+  let base = new Date();
+  if (props.selectedDate) {
+    const [y, m, d] = props.selectedDate.split('-').map(Number);
+    base = new Date(y ?? 1970, (m ?? 1) - 1, d ?? 1);
+  }
+  const day = base.getDay();
+  const weekStart = new Date(base);
+  weekStart.setDate(base.getDate() - day);
   weekStart.setHours(0, 0, 0, 0);
   currentWeekStart.value = weekStart;
 };

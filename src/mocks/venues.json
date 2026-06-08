@@ -11,7 +11,17 @@
     "mainImageUrl": "/assets/images/苗栗巨蛋體育館_01.jpg",
     "gallery": [
       "/assets/images/苗栗巨蛋體育館_01.jpg",
-      "/assets/images/苗栗巨蛋體育館_02.jpg"
+      "/assets/images/苗栗巨蛋體育館_02.jpg",
+      "/assets/images/arena/Arena_1.jpg",
+      "/assets/images/arena/Arena_2.jpg",
+      "/assets/images/arena/Arena_3.jpg",
+      "/assets/images/arena/Arena_4.jpg",
+      "/assets/images/arena/Arena_5.jpg",
+      "/assets/images/arena/Arena_6.jpg",
+      "/assets/images/arena/Arena_7.jpg",
+      "/assets/images/arena/Arena_8.jpg",
+      "/assets/images/arena/Arena_9.jpg",
+      "/assets/images/arena/Arena_10.jpg"
     ],
     "pricePerHour": 3000,
     "facilities": [
@@ -205,7 +215,17 @@
     "description": "本場地處市區邊緣，視野佳且四周道路便捷可直達苗栗市中心及苗栗頭份交流道，地理條件優越。現有四百公尺標準 PU 跑道八道供比賽使用，田賽場地亦符合比賽標準，無論是全國性比賽或縣內活動都是最佳場所。",
     "mainImageUrl": "/assets/images/田徑場_01.jpg",
     "gallery": [
-      "/assets/images/田徑場_01.jpg"
+      "/assets/images/田徑場_01.jpg",
+      "/assets/images/stadium/stadium_1.jpg",
+      "/assets/images/stadium/stadium_2.jpg",
+      "/assets/images/stadium/stadium_3.jpg",
+      "/assets/images/stadium/stadium_4.jpg",
+      "/assets/images/stadium/stadium_5.jpg",
+      "/assets/images/stadium/stadium_6.jpg",
+      "/assets/images/stadium/stadium_7.jpg",
+      "/assets/images/stadium/stadium_8.jpg",
+      "/assets/images/stadium/stadium_9.jpg",
+      "/assets/images/stadium/stadium_10.jpg"
     ],
     "pricePerHour": 5000,
     "facilities": [

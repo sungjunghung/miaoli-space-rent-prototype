@@ -254,6 +254,7 @@ const handleSearch = (): void => {
         >
           <MonthCalendar
             v-if="searchMode === 'daily'"
+            lock-view="month"
             :selected-start="searchDate"
             :view-date="searchDate"
             :show-legend="false"
@@ -261,6 +262,7 @@ const handleSearch = (): void => {
           />
           <MonthCalendar
             v-else
+            lock-view="month"
             :selected-start="searchStartDate"
             :selected-end="searchEndDate"
             :view-date="activeCalendar === 'end' ? (searchEndDate || searchStartDate) : searchStartDate"

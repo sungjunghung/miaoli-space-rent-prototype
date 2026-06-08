@@ -165,7 +165,7 @@ function removeImage() {
 
   <!-- 預約成功 -->
   <template v-else-if="submitted">
-    <PageHeaderBasic title="場地預約" />
+    <!-- <PageHeaderBasic title="場地預約" /> -->
     <div class="bg-base-200 flex items-center justify-center p-8">
       <div class="card bg-base-100 shadow-xl max-w-lg w-full">
         <div class="card-body items-center text-center space-y-6 py-12">

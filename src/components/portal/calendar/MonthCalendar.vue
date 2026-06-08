@@ -36,6 +36,12 @@ interface Props {
   minDays?: number;
   maxDays?: number;
   showLegend?: boolean;
+  /** 鎖定檢視模式;設定後固定顯示該模式並隱藏「週/月」切換(例:搜尋只顯示月) */
+  lockView?: 'month' | 'week';
+  /** 初始檢視模式;未設定時為月 */
+  defaultView?: 'month' | 'week';
+  /** 是否顯示「週/月」切換鈕;預設不顯示,有需要切換才開啟 */
+  showViewToggle?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -51,6 +57,9 @@ const props = withDefaults(defineProps<Props>(), {
   minDays: 1,
   maxDays: 999,
   showLegend: true,
+  lockView: undefined,
+  defaultView: 'month',
+  showViewToggle: false,
 });
 
 // 是否有任何事件要顯示在格子裡(影響桌機版的格子高度與排版)
@@ -124,8 +133,13 @@ function isDayRented(date: Date): boolean {
   });
 }
 
-// 顯示模式:週(預設,7 天一字排開)或月(完整月格)
-const view = ref<'month' | 'week'>('week');
+// 顯示模式:月(預設,完整月格)或週(7 天一字排開),由 defaultView 決定初始值
+// lockView 有設時固定為該模式(寫入會被忽略,因為切換鈕已隱藏)
+const internalView = ref<'month' | 'week'>(props.defaultView);
+const view = computed<'month' | 'week'>({
+  get: () => props.lockView ?? internalView.value,
+  set: (v) => { internalView.value = v },
+});
 
 function buildDay(date: Date): CalendarDay {
   let status: RentalStatus = 'available';
@@ -255,7 +269,7 @@ function canSelectDate(date: Date): boolean {
           <span class="material-symbols-outlined text-base-content shrink-0 mt-0.5">chevron_right</span>
         </button>
       </div>
-      <div role="tablist" class="tabs tabs-box tabs-sm">
+      <div v-if="showViewToggle && !lockView" role="tablist" class="tabs tabs-box tabs-sm">
         <button
           type="button"
           role="tab"
