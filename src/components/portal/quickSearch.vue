@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import MonthCalendar from "@/components/portal/calendar/MonthCalendar.vue";
 
@@ -38,6 +38,8 @@ const searchStartTime = ref("");
 const searchStartDate = ref(sevenDaysLater);
 const searchEndDate = ref(getDateAfterDays(8));
 const activeCalendar = ref<"single" | "start" | "end" | null>(null);
+// 日曆彈出層節點:用來判斷點擊是否落在彈窗內(失焦關閉)
+const popupEl = ref<HTMLElement | null>(null);
 
 const hourOptions = [
   "06:00",
@@ -114,9 +116,22 @@ function toggleCalendar(calendar: "single" | "start" | "end"): void {
 }
 
 function selectSingleDate(dateStr: string): void {
+  // 任何模式選日期都「不」自動關閉,只有失焦(點擊彈出層外)才關
   searchDate.value = dateStr;
+}
+
+// 失焦關閉:只有點在日曆彈窗內或欄位按鈕上才保持開啟,
+// 點時間選單、其他欄位以外的任何地方都關閉
+function handleClickOutside(e: MouseEvent): void {
+  if (!activeCalendar.value) return;
+  const target = e.target as HTMLElement;
+  if (popupEl.value?.contains(target)) return; // 點日曆內(選日期)→ 保持
+  if (target.closest("[data-cal-trigger]")) return; // 點欄位按鈕 → 交給按鈕自己 toggle/切換
   activeCalendar.value = null;
 }
+
+onMounted(() => document.addEventListener("mousedown", handleClickOutside));
+onUnmounted(() => document.removeEventListener("mousedown", handleClickOutside));
 
 function selectRangeDate(dateStr: string): void {
   if (!searchStartDate.value || (searchStartDate.value && searchEndDate.value)) {
@@ -131,8 +146,8 @@ function selectRangeDate(dateStr: string): void {
     return;
   }
 
+  // 多日租借:選完結束日期「不」關閉日曆,讓使用者能繼續微調範圍
   searchEndDate.value = dateStr;
-  activeCalendar.value = null;
 }
 
 const handleSearch = (): void => {
@@ -166,12 +181,13 @@ const handleSearch = (): void => {
 <template>
 
 
-      <div class="flex flex-col gap-3 md:flex-row md:items-end">
+      <div class="relative flex flex-col gap-3 md:flex-row md:items-end">
         <!-- Daily Mode -->
         <div v-if="searchMode === 'daily'" key="daily" class="grid grid-cols-1 sm:grid-cols-2 gap-3 min-w-0 flex-1">
-          <label class="form-control gap-1 relative">
+          <label class="form-control gap-1">
             <button
               id="search-date"
+              data-cal-trigger
               type="button"
               class="input w-full h-12"
               :class="{ 'input-primary': activeCalendar === 'single' }"
@@ -180,17 +196,6 @@ const handleSearch = (): void => {
             <span class="material-symbols-outlined text-base-content/50 text-xl">calendar_month</span>
               <span>{{ formatDateLabel(searchDate) }}</span>
             </button>
-            <div
-              v-if="activeCalendar === 'single'"
-              class="absolute left-0 right-0 top-full z-50 mt-2 rounded-box border border-base-300 bg-base-100 p-3 shadow-xl sm:right-auto sm:w-80"
-            >
-              <MonthCalendar
-                :selected-start="searchDate"
-                :view-date="searchDate"
-                :show-legend="false"
-                @select-date="selectSingleDate"
-              />
-            </div>
           </label>
 
           <label class="select w-full h-12">
@@ -206,9 +211,10 @@ const handleSearch = (): void => {
 
         <!-- Multi Mode -->
         <div v-else key="multi" class="grid grid-cols-1 sm:grid-cols-2 gap-3 min-w-0 flex-1">
-          <label class="form-control gap-1 relative">
+          <label class="form-control gap-1">
             <button
               id="search-start-date"
+              data-cal-trigger
               type="button"
               class="input w-full h-12"
               :class="{ 'input-primary': activeCalendar === 'start' }"
@@ -217,23 +223,12 @@ const handleSearch = (): void => {
             <span class="material-symbols-outlined text-base-content/50 text-xl">calendar_month</span>
               <span>{{ formatDateLabel(searchStartDate) }}</span>
             </button>
-            <div
-              v-if="activeCalendar === 'start'"
-              class="absolute left-0 right-0 top-full z-50 mt-2 rounded-box border border-base-300 bg-base-100 p-3 shadow-xl sm:right-auto sm:w-80"
-            >
-              <MonthCalendar
-                :selected-start="searchStartDate"
-                :selected-end="searchEndDate"
-                :view-date="searchStartDate"
-                :show-legend="false"
-                @select-date="selectRangeDate"
-              />
-            </div>
           </label>
 
-          <label class="form-control gap-1 relative">
+          <label class="form-control gap-1">
             <button
               id="search-end-date"
+              data-cal-trigger
               type="button"
               class="input w-full h-12"
               :class="{ 'input-primary': activeCalendar === 'end' }"
@@ -242,18 +237,6 @@ const handleSearch = (): void => {
               <span class="material-symbols-outlined text-base-content/50 text-xl">calendar_month</span>
               <span>{{ searchEndDate ? formatDateLabel(searchEndDate) : "選擇結束日期" }}</span>
             </button>
-            <div
-              v-if="activeCalendar === 'end'"
-              class="absolute left-0 right-0 top-full z-50 mt-2 rounded-box border border-base-300 bg-base-100 p-3 shadow-xl sm:left-auto sm:right-0 sm:w-80"
-            >
-              <MonthCalendar
-                :selected-start="searchStartDate"
-                :selected-end="searchEndDate"
-                :view-date="searchEndDate || searchStartDate"
-                :show-legend="false"
-                @select-date="selectRangeDate"
-              />
-            </div>
           </label>
         </div>
 
@@ -262,6 +245,29 @@ const handleSearch = (): void => {
           <span class="material-symbols-outlined text-2xl">search</span>
           <span class="lg:hidden">搜尋場館</span>
         </button>
+
+        <!-- 共用日曆彈出層:錨定整條搜尋列,寬度與搜尋範圍一致;放在 label 之外避免點擊被轉發 -->
+        <div
+          v-if="activeCalendar"
+          ref="popupEl"
+          class="absolute left-0 right-0 top-full z-50 mt-2 rounded-box border border-base-300 bg-base-100 p-3 shadow-xl"
+        >
+          <MonthCalendar
+            v-if="searchMode === 'daily'"
+            :selected-start="searchDate"
+            :view-date="searchDate"
+            :show-legend="false"
+            @select-date="selectSingleDate"
+          />
+          <MonthCalendar
+            v-else
+            :selected-start="searchStartDate"
+            :selected-end="searchEndDate"
+            :view-date="activeCalendar === 'end' ? (searchEndDate || searchStartDate) : searchStartDate"
+            :show-legend="true"
+            @select-date="selectRangeDate"
+          />
+        </div>
       </div>
 
 

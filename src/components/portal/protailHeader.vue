@@ -97,6 +97,12 @@ const searchConditionsText = computed(() => {
   return '搜尋';
 });
 
+// 收合搜尋列要顯示的方式:hourly=時段租借(daily.svg)、daily=多日租借(multi.svg)
+const searchMethod = computed<'hourly' | 'daily' | null>(() => {
+  const m = route.query.mode;
+  return m === 'hourly' || m === 'daily' ? m : null;
+});
+
 function logout() {
   authStore.logout()
   router.push('/login')
@@ -152,7 +158,8 @@ function onSearchLeave(el: Element, done: () => void) {
 <template>
 
   <div class="w-full rounded-none sticky top-0 transition-all duration-300 z-50 bg-base-100" :class="{
-    'backdrop-blur-md shadow-xl bg-base-100/65': isScrolled || isQuickSearchVisible,
+    'backdrop-blur-md shadow-xl bg-base-100/65': isScrolled && !isQuickSearchVisible,
+    'shadow-xl': isQuickSearchVisible,
   }">
     <div class="navbar">
       <div class="navbar-start w-fit lg:w-1/2">
@@ -163,30 +170,40 @@ function onSearchLeave(el: Element, done: () => void) {
       </div>
       <div class="navbar-center flex-1 lg:flex-none">
         <div v-if="!isQuickSearchVisible" @click="toggleQuickSearch"
-          class=" bg-base-200 rounded-full w-full lg:w-64 px-4 py-2 flex items-center gap-2 cursor-pointer select-none">
-          <span class="material-symbols-outlined shrink-0">search</span> <span>{{ searchConditionsText }}</span>
+          class=" bg-base-200 rounded-full w-full lg:w-fit px-8 py-2 flex items-center gap-2 cursor-pointer select-none">
+          <img v-if="searchMethod === 'hourly'" src="../../assets/images/daily.svg" alt="" class="w-5 shrink-0">
+          <img v-else-if="searchMethod === 'daily'" src="../../assets/images/multi.svg" alt="" class="w-5 shrink-0">
+          <span v-else class="material-symbols-outlined shrink-0">search</span>
+          <span>{{ searchConditionsText }}</span>
         </div>
-        <div v-else role="tablist" class="tabs tabs-sm md:tabs-md xl:tabs-lg tabs-box mx-auto rounded-full w-full">
+        <div v-else role="tablist" class="relative flex w-full rounded-full bg-base-200 p-1">
+          <!-- 滑動指示器:在兩個 tab 之間平滑左右移動 -->
+          <span
+            class="absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-secondary shadow transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            :class="searchMode === 'multi' ? 'translate-x-full' : 'translate-x-0'"
+          ></span>
           <button
             type="button"
             role="tab"
-            class="tab rounded-full lg:px-8 flex-1"
-            :class="{ 'tab-active bg-secondary text-secondary-content': searchMode === 'daily' }"
+            class="relative z-10 flex-1 flex items-center justify-center rounded-full py-2 lg:px-8 transition-colors duration-300"
+            :class="searchMode === 'daily' ? 'text-secondary-content' : 'text-base-content/60'"
             :aria-selected="searchMode === 'daily'"
             @click="searchMode = 'daily'"
           >
-          <span class="material-symbols-outlined text-xl lg:text-2xl mr-1">calendar_month</span>
-          時段租借</button>
+            <img src="../../assets/images/daily.svg" alt="" class="w-5 lg:w-8 mr-2">
+            時段租借
+          </button>
           <button
             type="button"
             role="tab"
-            class="tab rounded-full lg:px-8 flex-1"
-            :class="{ 'tab-active bg-secondary text-secondary-content': searchMode === 'multi' }"
+            class="relative z-10 flex-1 flex items-center justify-center rounded-full py-2 lg:px-8 transition-colors duration-300"
+            :class="searchMode === 'multi' ? 'text-secondary-content' : 'text-base-content/60'"
             :aria-selected="searchMode === 'multi'"
             @click="searchMode = 'multi'"
           >
-          <span class="material-symbols-outlined text-xl lg:text-2xl mr-1">group</span>
-          多日租借</button>
+            <img src="../../assets/images/multi.svg" alt="" class="w-5 lg:w-8 mr-2">
+            多日租借
+          </button>
         </div>
       </div>
       <div class="navbar-end  md:flex w-fit lg:w-1/2">

@@ -156,7 +156,7 @@ function clearSearch() {
 
           <!-- 標籤(桌機:右下凹陷白卡;手機:圖片下方一般排版) -->
           <div
-            class="info mt-3 md:mt-0 md:absolute md:right-0 md:bottom-0 md:max-w-[calc(100%-4rem)] md:bg-base-100 md:rounded-tl-[10px] md:pl-8 md:pr-6 md:pt-4 md:pb-4 md:transition-[padding] md:duration-300 md:ease-out md:group-hover:pl-10 md:group-hover:pr-10 md:group-hover:pt-8 md:group-hover:pb-10"
+            class="info mt-3 md:mt-0 md:absolute md:right-0 md:bottom-0 md:max-w-[calc(100%-4rem)] md:bg-base-200 md:rounded-tl-[10px] md:pl-8 md:pr-6 md:pt-4 md:pb-4 md:transition-[padding] md:duration-300 md:ease-out md:group-hover:pl-10 md:group-hover:pr-10 md:group-hover:pt-8 md:group-hover:pb-10"
           >
             <div class="meta flex items-baseline gap-3 flex-wrap">
               <span class="tag inline-flex items-center border border-base-content/25 px-2 py-0.5 text-xs leading-none">

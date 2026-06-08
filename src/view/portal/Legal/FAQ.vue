@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import PageHeaderBasic from '@/components/portal/PageHeaderBasic.vue'
 import faqData from '../../../mocks/faq.json'
 
 interface FaqItem {
@@ -75,11 +74,16 @@ function iconForSection(title: string) {
 </script>
 
 <template>
-  <PageHeaderBasic title="常見問題與注意事項" description="整理租借流程、費用付款、場地使用與會員帳號常見疑問。"
-    bg-image="/assets/images/bg_admin_login.jpg" />
-
+  <!-- <PageHeaderBasic title="常見問題與注意事項" description="整理租借流程、費用付款、場地使用與會員帳號常見疑問。"
+    bg-image="/assets/images/bg_admin_login.jpg" /> -->
+ <header>
+    <div class=" container mx-auto px-4 py-10">
+      <h1 class="text-8xl text-secondary">FAQ</h1>
+      <p class="text-xl ml-1 text-primary">常見問題</p>
+    </div>
+  </header>
   <main class="bg-base-200/60 min-h-screen">
-    <div class="container lg:max-w-6xl mx-auto px-4 py-10 space-y-8">
+    <div class="container mx-auto px-4 py-10 space-y-8">
       <div class="grid grid-cols-1 lg:grid-cols-[18rem_minmax(0,1fr)] gap-6 items-start">
         <aside class="lg:sticky lg:top-28 bg-base-100 border border-base-200 rounded-box shadow-sm overflow-hidden">
           <div class="p-4 border-b border-base-200">
