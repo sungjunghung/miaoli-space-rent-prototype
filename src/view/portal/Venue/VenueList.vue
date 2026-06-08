@@ -2,7 +2,6 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import allVenues from '@/mocks/venues.json'
-import PageHeaderBasic from '@/components/portal/PageHeaderBasic.vue'
 import { publicImageUrl } from '@/utils/assets'
 
 const router = useRouter()
@@ -97,21 +96,22 @@ const searchSummary = computed(() => {
 function clearSearch() {
   router.push({ name: 'venue-list' })
 }
-
-function goToDetail(id: number) {
-  router.push({ name: 'venue-detail', params: { id } })
-}
 </script>
 
 <template>
-  <PageHeaderBasic
+  <!-- <PageHeaderBasic
     title="場地列表"
     description="立即查看 available 時段，快速找到理想空間。"
     bg-image="/assets/images/bg_admin_login.jpg"
-  />
+  /> -->
+  <header>
+    <div class=" container mx-auto px-4 py-10">
+      <h1 class="text-8xl text-secondary">VENUES</h1>
+      <p class="text-xl ml-1 text-primary">場館資訊</p>
+    </div>
+  </header>
 
-  <main class="bg-base-100 min-h-screen">
-    <div class="container mx-auto px-4 lg:px-12 py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-0 py-16 lg:py-24">
 
       <section v-if="searchSummary" class="mb-8 flex items-center justify-between gap-4 flex-wrap border-l-4 border-primary pl-4">
         <div>
@@ -170,7 +170,7 @@ function goToDetail(id: number) {
         </article>
       </div>
     </div>
-  </main>
+
 </template>
 
 <style scoped>
