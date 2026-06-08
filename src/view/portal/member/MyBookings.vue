@@ -124,10 +124,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import PageHeaderBasic from '@/components/PageHeaderBasic.vue'
+import PageHeaderBasic from '@/components/portal/PageHeaderBasic.vue'
 import { useAuthStore } from '../../../stores/auth'
 import { useBookingsStore, type Booking } from '../../../stores/bookings'
-import BookingProgress from '../../../components/BookingProgress.vue'
+import BookingProgress from '../../../components/portal/BookingProgress.vue'
 import { toZhDate, formatBookingDate, formatBookingTime } from '../../../composables/useBookingFormat'
 
 const router = useRouter()

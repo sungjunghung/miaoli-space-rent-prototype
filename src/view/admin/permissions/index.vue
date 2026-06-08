@@ -79,7 +79,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import mockGroups from '@/mocks/permissionGroups.json'
-import AdminSlideDrawer from '@/components/AdminSlideDrawer.vue'
+import AdminSlideDrawer from '@/components/admin/AdminSlideDrawer.vue'
 import PermissionDetailContent from './components/PermissionDetailContent.vue'
 
 const search = ref('')

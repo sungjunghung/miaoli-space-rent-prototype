@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import PageHeaderBasic from '@/components/PageHeaderBasic.vue'
+import PageHeaderBasic from '@/components/portal/PageHeaderBasic.vue'
 import faqData from '../../../mocks/faq.json'
 
 interface FaqItem {

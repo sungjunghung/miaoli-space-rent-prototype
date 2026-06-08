@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import PageHeaderBasic from '@/components/PageHeaderBasic.vue'
+import PageHeaderBasic from '@/components/portal/PageHeaderBasic.vue'
 import venues from '@/mocks/venues.json'
 import { useAuthStore } from '@/stores/auth'
 import { publicImageUrl } from '@/utils/assets'

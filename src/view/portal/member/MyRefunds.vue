@@ -90,7 +90,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import PageHeaderBasic from '@/components/PageHeaderBasic.vue'
+import PageHeaderBasic from '@/components/portal/PageHeaderBasic.vue'
 import { useAuthStore } from '@/stores/auth'
 import {
   REFUND_STATUS_LABELS,

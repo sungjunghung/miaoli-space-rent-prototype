@@ -186,7 +186,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import mockNews from "@/mocks/news.json";
 import mockBookings from "@/mocks/generateBookings";
 import mockVenues from "@/mocks/venues.json";
-import MonthCalendar from '@/components/calendar/MonthCalendar.vue';
+import MonthCalendar from '@/components/portal/calendar/MonthCalendar.vue';
 import { publicImageUrl } from '@/utils/assets'
 
 // 月曆顯示預約熱度;JSON 型別過寬,用 any 餵給 MonthCalendar 的 BookingRecord[]

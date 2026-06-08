@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import PageHeaderBasic from '@/components/PageHeaderBasic.vue'
+import PageHeaderBasic from '@/components/portal/PageHeaderBasic.vue'
 import { useAuthStore } from '../../../stores/auth'
 import { useBookingsStore, type Booking } from '../../../stores/bookings'
-import BookingProgress from '../../../components/BookingProgress.vue'
+import BookingProgress from '../../../components/portal/BookingProgress.vue'
 import mockVenues from '../../../mocks/venues.json'
 import {
   toZhDate, formatBookingDate, formatBookingTime, RENTAL_MODE_LABELS,

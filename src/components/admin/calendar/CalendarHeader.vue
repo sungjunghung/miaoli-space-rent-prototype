@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject, computed } from 'vue';
 import type { CalendarState } from '@/composables/useCalendarState';
-import VenueFilterDropdown from '@/components/VenueFilterDropdown.vue';
+import VenueFilterDropdown from '@/components/admin/VenueFilterDropdown.vue';
 
 const emit = defineEmits<{
   addNote: [];

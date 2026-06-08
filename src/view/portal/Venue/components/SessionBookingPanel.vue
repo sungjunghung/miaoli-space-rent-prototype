@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import WeekCalendar from '@/components/calendar/WeekCalendar.vue'
+import WeekCalendar from '@/components/portal/calendar/WeekCalendar.vue'
 
 interface SessionDef { name: string; startTime: string; endTime: string }
 interface AvailableSession { code: string; label: string; time: string; weekday: number; weekend: number }

@@ -89,7 +89,7 @@ import { ref, computed } from 'vue'
 import mockAdmins from '../../../mocks/admins.json'
 import mockGroups from '../../../mocks/permissionGroups.json'
 import mockVenues from '../../../mocks/venues.json'
-import AdminSlideDrawer from '../../../components/AdminSlideDrawer.vue'
+import AdminSlideDrawer from '../../../components/admin/AdminSlideDrawer.vue'
 import AdminDetailContent from './components/AdminDetailContent.vue'
 
 const search = ref('')

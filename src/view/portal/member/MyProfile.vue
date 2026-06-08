@@ -188,7 +188,7 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import PageHeaderBasic from '@/components/PageHeaderBasic.vue'
+import PageHeaderBasic from '@/components/portal/PageHeaderBasic.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRefundsStore } from '@/stores/refunds'
 import { publicImageUrl } from '@/utils/assets'

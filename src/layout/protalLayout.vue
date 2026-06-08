@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount } from 'vue'
 import Lenis from 'lenis'
-import protailHeader from '../components/protailHeader.vue'
-import protailFooter from '../components/protailFooter.vue'
+import protailHeader from '../components/portal/protailHeader.vue'
+import protailFooter from '../components/portal/protailFooter.vue'
 
 let lenis: Lenis | null = null
 let rafId: number | null = null

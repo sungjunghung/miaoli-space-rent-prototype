@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import PageHeaderBasic from '@/components/PageHeaderBasic.vue'
+import PageHeaderBasic from '@/components/portal/PageHeaderBasic.vue'
 import venues from '@/mocks/venues.json'
 import venueRentalModes from '@/mocks/venue-edit/venueRentalModes.json'
 import allBookings from '@/mocks/generateBookings'

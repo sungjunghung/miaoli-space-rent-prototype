@@ -316,7 +316,7 @@
 import { computed, defineComponent, h, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import RoleSimulationPanel from './bookings/components/RoleSimulationPanel.vue'
-import AdminSlideDrawer from '@/components/AdminSlideDrawer.vue'
+import AdminSlideDrawer from '@/components/admin/AdminSlideDrawer.vue'
 import { useBookingsStore } from '@/stores/bookings'
 import {
   REFUND_STATUS_LABELS,

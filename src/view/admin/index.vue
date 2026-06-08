@@ -11,7 +11,7 @@ import { useBookingsStore } from '@/stores/bookings'
 import mockVenues from '@/mocks/venues.json'
 import { RENTAL_MODE_LABELS, formatBookingTime } from '@/composables/useBookingFormat'
 import { getBookingStatusDisplay, CANCELLED_STATUSES } from '@/composables/useBookingStatus'
-import VenueFilterDropdown from '@/components/VenueFilterDropdown.vue'
+import VenueFilterDropdown from '@/components/admin/VenueFilterDropdown.vue'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Tooltip, Legend, Filler)
 

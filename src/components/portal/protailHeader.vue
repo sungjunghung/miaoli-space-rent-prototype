@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
-import QuickSearch from "../components/quickSearch.vue";
+import { useAuthStore } from '../../stores/auth'
+import QuickSearch from "./quickSearch.vue";
 
 const router = useRouter()
 const route = useRoute()

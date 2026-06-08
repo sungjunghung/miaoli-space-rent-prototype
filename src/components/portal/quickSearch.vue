@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
-import MonthCalendar from "@/components/calendar/MonthCalendar.vue";
+import MonthCalendar from "@/components/portal/calendar/MonthCalendar.vue";
 
 const router = useRouter();
 

@@ -4,8 +4,8 @@ import { useRoute, useRouter } from "vue-router";
 import venues from "@/mocks/venues.json";
 import allBookings from "@/mocks/generateBookings";
 import calendarNotes from "@/mocks/calendarNotes.json";
-import WeekCalendar from "@/components/calendar/WeekCalendar.vue";
-import MonthCalendar from "@/components/calendar/MonthCalendar.vue";
+import WeekCalendar from "@/components/portal/calendar/WeekCalendar.vue";
+import MonthCalendar from "@/components/portal/calendar/MonthCalendar.vue";
 import { publicImageUrl } from "@/utils/assets";
 
 const route = useRoute();

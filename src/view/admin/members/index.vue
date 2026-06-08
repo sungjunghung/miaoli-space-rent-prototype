@@ -105,7 +105,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import mockUsers from '../../../mocks/users.json'
-import AdminSlideDrawer from '../../../components/AdminSlideDrawer.vue'
+import AdminSlideDrawer from '../../../components/admin/AdminSlideDrawer.vue'
 import MemberDetailContent from './components/MemberDetailContent.vue'
 
 const IDENTITY_MAP: Record<string, string> = {

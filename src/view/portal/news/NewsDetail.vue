@@ -58,7 +58,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import PageHeaderBasic from '@/components/PageHeaderBasic.vue'
+import PageHeaderBasic from '@/components/portal/PageHeaderBasic.vue'
 import mockNews from '../../../mocks/news.json'
 import { publicImageUrl } from '@/utils/assets'
 

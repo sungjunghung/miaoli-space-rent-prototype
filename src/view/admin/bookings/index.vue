@@ -143,8 +143,8 @@ import { ref, computed, watch } from 'vue'
 import { useBookingsStore, type Booking } from '../../../stores/bookings'
 import { formatBookingDate, RENTAL_MODE_LABELS_SHORT } from '../../../composables/useBookingFormat'
 import { CANCELLED_STATUSES } from '../../../composables/useBookingStatus'
-import VenueFilterDropdown from '../../../components/VenueFilterDropdown.vue'
-import AdminSlideDrawer from '../../../components/AdminSlideDrawer.vue'
+import VenueFilterDropdown from '../../../components/admin/VenueFilterDropdown.vue'
+import AdminSlideDrawer from '../../../components/admin/AdminSlideDrawer.vue'
 import BookingDetailContent from './components/BookingDetailContent.vue'
 
 const bookingsStore = useBookingsStore()

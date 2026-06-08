@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import MonthCalendar from '@/components/calendar/MonthCalendar.vue'
+import MonthCalendar from '@/components/portal/calendar/MonthCalendar.vue'
 
 const props = defineProps<{
   closedWeekdays: number[]
