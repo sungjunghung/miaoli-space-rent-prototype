@@ -5,20 +5,20 @@
     description="場館公告、系統更新與活動資訊不漏接。"
     bg-image="/assets/images/bg_admin_login.jpg"
   /> -->
+
   <header>
-    <div class=" container mx-auto px-4 py-10">
-      <h1 class="text-8xl text-secondary">NEWS</h1>
-      <p class="text-xl ml-1 text-primary">最新消息</p>
+    <div class=" container mx-auto px-4 py-4 lg:py-10">
+      <h1 class="text-2xl lg:text-8xl text-secondary">NEWS</h1>
+      <p class="lg:text-xl ml-1 text-primary">最新消息</p>
     </div>
   </header>
   <main class="bg-base-200/60 min-h-screen">
-    <div class="container mx-auto px-4 py-10">
+    <div class="container mx-auto px-4 lg:py-10">
       <div class="grid gap-8 lg:grid-cols-[12rem_minmax(0,1fr)]">
 
         <!-- 左側目錄篩選 -->
         <aside class="lg:sticky lg:top-24 lg:self-start">
-          <p class="uppercase tracking-[0.24em] text-base-content/40 mb-3">分類</p>
-          <div class="divider"></div>
+          <p class="uppercase tracking-[0.24em] text-base-content/40 mb-3 hidden lg:block">分類</p>
           <ul class="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible -mx-4 px-4 lg:mx-0 lg:px-0">
             <li v-for="cat in categoryOptions" :key="cat.value">
               <button
@@ -68,7 +68,7 @@
                 </div>
               </div>
 
-              <div class="lg:justify-self-end w-full max-w-36 aspect-4/3 overflow-hidden bg-base-200">
+              <div class="order-first lg:order-none w-full lg:max-w-36 aspect-video lg:aspect-4/3 overflow-hidden rounded-md lg:rounded-none bg-base-200 lg:justify-self-end">
                 <img
                   v-if="item.imageUrl"
                   :src="publicImageUrl(item.imageUrl)"

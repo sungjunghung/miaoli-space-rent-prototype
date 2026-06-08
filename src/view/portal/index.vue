@@ -70,6 +70,7 @@
 					:counts="dailyCounts"
 					:cell-events="cellEvents"
 					:show-legend="!isAllVenues"
+					:default-view="calendarDefaultView"
 					viewable
 					@select-date="onCalendarDayClick"
 				/>
@@ -132,7 +133,7 @@
 							</div>
 						</div>
 
-						<div class="lg:justify-self-end w-full max-w-36 aspect-4/3 overflow-hidden bg-base-200">
+						<div class="order-first lg:order-none w-full lg:max-w-36 aspect-video lg:aspect-4/3 overflow-hidden rounded-md lg:rounded-none bg-base-200 lg:justify-self-end">
 							<img v-if="item.imageUrl" :src="publicImageUrl(item.imageUrl)" :alt="item.title"
 								class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
 							<div v-else class="flex h-full w-full items-center justify-center">
@@ -199,6 +200,15 @@ const isAllVenues = computed(() => selectedVenueId.value === -1)
 const filteredBookings = computed(() =>
   isAllVenues.value ? [] : bookings.filter(b => b.venueId === selectedVenueId.value)
 )
+
+// 行動版(<lg)月曆預設顯示「週」,桌機顯示「月」
+const calendarMq = window.matchMedia('(max-width: 1023px)')
+const calendarDefaultView = ref<'week' | 'month'>(calendarMq.matches ? 'week' : 'month')
+const onCalendarMqChange = (e: MediaQueryListEvent) => {
+  calendarDefaultView.value = e.matches ? 'week' : 'month'
+}
+onMounted(() => calendarMq.addEventListener('change', onCalendarMqChange))
+onUnmounted(() => calendarMq.removeEventListener('change', onCalendarMqChange))
 
 // 熱度模式:聚合每天有多少筆預約跨越該日(daily 含 start~end 區間,hourly 取當日)
 const dailyCounts = computed<Record<string, number>>(() => {

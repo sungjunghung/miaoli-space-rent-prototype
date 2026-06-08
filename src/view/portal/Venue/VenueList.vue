@@ -117,13 +117,13 @@ function clearSearch() {
     bg-image="/assets/images/bg_admin_login.jpg"
   /> -->
   <header>
-    <div class=" container mx-auto px-4 py-10">
-      <h1 class="text-8xl text-secondary">VENUES</h1>
-      <p class="text-xl ml-1 text-primary">場館資訊</p>
+    <div class=" container mx-auto px-4 py-4 lg:py-10">
+      <h1 class="text-2xl lg:text-8xl text-secondary">VENUES</h1>
+      <p class="lg:text-xl ml-1 text-primary">場館資訊</p>
     </div>
   </header>
 
-    <div class="container mx-auto px-4 lg:px-0 py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-0 py-4 lg:py-24">
 
       <section v-if="searchSummary" class="mb-8 flex items-center justify-between gap-4 flex-wrap border-l-4 border-primary pl-4">
         <div>

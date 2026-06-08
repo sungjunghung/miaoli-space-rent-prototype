@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 type RentalStatus = 'available' | 'partial' | 'rented' | 'closed';
 
@@ -136,6 +136,8 @@ function isDayRented(date: Date): boolean {
 // 顯示模式:月(預設,完整月格)或週(7 天一字排開),由 defaultView 決定初始值
 // lockView 有設時固定為該模式(寫入會被忽略,因為切換鈕已隱藏)
 const internalView = ref<'month' | 'week'>(props.defaultView);
+// defaultView 改變(例如響應式斷點切換)時跟著更新初始檢視
+watch(() => props.defaultView, (v) => { internalView.value = v });
 const view = computed<'month' | 'week'>({
   get: () => props.lockView ?? internalView.value,
   set: (v) => { internalView.value = v },
