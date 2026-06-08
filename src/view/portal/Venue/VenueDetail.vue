@@ -336,7 +336,7 @@ function formatMoney(value: number | null | undefined) {
   </div>
 
   <main v-else class="bg-base-200/60">
-    <section class="relative overflow-hidden bg-neutral flex flex-col min-h-dvh pb-4 lg:block lg:min-h-0 lg:pb-16">
+    <section class="relative overflow-hidden bg-neutral flex flex-col h-[calc(100dvh-5rem-4rem)] pb-4 lg:block lg:h-auto lg:pb-16">
       <Transition name="hero-fade">
         <img :key="heroImage" :src="heroImage" :alt="venue.name" :style="heroParallaxStyle"
           class="absolute inset-0 w-full h-full object-cover will-change-transform" />
