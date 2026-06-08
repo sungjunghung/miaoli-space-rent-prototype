@@ -19,7 +19,16 @@
         <!-- 左側目錄篩選 -->
         <aside class="lg:sticky lg:top-24 lg:self-start">
           <p class="uppercase tracking-[0.24em] text-base-content/40 mb-3 hidden lg:block">分類</p>
-          <ul class="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible -mx-4 px-4 lg:mx-0 lg:px-0">
+
+          <!-- 手機:下拉選單 -->
+          <select v-model="selectedCategory" class="select w-full lg:hidden">
+            <option v-for="cat in categoryOptions" :key="cat.value" :value="cat.value">
+              {{ cat.label }}（{{ cat.count }}）
+            </option>
+          </select>
+
+          <!-- 桌機:垂直清單 -->
+          <ul class="hidden lg:flex lg:flex-col gap-1">
             <li v-for="cat in categoryOptions" :key="cat.value">
               <button
                 type="button"

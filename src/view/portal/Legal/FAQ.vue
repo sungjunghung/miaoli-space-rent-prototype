@@ -86,7 +86,7 @@ function iconForSection(title: string) {
   <main class="bg-base-200/60 min-h-screen">
     <div class="container mx-auto px-4 py-4 lg:py-10 space-y-8">
       <div class="grid grid-cols-1 lg:grid-cols-[18rem_minmax(0,1fr)] gap-6 items-start">
-        <aside class="lg:sticky lg:top-28 bg-base-100 border border-base-200 rounded-box shadow-sm overflow-hidden">
+        <aside class="hidden lg:block lg:sticky lg:top-28 bg-base-100 border border-base-200 rounded-box shadow-sm overflow-hidden">
           <div class="p-4 border-b border-base-200">
             <h2 class="font-bold">問題分類</h2>
           </div>

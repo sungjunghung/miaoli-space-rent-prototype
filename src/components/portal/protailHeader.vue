@@ -81,7 +81,7 @@ onUnmounted(() => {
 
 const searchConditionsText = computed(() => {
   const q = route.query;
-  if (!q.mode) return '搜尋';
+  if (!q.mode) return '搜尋可用的場地';
 
   const formatDateShort = (dateStr: any) => {
     if (!dateStr) return '';
