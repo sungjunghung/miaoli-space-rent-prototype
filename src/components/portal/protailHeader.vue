@@ -157,7 +157,7 @@ function onSearchLeave(el: Element, done: () => void) {
     <div class="navbar">
       <div class="navbar-start w-fit lg:w-1/2">
         <button class="btn btn-ghost text-xl normal-case text-primary" @click="$router.push('/')">
-          <img src="../assets/images/logo.svg" alt="" class="w-10">
+          <img src="../../assets/images/logo.svg" alt="" class="w-10">
           <span class="hidden lg:block font-semibold mb-1">苗栗縣體育場館預約系統</span>
         </button>
       </div>
