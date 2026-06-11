@@ -23,6 +23,28 @@ const memberLinks = [
 // dock 高亮目前所在頁(首頁需精準比對,其餘比對前綴以涵蓋子頁面)
 const isNavActive = (to: string) => (to === '/' ? route.path === '/' : route.path.startsWith(to))
 
+// 手機頂部 navbar 顯示的頁面標題:以路由 name 對應
+const PAGE_TITLES: Record<string, string> = {
+  'portal-index': '首頁',
+  'venue-list': '場館資訊',
+  'venue-detail': '場館資訊',
+  'venue-booking': '預訂場地',
+  'venue-confirm': '確認預訂',
+  'news-list': '最新消息',
+  'news-detail': '最新消息',
+  'faq': '常見問題',
+  'terms-of-service': '服務條款',
+  'privacy-policy': '隱私權政策',
+  'member-index': '會員中心',
+  'my-profile': '我的帳戶',
+  'my-bookings': '我的預訂',
+  'my-refunds': '我的退款',
+  'booking-detail': '預訂詳情',
+  'portal-login': '登入',
+  'register': '註冊',
+}
+const pageTitle = computed(() => PAGE_TITLES[String(route.name ?? '')] ?? '')
+
 const showQuickSearch = ref(false)
 const isScrolled = ref(false)
 // 租借方式:由 navbar 的 tabs 控制,下傳給 QuickSearch
@@ -168,57 +190,80 @@ function onSearchLeave(el: Element, done: () => void) {
 </script>
 <template>
 
-  <div class="w-full rounded-none sticky top-0 transition-all duration-300 z-50 bg-base-100" :class="{
+  <div class="w-full rounded-none sticky top-0 transition-all duration-300 z-50 bg-base-100 " :class="{
     'backdrop-blur-md shadow-xl bg-base-100/65': isScrolled && !isQuickSearchVisible,
     'shadow-xl': isQuickSearchVisible,
   }">
+    <!-- <div class="navbar bg-base-100 shadow-sm lg:hidden">
+    <div class="navbar-start">
+      <button v-if="!isHomePage" class="btn btn-ghost btn-square" @click="$router.back()">
+        <span class="material-symbols-outlined text-2xl">arrow_back</span>
+      </button>
+    </div>
+    <div class="navbar-center">
+      <h1 class="font-bold">{{ pageTitle }}</h1>
+    </div>
+    <div class="navbar-end">
+      <button class="btn btn-ghost btn-square lg:hidden" @click="toggleQuickSearch" >
+          <span class="material-symbols-outlined text-2xl">search</span>
+      </button>
+    </div>
+  </div> -->
     <div class="navbar">
       <div class="navbar-start w-fit lg:w-1/2">
-        <button class="btn btn-ghost text-xl normal-case text-primary" @click="$router.push('/')">
+        <button v-if="!isHomePage && !isQuickSearchVisible" class="btn btn-ghost btn-square" @click="$router.back()">
+          <span class="material-symbols-outlined text-2xl">arrow_back</span>
+        </button>
+        <button class="btn btn-ghost text-xl normal-case text-primary hidden lg:flex" @click="$router.push('/')">
           <img src="../../assets/images/logo.svg" alt="" class="w-10">
           <span class="hidden lg:block font-semibold mb-1">苗栗縣體育場館預約系統</span>
         </button>
       </div>
       <div class="navbar-center flex-1 lg:flex-none">
+        <template v-if="isHomePage  && !isQuickSearchVisible"> 
+        <button class="btn btn-ghost text-xl normal-case text-primary lg:hidden" @click="$router.push('/')">
+          <img src="../../assets/images/logo.svg" alt="" class="w-10">
+          <span class="font-semibold mb-1">苗栗縣體育場館預約系統</span>
+        </button>
+        </template>
+        <template v-else>
+          <strong class="lg:hidden" v-if="!isQuickSearchVisible">
+            {{ pageTitle }}
+          </strong>
+        </template>
         <div v-if="!isQuickSearchVisible" @click="toggleQuickSearch"
-          class=" bg-base-200 rounded-full w-full lg:w-fit px-8 py-2 flex items-center gap-2 cursor-pointer select-none">
+          class=" hidden lg:flex bg-base-200 rounded-full w-full lg:w-fit py-2 items-center gap-2 cursor-pointer select-none">
           <img v-if="searchMethod === 'hourly'" src="../../assets/images/daily.svg" alt="" class="w-5 shrink-0">
           <img v-else-if="searchMethod === 'daily'" src="../../assets/images/multi.svg" alt="" class="w-5 shrink-0">
           <span v-else class="material-symbols-outlined shrink-0">search</span>
           <span>{{ searchConditionsText }}</span>
         </div>
-        <div v-else role="tablist" class="relative flex w-full rounded-full bg-base-200 p-1">
+        <div v-if="isQuickSearchVisible" role="tablist" class="relative flex w-full rounded-full bg-base-200 p-1">
           <!-- 滑動指示器:在兩個 tab 之間平滑左右移動 -->
           <span
             class="absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-secondary shadow transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
-            :class="searchMode === 'multi' ? 'translate-x-full' : 'translate-x-0'"
-          ></span>
-          <button
-            type="button"
-            role="tab"
+            :class="searchMode === 'multi' ? 'translate-x-full' : 'translate-x-0'"></span>
+          <button type="button" role="tab"
             class="relative z-10 flex-1 flex items-center justify-center rounded-full py-2 lg:px-8 transition-colors duration-300"
             :class="searchMode === 'daily' ? 'text-secondary-content' : 'text-base-content/60'"
-            :aria-selected="searchMode === 'daily'"
-            @click="searchMode = 'daily'"
-          >
+            :aria-selected="searchMode === 'daily'" @click="searchMode = 'daily'">
             <img src="../../assets/images/daily.svg" alt="" class="w-5 lg:w-8 mr-2">
             時段租借
           </button>
-          <button
-            type="button"
-            role="tab"
+          <button type="button" role="tab"
             class="relative z-10 flex-1 flex items-center justify-center rounded-full py-2 lg:px-8 transition-colors duration-300"
             :class="searchMode === 'multi' ? 'text-secondary-content' : 'text-base-content/60'"
-            :aria-selected="searchMode === 'multi'"
-            @click="searchMode = 'multi'"
-          >
+            :aria-selected="searchMode === 'multi'" @click="searchMode = 'multi'">
             <img src="../../assets/images/multi.svg" alt="" class="w-5 lg:w-8 mr-2">
             多日租借
           </button>
         </div>
       </div>
       <div class="navbar-end  md:flex w-fit lg:w-1/2">
-        <div class="w-18 md:hidden" v-if="isQuickSearchVisible"></div>
+
+        <button class="btn btn-ghost btn-square lg:hidden" v-if="!isQuickSearchVisible" @click="toggleQuickSearch">
+          <span class="material-symbols-outlined text-2xl">search</span>
+        </button>
         <ul class="menu menu-md xl:menu-lg xl:gap-1 xl:mr-3 text-secondary-700  menu-horizontal hidden lg:flex">
           <li v-for="link in navLinks" :key="link.to"><router-link :to="link.to">{{ link.label }}</router-link></li>
         </ul>
@@ -259,12 +304,7 @@ function onSearchLeave(el: Element, done: () => void) {
       </div>
     </div>
     <!-- 展開的搜尋框 -->
-    <Transition
-      :css="false"
-      @before-enter="onSearchBeforeEnter"
-      @enter="onSearchEnter"
-      @leave="onSearchLeave"
-    >
+    <Transition :css="false" @before-enter="onSearchBeforeEnter" @enter="onSearchEnter" @leave="onSearchLeave">
       <div v-if="isQuickSearchVisible">
         <div class="lg:max-w-1/2 xl:max-w-2/5 mx-auto p-4">
           <QuickSearch v-model:mode="searchMode" @search="onSearched" />
@@ -283,10 +323,9 @@ function onSearchLeave(el: Element, done: () => void) {
       <span class="material-symbols-outlined text-[1.5rem]">login</span>
       <span class="dock-label">登入</span>
     </router-link>
-    <router-link v-else to="/member/profile" :class="{ 'dock-active': route.path.startsWith('/member') }">
+    <router-link v-else to="/member" :class="{ 'dock-active': route.path.startsWith('/member') }">
       <span class="material-symbols-outlined text-[1.5rem]">account_circle</span>
       <span class="dock-label">會員</span>
     </router-link>
   </div>
 </template>
-

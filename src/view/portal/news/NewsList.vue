@@ -12,6 +12,7 @@
       <p class="lg:text-xl ml-1 text-primary">最新消息</p>
     </div>
   </header>
+  
   <main class="bg-base-200/60 min-h-screen">
     <div class="container mx-auto px-4 lg:py-10">
       <div class="grid gap-8 lg:grid-cols-[12rem_minmax(0,1fr)]">

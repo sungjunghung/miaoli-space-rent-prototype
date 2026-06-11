@@ -94,6 +94,11 @@ const router = createRouter({
         },
         // Member
         {
+          path: 'member',
+          name: 'member-index',
+          component: () => import('../view/portal/member/MemberIndex.vue'),
+        },
+        {
           path: 'member/profile',
           name: 'my-profile',
           component: () => import('../view/portal/member/MyProfile.vue'),
