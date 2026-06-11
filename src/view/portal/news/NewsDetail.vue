@@ -12,12 +12,8 @@
     </div>
 
     <template v-else>
-      
-      <PageHeaderBasic
-        :title="item.title"
-        :description="item.summary"
-        :bg-image="headerBgImage"
-      >
+
+      <PageHeaderBasic :title="item.title" :description="item.summary" :bg-image="headerBgImage">
         <div class="flex flex-wrap items-center justify-center gap-2 text-sm">
           <span v-if="item.pinned" class="badge badge-warning gap-1">
             <span class="material-symbols-outlined text-sm">push_pin</span>
@@ -31,18 +27,26 @@
         </div>
       </PageHeaderBasic>
 
-      <div class="container mx-auto px-4 py-10">
-        <article class="max-w-4xl mx-auto bg-base-100 border border-base-200 shadow-sm overflow-hidden">
+      <div class="container mx-auto px-4 py-4 lg:py-10">
+        <header class="mb-4 lg:hidden">
+        <h1 class="text-2xl md:text-3xl font-bold mb-2">{{ item.title }}</h1>
+        <span v-if="item.pinned" class="badge badge-warning gap-1">
+          <span class="material-symbols-outlined text-sm">push_pin</span>
+          置頂公告
+        </span>
+        <span class="badge badge-neutral">{{ item.category }}</span>
+        </header>
+        <article class="max-w-4xl mx-auto lg:bg-base-100 lg:border border-base-200 lg:shadow-sm overflow-hidden">
           <figure v-if="item.imageUrl" class="aspect-video bg-base-300">
             <img :src="publicImageUrl(item.imageUrl)" :alt="item.title" class="w-full h-full object-cover" />
           </figure>
 
-          <div class="p-6 md:p-10">
+          <div class="py-4 md:p-10">
             <div class="prose max-w-none prose-base-content">
               <p class="whitespace-pre-line leading-loose text-base md:text-lg">{{ item.content }}</p>
             </div>
 
-            <div class="mt-10 pt-6 border-t border-base-200 flex items-center justify-between gap-3">
+            <div class=" hidden  mt-10 pt-6 border-t border-base-200 lg:flex items-center justify-between gap-3">
               <router-link to="/news" class="btn btn-outline">
                 <span class="material-symbols-outlined text-base">list</span>
                 回消息列表

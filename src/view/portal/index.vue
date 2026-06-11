@@ -106,34 +106,35 @@
 				<router-link v-for="item in latestNews" :key="item.id" :to="`/news/${item.id}`"
 					class="group block transition-colors hover:bg-base-200/40">
 					<article
-						class="grid gap-4 p-4 md:p-5 lg:grid-cols-[10rem_minmax(0,1fr)_8.5rem] lg:gap-6 lg:items-center">
-						<div class="flex flex-row lg:flex-col lg:items-start items-center gap-3 lg:gap-2 min-w-0">
-							<div class="flex items-center gap-2 shrink-0">
-								<span v-if="item.pinned" class="badge badge-warning badge-sm">置頂</span>
-								<span class="badge badge-neutral badge-sm">{{ item.category }}</span>
+						class="flex items-center gap-4 p-4 md:p-5 lg:grid lg:grid-cols-[10rem_minmax(0,1fr)_8.5rem] lg:gap-6 lg:items-center">
+						<!-- 文字區:桌機用 contents 攤平成 meta / content 兩欄,手機則為圖片左側的縱向欄 -->
+						<div class="flex flex-col gap-1 min-w-0 flex-1 lg:contents">
+							<div class="flex flex-row lg:flex-col lg:items-start items-center gap-2 min-w-0">
+								<div class="flex items-center gap-2 shrink-0">
+									<span v-if="item.pinned" class="badge badge-warning badge-sm">置頂</span>
+									<span class="badge badge-neutral badge-sm">{{ item.category }}</span>
+								</div>
+								<p class="text-xs uppercase tracking-[0.24em] text-base-content/40 hidden lg:block">News</p>
+								<p class="text-xs lg:text-sm text-base-content/60 lg:mt-1">{{ formatDate(item.publishedAt) }}</p>
 							</div>
+
 							<div class="min-w-0">
-								<p class="text-xs uppercase tracking-[0.24em] text-base-content/40">News</p>
-								<p class="text-sm text-base-content/60 mt-1">{{ formatDate(item.publishedAt) }}</p>
+								<h3
+									class="text-base md:text-xl font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
+									{{ item.title }}
+								</h3>
+								<p class="mt-1 lg:mt-2 text-sm md:text-base text-base-content/60 leading-relaxed line-clamp-2 hidden sm:block">
+									{{ item.summary }}
+								</p>
+								<div class="mt-3 lg:mt-4 hidden lg:inline-flex items-center gap-1 text-sm font-semibold text-primary">
+									閱讀全文
+									<span
+										class="material-symbols-outlined text-base transition-transform group-hover:translate-x-1">arrow_forward</span>
+								</div>
 							</div>
 						</div>
 
-						<div class="min-w-0">
-							<h3
-								class="text-lg md:text-xl font-bold leading-snug group-hover:text-primary transition-colors">
-								{{ item.title }}
-							</h3>
-							<p class="mt-2 text-sm md:text-base text-base-content/60 leading-relaxed line-clamp-2">
-								{{ item.summary }}
-							</p>
-							<div class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary">
-								閱讀全文
-								<span
-									class="material-symbols-outlined text-base transition-transform group-hover:translate-x-1">arrow_forward</span>
-							</div>
-						</div>
-
-						<div class="order-first lg:order-none w-full lg:max-w-36 aspect-video lg:aspect-4/3 overflow-hidden rounded-md lg:rounded-none bg-base-200 lg:justify-self-end">
+						<div class="w-24 sm:w-32 lg:w-auto lg:max-w-36 shrink-0 aspect-square lg:aspect-4/3 overflow-hidden rounded-md lg:rounded-none bg-base-200 lg:justify-self-end">
 							<img v-if="item.imageUrl" :src="publicImageUrl(item.imageUrl)" :alt="item.title"
 								class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
 							<div v-else class="flex h-full w-full items-center justify-center">

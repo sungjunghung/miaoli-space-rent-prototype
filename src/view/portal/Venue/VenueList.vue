@@ -116,7 +116,7 @@ function clearSearch() {
     description="立即查看 available 時段，快速找到理想空間。"
     bg-image="/assets/images/bg_admin_login.jpg"
   /> -->
-  <header>
+  <header class=" hidden lg:block">
     <div class=" container mx-auto px-4 py-4 lg:py-10">
       <h1 class="text-2xl lg:text-8xl text-secondary">VENUES</h1>
       <p class="lg:text-xl ml-1 text-primary">場館資訊</p>

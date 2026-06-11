@@ -227,9 +227,9 @@ function onSearchLeave(el: Element, done: () => void) {
         </button>
         </template>
         <template v-else>
-          <strong class="lg:hidden" v-if="!isQuickSearchVisible">
+          <div class="lg:hidden w-full text-center py-2 font-semibold" v-if="!isQuickSearchVisible">
             {{ pageTitle }}
-          </strong>
+          </div>
         </template>
         <div v-if="!isQuickSearchVisible" @click="toggleQuickSearch"
           class=" hidden lg:flex bg-base-200 rounded-full w-full lg:w-fit py-2 items-center gap-2 cursor-pointer select-none">
