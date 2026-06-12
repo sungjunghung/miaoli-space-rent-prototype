@@ -77,7 +77,7 @@ function iconForSection(title: string) {
   <!-- <PageHeaderBasic title="常見問題與注意事項" description="整理租借流程、費用付款、場地使用與會員帳號常見疑問。"
     bg-image="/assets/images/bg_admin_login.jpg" /> -->
 
-  <header>
+  <header class="hidden lg:block">
     <div class=" container mx-auto px-4 py-4 lg:py-10">
       <h1 class="text-2xl lg:text-8xl text-secondary">FAQ</h1>
       <p class="lg:text-xl ml-1 text-primary">常見問題</p>

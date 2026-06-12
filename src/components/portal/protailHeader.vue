@@ -193,6 +193,7 @@ function onSearchLeave(el: Element, done: () => void) {
   <div class="w-full rounded-none sticky top-0 transition-all duration-300 z-50 bg-base-100 " :class="{
     'backdrop-blur-md shadow-xl bg-base-100/65': isScrolled && !isQuickSearchVisible,
     'shadow-xl': isQuickSearchVisible,
+    'hidden lg:block': isHomePage,
   }">
     <!-- <div class="navbar bg-base-100 shadow-sm lg:hidden">
     <div class="navbar-start">
@@ -221,7 +222,8 @@ function onSearchLeave(el: Element, done: () => void) {
       </div>
       <div class="navbar-center flex-1 lg:flex-none">
         <template v-if="isHomePage  && !isQuickSearchVisible"> 
-        <button class="btn btn-ghost text-xl normal-case text-primary lg:hidden" @click="$router.push('/')">
+        
+        <button class="btn btn-ghost text-xl normal-case text-primary lg:hidden w-full" @click="$router.push('/')">
           <img src="../../assets/images/logo.svg" alt="" class="w-10">
           <span class="font-semibold mb-1">苗栗縣體育場館預約系統</span>
         </button>
@@ -261,7 +263,7 @@ function onSearchLeave(el: Element, done: () => void) {
       </div>
       <div class="navbar-end  md:flex w-fit lg:w-1/2">
 
-        <button class="btn btn-ghost btn-square lg:hidden" v-if="!isQuickSearchVisible" @click="toggleQuickSearch">
+        <button class="btn btn-ghost btn-square lg:hidden" v-if="!isQuickSearchVisible && !isHomePage" @click="toggleQuickSearch">
           <span class="material-symbols-outlined text-2xl">search</span>
         </button>
         <ul class="menu menu-md xl:menu-lg xl:gap-1 xl:mr-3 text-secondary-700  menu-horizontal hidden lg:flex">

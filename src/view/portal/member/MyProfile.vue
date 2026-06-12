@@ -25,7 +25,7 @@
               <input type="text" class="input w-full" :value="identityLabel" disabled />
             </fieldset>
           </div>
-          <button class="btn btn-primary btn-sm">
+          <button class="btn btn-primary w-full lg:w-fit">
             <span class="material-symbols-outlined text-base">save</span>
             儲存
           </button>

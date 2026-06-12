@@ -1,6 +1,6 @@
 <template>
 	<!-- Hero Section -->
-	<div class="relative min-h-[calc(100dvh-8rem)] lg:min-h-[50dvh] flex items-center justify-center overflow-hidden  pb-4 pt-16 ">
+	<div class="relative min-h-[calc(100dvh-5rem-env(safe-area-inset-bottom))] lg:min-h-[50dvh] flex items-center justify-center py-10 ">
 		<!-- Background Image with Overlay -->
 		<div class="absolute inset-0 z-0 bg-slate-900 overflow-hidden">
 			<div class="absolute -inset-y-[35%] inset-x-0 will-change-transform" :style="heroParallaxStyle">
@@ -28,6 +28,7 @@
 			<div class="flex flex-col items-center justify-center gap-10">
 				<!-- Text Content -->
 				<div class="text-center space-y-8 max-w-3xl">
+					
 					<div class="space-y-4">
 						<h1
 							class="text-4xl sm:text-5xl lg:text-7xl font-heading font-extrabold text-white leading-[1.1] tracking-tight animate-fade-in-up [animation-delay:200ms]">
@@ -40,20 +41,42 @@
 							無論是國際賽事、商務會議還是親子活動，我們提供多元專業的場地選擇，滿足您的一站式租借需求。
 						</p>
 					</div>
-
+					<!-- 行動版首頁搜尋:桌機由頁首釘選的搜尋列負責,故僅手機顯示 -->
+					<div class="lg:hidden rounded-box bg-base-100 backdrop-blur-md p-4 shadow-xl text-left space-y-3">
+						<div role="tablist" class="relative flex w-full rounded-full bg-base-200 p-1">
+							<span
+								class="absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-secondary shadow transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+								:class="searchMode === 'multi' ? 'translate-x-full' : 'translate-x-0'"></span>
+							<button type="button" role="tab"
+								class="relative z-10 flex-1 flex items-center justify-center rounded-full py-2 transition-colors duration-300"
+								:class="searchMode === 'daily' ? 'text-secondary-content' : 'text-base-content/60'"
+								:aria-selected="searchMode === 'daily'" @click="searchMode = 'daily'">
+								<img src="@/assets/images/daily.svg" alt="" class="w-5 mr-2">
+								時段租借
+							</button>
+							<button type="button" role="tab"
+								class="relative z-10 flex-1 flex items-center justify-center rounded-full py-2 transition-colors duration-300"
+								:class="searchMode === 'multi' ? 'text-secondary-content' : 'text-base-content/60'"
+								:aria-selected="searchMode === 'multi'" @click="searchMode = 'multi'">
+								<img src="@/assets/images/multi.svg" alt="" class="w-5 mr-2">
+								多日租借
+							</button>
+						</div>
+						<QuickSearch v-model:mode="searchMode" />
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<!-- Main Content Section -->
-	<div class="container mx-auto px-4 py-20 space-y-24">
+	<div class="container mx-auto">
 
 		<!-- Booking Heatmap Calendar -->
 		<section>
-			<div class="flex flex-col gap-4 mb-12 sm:flex-row sm:items-center sm:justify-between">
+			<header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-4 py-6 lg:px-0 lg:py-8">
 				<div>
-					<h2 class="text-3xl font-heading font-bold text-base-content mb-2">
-						場館預約熱度
+					<h2 class="text-xl lg:text-3xl font-heading font-bold text-base-content mb-2">
+						場館預約概況
 					</h2>
 					<p class="">紅色為該場館已有預約的日期,規劃前可先參考</p>
 				</div>
@@ -61,7 +84,7 @@
 					<option :value="-1">全部場館(預約熱度)</option>
 					<option v-for="v in venueOptions" :key="v.id" :value="v.id">{{ v.name }}</option>
 				</select>
-			</div>
+			</header>
 	
 			<div class="bg-base-100 border border-base-200 p-6 rounded-box">
 	
@@ -88,18 +111,18 @@
 
 		<!-- News Section -->
 		<section>
-			<div class="flex flex-col gap-3 mb-12 sm:flex-row sm:items-end sm:justify-between">
+			<header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-4 py-6 lg:px-0 lg:py-8">
 				<div>
 					<h2 class="text-3xl font-heading font-bold text-base-content mb-2">
 						最新消息
 					</h2>
 					<p class="">場館公告、活動資訊與維護通知</p>
 				</div>
-				<router-link to="/news" class="btn btn-ghost self-start sm:self-auto">
+				<router-link to="/news" class="btn btn-ghost self-start sm:self-auto hidden lg:inline-flex">
 					查看全部
 					<span class="material-symbols-outlined">arrow_forward</span>
 				</router-link>
-			</div>
+			</header>
 
 			<!-- 列表版型與 NewsList 內頁一致 -->
 			<div class="bg-base-100 border border-base-200 divide-y divide-base-200 overflow-hidden">
@@ -145,7 +168,7 @@
 				</router-link>
 			</div>
 
-			<div class="mt-8 text-center sm:hidden">
+			<div class="mt-8 text-center sm:hidden px-4 mb-12">
 				<router-link to="/news" class="btn btn-outline w-full">
 					查看全部消息
 				</router-link>
@@ -189,7 +212,11 @@ import mockNews from "@/mocks/news.json";
 import mockBookings from "@/mocks/generateBookings";
 import mockVenues from "@/mocks/venues.json";
 import MonthCalendar from '@/components/portal/calendar/MonthCalendar.vue';
+import QuickSearch from '@/components/portal/quickSearch.vue';
 import { publicImageUrl } from '@/utils/assets'
+
+// 行動版首頁搜尋的租借方式:daily=時段租借、multi=多日租借
+const searchMode = ref<'daily' | 'multi'>('daily')
 
 // 月曆顯示預約熱度;JSON 型別過寬,用 any 餵給 MonthCalendar 的 BookingRecord[]
 const bookings = mockBookings as any[]
