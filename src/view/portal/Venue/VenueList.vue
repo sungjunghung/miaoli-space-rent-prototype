@@ -123,9 +123,9 @@ function clearSearch() {
     </div>
   </header>
 
-    <div class="container mx-auto px-4 lg:px-0 py-4 lg:py-24">
+  <div class="basis-ccontainer">
 
-      <section v-if="searchSummary" class="mb-8 flex items-center justify-between gap-4 flex-wrap border-l-4 border-primary pl-4">
+      <section v-if="searchSummary" class="mb-8 flex items-center justify-between gap-4 flex-wrap border-l-4 border-primary p-4 bg-base-100">
         <div>
           <p class="text-xs text-base-content/50 tracking-widest font-semibold">搜尋條件</p>
           <p class="text-base md:text-lg font-bold mt-1">{{ searchSummary }}</p>

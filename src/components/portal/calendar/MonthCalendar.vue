@@ -42,6 +42,8 @@ interface Props {
   defaultView?: 'month' | 'week';
   /** 是否顯示「週/月」切換鈕;預設不顯示,有需要切換才開啟 */
   showViewToggle?: boolean;
+  /** 是否顯示「本週/本月」快速回到今天的按鈕;預設不顯示 */
+  showTodayButton?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -60,6 +62,7 @@ const props = withDefaults(defineProps<Props>(), {
   lockView: undefined,
   defaultView: 'month',
   showViewToggle: false,
+  showTodayButton: false,
 });
 
 // 是否有任何事件要顯示在格子裡(影響桌機版的格子高度與排版)
@@ -220,6 +223,21 @@ const goNext = (): void => {
   }
 };
 
+// 回到今天:週視圖跳到本週、月視圖跳到本月
+const goToday = (): void => {
+  currentMonth.value = new Date();
+};
+const todayLabel = computed(() => (view.value === 'week' ? '本週' : '本月'));
+// 目前錨點已經落在今天所在的週/月時,按鈕無需強調(disabled)
+const isOnCurrentPeriod = computed(() => {
+  const now = new Date();
+  if (view.value === 'week') {
+    return weekStartOf(currentMonth.value).getTime() === weekStartOf(now).getTime();
+  }
+  return currentMonth.value.getFullYear() === now.getFullYear() &&
+    currentMonth.value.getMonth() === now.getMonth();
+});
+
 const isToday = (date: Date): boolean =>
   date.toDateString() === new Date().toDateString();
 
@@ -270,8 +288,15 @@ function canSelectDate(date: Date): boolean {
         <button @click="goNext" class="btn btn-square btn-ghost">
           <span class="material-symbols-outlined text-base-content shrink-0 mt-0.5">chevron_right</span>
         </button>
+        <button
+          v-if="showTodayButton"
+          type="button"
+          class="btn btn-sm btn-outline ml-1"
+          :disabled="isOnCurrentPeriod"
+          @click="goToday"
+        >{{ todayLabel }}</button>
       </div>
-      <div v-if="showViewToggle && !lockView" role="tablist" class="tabs tabs-box tabs-sm">
+      <div v-if="showViewToggle && !lockView" role="tablist" class="tabs tabs-box tabs-sm hidden lg:flex">
         <button
           type="button"
           role="tab"

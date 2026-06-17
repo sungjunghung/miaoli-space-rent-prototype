@@ -1,6 +1,6 @@
 <template>
 	<!-- Hero Section -->
-	<div class="relative min-h-[calc(100dvh-5rem-env(safe-area-inset-bottom))] lg:min-h-[50dvh] flex items-center justify-center py-10 ">
+	<div class="relative min-h-[calc(100dvh-5rem-env(safe-area-inset-bottom))] lg:min-h-[calc(100dvh-5rem)] flex items-start justify-center pt-[14vh] lg:pt-[15vh] pb-10 ">
 		<!-- Background Image with Overlay -->
 		<div class="absolute inset-0 z-0 bg-slate-900 overflow-hidden">
 			<div class="absolute -inset-y-[35%] inset-x-0 will-change-transform" :style="heroParallaxStyle">
@@ -29,20 +29,21 @@
 				<!-- Text Content -->
 				<div class="text-center space-y-8 max-w-3xl">
 					
-					<div class="space-y-4">
+					<div class="space-y-5">
+							<p class="sport-eyebrow justify-center animate-fade-in-up [animation-delay:100ms]">MIAOLI SPORTS VENUE</p>
 						<h1
-							class="text-4xl sm:text-5xl lg:text-7xl font-heading font-extrabold text-white leading-[1.1] tracking-tight animate-fade-in-up [animation-delay:200ms]">
+							class="sport-title text-white whitespace-nowrap text-4xl sm:text-5xl lg:text-7xl animate-fade-in-up [animation-delay:200ms]">
 							苗栗
 							<span
-								class="text-transparent bg-clip-text bg-linear-to-r from-primary-400 to-secondary-400">最佳活動空間</span>
+								class="text-primary">最佳活動空間</span>
 						</h1>
 						<p
-							class="text-lg lg:text-xl text-slate-300 font-medium max-w-xl mx-auto leading-relaxed animate-fade-in-up [animation-delay:400ms]">
-							無論是國際賽事、商務會議還是親子活動，我們提供多元專業的場地選擇，滿足您的一站式租借需求。
+							class="text-lg lg:text-xl text-slate-200 font-medium max-w-xl mx-auto leading-relaxed text-balance animate-fade-in-up [animation-delay:400ms]">
+							國際賽事、商務會議、親子活動,多元專業場地一站式租借。
 						</p>
 					</div>
-					<!-- 行動版首頁搜尋:桌機由頁首釘選的搜尋列負責,故僅手機顯示 -->
-					<div class="lg:hidden rounded-box bg-base-100 backdrop-blur-md p-4 shadow-xl text-left space-y-3">
+					<!-- 首頁搜尋:hero 主導,桌機與手機皆顯示(桌機放大) -->
+					<div class="rounded-box bg-base-100/95 backdrop-blur-md p-4 lg:p-6 shadow-2xl text-left space-y-3 lg:max-w-2xl lg:mx-auto">
 						<div role="tablist" class="relative flex w-full rounded-full bg-base-200 p-1">
 							<span
 								class="absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-secondary shadow transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
@@ -68,17 +69,99 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- 數據信任條 -->
+	<section class="bg-secondary text-secondary-content">
+		<div class="container mx-auto px-4 py-10 lg:py-12">
+			<dl class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-secondary-content/15">
+				<div v-for="s in heroStats" :key="s.label" class="flex flex-col items-center text-center gap-2 px-4 py-6 sm:py-3 lg:py-4">
+					<span class="material-symbols-outlined text-3xl lg:text-4xl text-primary">{{ s.icon }}</span>
+					<dd class="flex items-baseline gap-2.5">
+						<span class="font-heading italic font-bold leading-none text-5xl lg:text-6xl tracking-tight">{{ s.value }}</span>
+						<span class="font-heading text-xl lg:text-2xl font-semibold text-secondary-content/60">{{ s.unit }}</span>
+					</dd>
+					<dt class="text-sm lg:text-base tracking-wide text-secondary-content/80">{{ s.label }}</dt>
+				</div>
+			</dl>
+		</div>
+	</section>
+
+	<!-- 精選場館 -->
+	<section class="bg-base-200">
+		<div class="container mx-auto px-4 py-14 lg:py-20">
+			<div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between mb-8 lg:mb-10">
+				<div>
+					<p class="sport-eyebrow">VENUES</p>
+					<h2 class="mt-2 text-3xl lg:text-4xl font-heading font-black text-secondary">精選場館</h2>
+					<p class="mt-2 text-base-content/60">從綜合體育館到專業球場,挑選最適合你的活動空間。</p>
+				</div>
+				<router-link to="/venues" class="btn btn-outline btn-secondary self-start sm:self-auto">
+					瀏覽全部場館
+					<span class="material-symbols-outlined">arrow_forward</span>
+				</router-link>
+			</div>
+
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-16 gap-x-8">
+				<article v-for="v in featuredVenues" :key="v.id" class="m-post group relative">
+					<!-- 整張卡的點擊區(蓋滿,任何位置都可點) -->
+					<router-link :to="{ name: 'venue-detail', params: { id: v.id } }"
+						class="m-post__link absolute inset-0 z-20" :aria-label="v.name"></router-link>
+
+					<!-- 圖片 -->
+					<div class="eyecatch relative aspect-4/3 overflow-hidden rounded-md bg-base-300">
+						<img :src="publicImageUrl(v.mainImageUrl)" :alt="v.name"
+							class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" />
+						<div
+							class="post-link absolute inset-0 transition-[backdrop-filter] duration-300 group-hover:backdrop-blur-[3px]">
+						</div>
+					</div>
+
+					<!-- 標籤(桌機:右下凹陷白卡;手機:圖片下方一般排版) -->
+					<div
+						class="info mt-3 md:mt-0 md:absolute md:right-0 md:bottom-0 md:max-w-[calc(100%-4rem)] md:bg-base-200 md:rounded-tl-[10px] md:pl-8 md:pr-6 md:pt-4 md:pb-4 md:transition-[padding] md:duration-300 md:ease-out md:group-hover:pl-10 md:group-hover:pr-10 md:group-hover:pt-8 md:group-hover:pb-10">
+						<div class="meta flex items-center gap-2 flex-wrap text-xs">
+							<span v-if="v.capacity"
+								class="tag inline-flex items-center gap-1 border border-base-content/25 px-2 py-0.5 leading-none">
+								<span class="material-symbols-outlined text-sm leading-none">groups</span>
+								可容納 {{ v.capacity.toLocaleString() }} 人
+							</span>
+							<span v-else
+								class="tag inline-flex items-center border border-base-content/25 px-2 py-0.5 leading-none">
+								{{ v.type }}
+							</span>
+						</div>
+						<h3 class="title text-xl md:text-2xl font-heading font-black leading-snug mt-2 text-base-content">
+							{{ v.name }}
+						</h3>
+
+						<!-- 操作按鈕:行動版直接顯示;桌機版預設收起,hover 才展開(收起時不可點,讓整卡連結生效) -->
+						<div
+							class="actions relative z-30 flex gap-2 mt-3
+							       md:mt-0 md:max-h-0 md:opacity-0 md:overflow-hidden md:pointer-events-none
+							       md:transition-all md:duration-300 md:ease-out
+							       md:group-hover:mt-3 md:group-hover:max-h-12 md:group-hover:opacity-100 md:group-hover:pointer-events-auto">
+							<router-link :to="{ name: 'venue-booking', params: { id: v.id } }" class="btn btn-primary flex-1">立即租借</router-link>
+							<router-link :to="{ name: 'venue-detail', params: { id: v.id } }"
+								class="btn btn-outline flex-1">場館詳情</router-link>
+						</div>
+					</div>
+				</article>
+			</div>
+		</div>
+	</section>
+
 	<!-- Main Content Section -->
-	<div class="container mx-auto">
+	<div class="container mx-auto py-6 lg:py-10">
+
+
 
 		<!-- Booking Heatmap Calendar -->
 		<section>
 			<header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-4 py-6 lg:px-0 lg:py-8">
 				<div>
-					<h2 class="text-xl lg:text-3xl font-heading font-bold text-base-content mb-2">
-						場館預約概況
-					</h2>
-					<p class="">紅色為該場館已有預約的日期,規劃前可先參考</p>
+					<p class="sport-eyebrow">AVAILABILITY</p>
+					<h2 class="mt-2 text-2xl lg:text-4xl font-heading font-black text-secondary">場館預約概況</h2>
+					<p class="mt-2 text-base-content/60">紅色為該場館已有預約的日期,規劃前可先參考。</p>
 				</div>
 				<select v-model.number="selectedVenueId" class="select select-bordered w-full sm:max-w-xs">
 					<option :value="-1">全部場館(預約熱度)</option>
@@ -93,7 +176,9 @@
 					:counts="dailyCounts"
 					:cell-events="cellEvents"
 					:show-legend="!isAllVenues"
-					:default-view="calendarDefaultView"
+					default-view="week"
+					show-view-toggle
+					show-today-button
 					viewable
 					@select-date="onCalendarDayClick"
 				/>
@@ -108,15 +193,42 @@
 				</div>
 			</div>
 		</section>
+	</div>
 
+	<!-- 預約流程:運動感流程軌道(深藍底 + 巨大橘色號碼坐在連接軌道線上) -->
+	<section class="diag-top -mt-9 bg-secondary text-secondary-content">
+		<div class="container mx-auto px-4 pt-24 pb-16 lg:pt-28 lg:pb-24">
+			<div class="text-center max-w-2xl mx-auto mb-12 lg:mb-16">
+				<p class="sport-eyebrow justify-center">HOW IT WORKS</p>
+				<h2 class="mt-3 sport-title text-3xl lg:text-5xl">四步驟完成預約</h2>
+				<p class="mt-3 text-secondary-content/70">從搜尋到入場,全程線上完成,簡單又快速。</p>
+			</div>
+			<ol class="relative grid gap-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+				<!-- 連接軌道線(桌機;被各號碼的底色切成區段) -->
+				<span class="hidden lg:block absolute top-8 lg:top-9 left-0 right-0 h-0.5 bg-secondary-content/15"></span>
+				<li v-for="(step, i) in bookingSteps" :key="step.title" class="relative flex flex-col items-center text-center">
+					<span class="relative z-10 inline-flex items-center justify-center bg-secondary px-4">
+						<span class="font-heading italic font-bold leading-none text-6xl lg:text-7xl text-primary">{{ String(i + 1).padStart(2, '0') }}</span>
+					</span>
+					<h3 class="mt-5 inline-flex items-center gap-2 text-lg lg:text-xl font-heading font-black">
+						<span class="material-symbols-outlined text-xl text-primary">{{ step.icon }}</span>
+						{{ step.title }}
+					</h3>
+					<p class="mt-2 max-w-[15rem] text-sm leading-relaxed text-secondary-content/70">{{ step.desc }}</p>
+				</li>
+			</ol>
+		</div>
+	</section>
+
+	<!-- Main Content Section: 最新消息 -->
+	<div class="container mx-auto py-14 lg:py-20">
 		<!-- News Section -->
 		<section>
 			<header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-4 py-6 lg:px-0 lg:py-8">
 				<div>
-					<h2 class="text-3xl font-heading font-bold text-base-content mb-2">
-						最新消息
-					</h2>
-					<p class="">場館公告、活動資訊與維護通知</p>
+					<p class="sport-eyebrow">NEWS</p>
+					<h2 class="mt-2 text-2xl lg:text-4xl font-heading font-black text-secondary">最新消息</h2>
+					<p class="mt-2 text-base-content/60">場館公告、活動資訊與維護通知。</p>
 				</div>
 				<router-link to="/news" class="btn btn-ghost self-start sm:self-auto hidden lg:inline-flex">
 					查看全部
@@ -124,49 +236,38 @@
 				</router-link>
 			</header>
 
-			<!-- 列表版型與 NewsList 內頁一致 -->
-			<div class="bg-base-100 border border-base-200 divide-y divide-base-200 overflow-hidden">
-				<router-link v-for="item in latestNews" :key="item.id" :to="`/news/${item.id}`"
-					class="group block transition-colors hover:bg-base-200/40">
-					<article
-						class="flex items-center gap-4 p-4 md:p-5 lg:grid lg:grid-cols-[10rem_minmax(0,1fr)_8.5rem] lg:gap-6 lg:items-center">
-						<!-- 文字區:桌機用 contents 攤平成 meta / content 兩欄,手機則為圖片左側的縱向欄 -->
-						<div class="flex flex-col gap-1 min-w-0 flex-1 lg:contents">
-							<div class="flex flex-row lg:flex-col lg:items-start items-center gap-2 min-w-0">
-								<div class="flex items-center gap-2 shrink-0">
-									<span v-if="item.pinned" class="badge badge-warning badge-sm">置頂</span>
-									<span class="badge badge-neutral badge-sm">{{ item.category }}</span>
-								</div>
-								<p class="text-xs uppercase tracking-[0.24em] text-base-content/40 hidden lg:block">News</p>
-								<p class="text-xs lg:text-sm text-base-content/60 lg:mt-1">{{ formatDate(item.publishedAt) }}</p>
+			<!-- 最新消息:運動排行榜式索引清單(刻意與場館圖卡區隔) -->
+			<ol class="border-t-2 border-base-content/10">
+				<li v-for="(item, i) in latestNews" :key="item.id">
+					<router-link :to="`/news/${item.id}`"
+						class="group flex items-center gap-4 sm:gap-6 border-b border-base-300 px-1 sm:px-2 py-5 sm:py-6 transition-colors hover:bg-base-100">
+						<span
+							class="font-heading italic font-bold leading-none text-3xl sm:text-5xl w-9 sm:w-16 shrink-0 text-center text-base-300 transition-colors group-hover:text-primary">
+							{{ String(i + 1).padStart(2, '0') }}
+						</span>
+						<div class="min-w-0 flex-1">
+							<div class="flex items-center gap-2 mb-1.5">
+								<span v-if="item.pinned" class="badge badge-primary badge-sm border-0">置頂</span>
+								<span class="font-heading uppercase tracking-wider text-xs font-semibold text-secondary">{{ item.category }}</span>
+								<span class="text-base-content/25">/</span>
+								<span class="font-heading text-xs tracking-wide text-base-content/50">{{ formatDate(item.publishedAt) }}</span>
 							</div>
-
-							<div class="min-w-0">
-								<h3
-									class="text-base md:text-xl font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
-									{{ item.title }}
-								</h3>
-								<p class="mt-1 lg:mt-2 text-sm md:text-base text-base-content/60 leading-relaxed line-clamp-2 hidden sm:block">
-									{{ item.summary }}
-								</p>
-								<div class="mt-3 lg:mt-4 hidden lg:inline-flex items-center gap-1 text-sm font-semibold text-primary">
-									閱讀全文
-									<span
-										class="material-symbols-outlined text-base transition-transform group-hover:translate-x-1">arrow_forward</span>
-								</div>
-							</div>
+							<h3
+								class="text-lg sm:text-2xl font-heading font-black leading-snug text-base-content transition-colors group-hover:text-primary line-clamp-1">
+								{{ item.title }}
+							</h3>
+							<p class="mt-1 text-sm text-base-content/60 line-clamp-1 hidden sm:block">{{ item.summary }}</p>
 						</div>
-
-						<div class="w-24 sm:w-32 lg:w-auto lg:max-w-36 shrink-0 aspect-square lg:aspect-4/3 overflow-hidden rounded-md lg:rounded-none bg-base-200 lg:justify-self-end">
-							<img v-if="item.imageUrl" :src="publicImageUrl(item.imageUrl)" :alt="item.title"
-								class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-							<div v-else class="flex h-full w-full items-center justify-center">
-								<span class="material-symbols-outlined text-4xl text-base-content/20">campaign</span>
-							</div>
+						<div v-if="item.imageUrl"
+							class="shrink-0 w-20 h-14 sm:w-28 sm:h-20 overflow-hidden rounded-md bg-base-200">
+							<img :src="publicImageUrl(item.imageUrl)" :alt="item.title"
+								class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
 						</div>
-					</article>
-				</router-link>
-			</div>
+						<span
+							class="material-symbols-outlined shrink-0 text-base-content/30 transition-all group-hover:text-primary group-hover:translate-x-1">arrow_forward</span>
+					</router-link>
+				</li>
+			</ol>
 
 			<div class="mt-8 text-center sm:hidden px-4 mb-12">
 				<router-link to="/news" class="btn btn-outline w-full">
@@ -175,6 +276,21 @@
 			</div>
 		</section>
 	</div>
+
+	<!-- CTA -->
+	<section class="diag-top -mt-9 bg-linear-to-br from-primary to-primary-600 text-primary-content">
+		<div class="container mx-auto px-4 pt-24 pb-16 lg:pt-32 lg:pb-24">
+			<div class="flex flex-col items-center text-center gap-6">
+				<h2 class="sport-title text-4xl lg:text-6xl max-w-3xl">準備好預約<span class="text-base-100/40">了嗎?</span></h2>
+				<p class="text-primary-content/85 max-w-xl text-base lg:text-lg">立即查詢可租借時段,線上完成苗栗縣體育場館預約。</p>
+				<router-link to="/venues"
+					class="btn btn-lg bg-base-100 text-primary hover:bg-base-200 border-0 shadow-lg">
+					立即尋找場地
+					<span class="material-symbols-outlined">arrow_forward</span>
+				</router-link>
+			</div>
+		</div>
+	</section>
 
 	<!-- 預約清單 modal:點月曆某天時顯示當日的預約簡要列表 -->
 	<dialog ref="bookingsModal" class="modal">
@@ -218,6 +334,26 @@ import { publicImageUrl } from '@/utils/assets'
 // 行動版首頁搜尋的租借方式:daily=時段租借、multi=多日租借
 const searchMode = ref<'daily' | 'multi'>('daily')
 
+// ── 首頁內容區 ──
+// 精選場館:取頂層(無 parentId)、可租借的場館;首頁展示前 6 筆
+const topVenues = (mockVenues as any[]).filter(v => !v.parentId && v.status === 'available')
+const featuredVenues = topVenues.slice(0, 6)
+
+// 數據信任條
+const heroStats = [
+  { icon: 'stadium', value: String(topVenues.length), unit: '座', label: '可租借場館' },
+  { icon: 'event_available', value: '3', unit: '種', label: '彈性租借方式' },
+  { icon: 'bolt', value: '24', unit: 'h', label: '線上即時預約' },
+]
+
+// 預約流程
+const bookingSteps = [
+  { icon: 'search', title: '搜尋場地', desc: '選擇日期與租借方式,快速找到合適的場館。' },
+  { icon: 'event_available', title: '線上預約', desc: '挑選時段、填寫租借資料,即時送出申請。' },
+  { icon: 'receipt_long', title: '確認繳費', desc: '審核通過後,於期限內完成線上繳費。' },
+  { icon: 'sports_handball', title: '入場使用', desc: '依預約時段前往場館,盡情享受活動。' },
+]
+
 // 月曆顯示預約熱度;JSON 型別過寬,用 any 餵給 MonthCalendar 的 BookingRecord[]
 const bookings = mockBookings as any[]
 const venueOptions = mockVenues.map(v => ({ id: v.id, name: v.name }))
@@ -228,15 +364,6 @@ const isAllVenues = computed(() => selectedVenueId.value === -1)
 const filteredBookings = computed(() =>
   isAllVenues.value ? [] : bookings.filter(b => b.venueId === selectedVenueId.value)
 )
-
-// 行動版(<lg)月曆預設顯示「週」,桌機顯示「月」
-const calendarMq = window.matchMedia('(max-width: 1023px)')
-const calendarDefaultView = ref<'week' | 'month'>(calendarMq.matches ? 'week' : 'month')
-const onCalendarMqChange = (e: MediaQueryListEvent) => {
-  calendarDefaultView.value = e.matches ? 'week' : 'month'
-}
-onMounted(() => calendarMq.addEventListener('change', onCalendarMqChange))
-onUnmounted(() => calendarMq.removeEventListener('change', onCalendarMqChange))
 
 // 熱度模式:聚合每天有多少筆預約跨越該日(daily 含 start~end 區間,hourly 取當日)
 const dailyCounts = computed<Record<string, number>>(() => {
@@ -441,3 +568,28 @@ onUnmounted(() => {
 	window.removeEventListener('scroll', onHeroParallaxScroll);
 });
 </script>
+
+<style scoped>
+/* 精選場館卡片:沿用 VenueList 的 misakigumi 右下角凹陷(只在桌機顯示) */
+@media (min-width: 768px) {
+	.m-post .info::before,
+	.m-post .info::after {
+		content: "";
+		position: absolute;
+		width: 10px;
+		height: 10px;
+		background-image: url("data:image/svg+xml;base64,PHN2ZyBmaWxsPSJub25lIiBoZWlnaHQ9IjEwIiB2aWV3Qm94PSIwIDAgMTAgMTAiIHdpZHRoPSIxMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMTAgMTBoLTEwYzUuNTIyODUgMCAxMC00LjQ3NzE1IDEwLTEweiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==");
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+	.m-post .info::before {
+		right: 0;
+		top: -10px;
+	}
+	.m-post .info::after {
+		left: -10px;
+		bottom: 0;
+	}
+}
+</style>

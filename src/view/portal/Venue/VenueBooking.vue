@@ -355,9 +355,7 @@ const sessionDefs = computed(() => (venue.value?.rentalModes.session?.sessions ?
     </main>
 
     <!-- Sticky Footer -->
-    <div
-      class="sticky  bottom-0 left-0 right-0 z-50 bg-base-100 backdrop-blur-lg border-t border-base-200 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-      <div class="max-w-5xl mx-auto px-4 py-3 pb-6 md:pb-3">
+    <div class="mt-8 flex flex-wrap gap-3 fixed bottom-20 left-0 right-0 p-4 bg-base-100/90 backdrop-blur-sm border-t border-base-200 lg:hidden justify-center z-20">
         <div class="flex items-center justify-between gap-4">
           <div class="flex-1">
             <div v-if="totalPrice > 0" class="space-y-0.5">
@@ -371,7 +369,7 @@ const sessionDefs = computed(() => (venue.value?.rentalModes.session?.sessions ?
             下一步
           </button>
         </div>
-      </div>
+    
     </div>
   </template>
 </template>

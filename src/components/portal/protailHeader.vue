@@ -49,10 +49,9 @@ const showQuickSearch = ref(false)
 const isScrolled = ref(false)
 // 租借方式:由 navbar 的 tabs 控制,下傳給 QuickSearch
 const searchMode = ref<'daily' | 'multi'>('daily')
-// lg 斷點(1024px)以上視為桌機;手機版不自動展開搜尋框,需手動按下搜尋鈕
-const isDesktop = ref(window.matchMedia('(min-width: 768px)').matches)
 const isHomePage = computed(() => route.path === '/')
-const shouldPinQuickSearch = computed(() => isDesktop.value && isHomePage.value && !isScrolled.value)
+// 首頁搜尋改由 hero 主導,頁首不再自動釘選展開(避免雙搜尋框);使用者仍可點搜尋鈕手動展開
+const shouldPinQuickSearch = computed(() => false)
 const isQuickSearchVisible = computed(() => shouldPinQuickSearch.value || showQuickSearch.value)
 
 // 搜尋以覆蓋層展開時(= 有深色 backdrop;已排除首頁桌機 pinned)鎖住背景捲動
@@ -85,19 +84,12 @@ const handleScroll = () => {
   isScrolled.value = window.scrollY >= 120
 }
 
-const desktopMq = window.matchMedia('(min-width: 768px)')
-const handleMqChange = (e: MediaQueryListEvent) => {
-  isDesktop.value = e.matches
-}
-
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
-  desktopMq.addEventListener('change', handleMqChange)
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
-  desktopMq.removeEventListener('change', handleMqChange)
   setScrollLock(false) // 離開頁面時務必解除鎖定,避免殘留
 })
 
@@ -190,9 +182,9 @@ function onSearchLeave(el: Element, done: () => void) {
 </script>
 <template>
 
-  <div class="w-full rounded-none sticky top-0 transition-all duration-300 z-50 bg-base-100 " :class="{
-    'backdrop-blur-md shadow-xl bg-base-100/65': isScrolled && !isQuickSearchVisible,
-    'shadow-xl': isQuickSearchVisible,
+  <div class="w-full rounded-none sticky top-0 transition-all duration-300 z-50 bg-base-100 border-b border-base-200" :class="{
+    'backdrop-blur-md shadow-lg bg-base-100/80 border-transparent': isScrolled && !isQuickSearchVisible,
+    'shadow-xl border-transparent': isQuickSearchVisible,
     'hidden lg:block': isHomePage,
   }">
     <!-- <div class="navbar bg-base-100 shadow-sm lg:hidden">
@@ -210,14 +202,19 @@ function onSearchLeave(el: Element, done: () => void) {
       </button>
     </div>
   </div> -->
-    <div class="navbar">
-      <div class="navbar-start w-fit lg:w-1/2">
-        <button v-if="!isHomePage && !isQuickSearchVisible" class="btn btn-ghost btn-square" @click="$router.back()">
+    <div class="navbar gap-1">
+      <div class="navbar-start w-fit lg:w-auto lg:flex-1">
+        <button v-if="!isHomePage && !isQuickSearchVisible" class="btn btn-ghost btn-square lg:hidden" @click="$router.back()">
           <span class="material-symbols-outlined text-2xl">arrow_back</span>
         </button>
-        <button class="btn btn-ghost text-xl normal-case text-primary hidden lg:flex" @click="$router.push('/')">
-          <img src="../../assets/images/logo.svg" alt="" class="w-10">
-          <span class="hidden lg:block font-semibold mb-1">苗栗縣體育場館預約系統</span>
+        <button
+          class="hidden lg:flex items-center gap-3 rounded-box px-2 py-1.5 transition-colors hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary cursor-pointer"
+          @click="$router.push('/')" aria-label="回首頁">
+          <img src="../../assets/images/logo.svg" alt="苗栗縣體育場館預約系統" class="w-10 h-10 shrink-0">
+          <span class="flex flex-col items-start leading-none">
+            <span class="text-[0.65rem] font-medium tracking-[0.18em] text-secondary/60">MIAOLI SPORTS VENUE</span>
+            <span class="mt-1 text-lg font-bold text-secondary whitespace-nowrap">苗栗縣體育場館預約系統</span>
+          </span>
         </button>
       </div>
       <div class="navbar-center flex-1 lg:flex-none">
@@ -233,13 +230,16 @@ function onSearchLeave(el: Element, done: () => void) {
             {{ pageTitle }}
           </div>
         </template>
-        <div v-if="!isQuickSearchVisible" @click="toggleQuickSearch"
-          class=" hidden lg:flex bg-base-200 rounded-full w-full lg:w-fit py-2 items-center gap-2 cursor-pointer select-none">
+        <button v-if="!isQuickSearchVisible" type="button" @click="toggleQuickSearch"
+          class="hidden lg:flex group items-center gap-3 rounded-full border border-base-300 bg-base-100 pl-5 pr-2 py-2 shadow-sm hover:shadow-md hover:border-secondary/40 transition-all duration-200 cursor-pointer select-none">
           <img v-if="searchMethod === 'hourly'" src="../../assets/images/daily.svg" alt="" class="w-5 shrink-0">
           <img v-else-if="searchMethod === 'daily'" src="../../assets/images/multi.svg" alt="" class="w-5 shrink-0">
-          <span v-else class="material-symbols-outlined shrink-0">search</span>
-          <span>{{ searchConditionsText }}</span>
-        </div>
+          <span class="text-sm font-medium text-base-content/80 whitespace-nowrap">{{ searchConditionsText }}</span>
+          <span
+            class="grid place-items-center w-9 h-9 rounded-full bg-primary text-primary-content shrink-0 transition-transform duration-200 group-hover:scale-105">
+            <span class="material-symbols-outlined text-xl">search</span>
+          </span>
+        </button>
         <div v-if="isQuickSearchVisible" role="tablist" class="relative flex w-full rounded-full bg-base-200 p-1">
           <!-- 滑動指示器:在兩個 tab 之間平滑左右移動 -->
           <span
@@ -261,16 +261,22 @@ function onSearchLeave(el: Element, done: () => void) {
           </button>
         </div>
       </div>
-      <div class="navbar-end  md:flex w-fit lg:w-1/2">
+      <div class="navbar-end md:flex w-fit lg:flex-1 gap-1">
 
         <button class="btn btn-ghost btn-square lg:hidden" v-if="!isQuickSearchVisible && !isHomePage" @click="toggleQuickSearch">
           <span class="material-symbols-outlined text-2xl">search</span>
         </button>
-        <ul class="menu menu-md xl:menu-lg xl:gap-1 xl:mr-3 text-secondary-700  menu-horizontal hidden lg:flex">
-          <li v-for="link in navLinks" :key="link.to"><router-link :to="link.to">{{ link.label }}</router-link></li>
-        </ul>
+        <nav class="hidden lg:flex items-center gap-0.5 xl:gap-1 xl:mr-2">
+          <router-link v-for="link in navLinks" :key="link.to" :to="link.to"
+            class="px-3 xl:px-3.5 py-2 rounded-full text-sm xl:text-[0.95rem] font-medium transition-colors duration-200 whitespace-nowrap"
+            :class="isNavActive(link.to)
+              ? 'text-primary bg-primary/10'
+              : 'text-secondary/80 hover:text-secondary hover:bg-base-200'">
+            {{ link.label }}
+          </router-link>
+        </nav>
         <template v-if="!authStore.isLoggedIn">
-          <router-link to="/login" class="btn btn-primary hidden lg:flex">登入</router-link>
+          <router-link to="/login" class="btn btn-primary hidden lg:flex ml-1">登入</router-link>
         </template>
         <template v-else>
           <div class="dropdown dropdown-end hidden lg:block">

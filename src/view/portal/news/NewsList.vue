@@ -13,8 +13,8 @@
     </div>
   </header>
 
-  <main class="bg-base-200/60 min-h-screen">
-    <div class="container mx-auto p-0 lg:py-10">
+  <main class="basis-ccontainer-flush ">
+
       <div class="grid lg:gap-8 lg:grid-cols-[12rem_minmax(0,1fr)]">
 
         <!-- 左側目錄篩選 -->
@@ -22,7 +22,7 @@
           <p class="uppercase tracking-[0.24em] text-base-content/40 mb-3 hidden lg:block">分類</p>
 
           <!-- 手機:下拉選單 -->
-          <div class="lg:hidden p-4">
+          <div class="lg:hidden px-4 mb-4">
             <select v-model="selectedCategory" class="select w-full ">
               <option v-for="cat in categoryOptions" :key="cat.value" :value="cat.value">
                 {{ cat.label }}（{{ cat.count }}）
@@ -46,55 +46,46 @@
 
         <!-- 右側消息列表:一則一個獨立橫幅 -->
         <section class="lg:space-y-4">
-          <router-link v-for="item in filteredNews" :key="item.id" :to="`/news/${item.id}`"
-            class="group block bg-base-100 border border-base-200 hover:border-primary hover:shadow-md transition-all">
-            <article
-              class="flex items-center gap-4 p-4 md:p-8 lg:grid lg:grid-cols-[10rem_minmax(0,1fr)_8.5rem] lg:gap-6 lg:items-center">
-              <!-- 文字區:桌機用 contents 攤平成 meta / content 兩欄,手機則為圖片右側的縱向欄 -->
-              <div class="flex flex-col gap-1 min-w-0 flex-1 lg:contents">
-                <div class="flex flex-row lg:flex-col lg:items-start items-center gap-2 min-w-0">
-                  <div class="flex items-center gap-2 shrink-0">
-                    <span v-if="item.pinned" class="badge badge-warning badge-sm">置頂</span>
-                    <span class="badge badge-neutral badge-sm">{{ item.category }}</span>
+          <!-- 消息列表:與首頁一致的運動排行榜式索引清單 -->
+          <ol class="border-t-2 border-base-content/10">
+            <li v-for="(item, i) in filteredNews" :key="item.id">
+              <router-link :to="`/news/${item.id}`"
+                class="group flex items-center gap-4 sm:gap-6 border-b border-base-300 px-1 sm:px-2 py-5 sm:py-6 transition-colors hover:bg-base-100">
+                <span
+                  class="font-heading italic font-bold leading-none text-3xl sm:text-5xl w-9 sm:w-16 shrink-0 text-center text-base-300 transition-colors group-hover:text-primary">
+                  {{ String(i + 1).padStart(2, '0') }}
+                </span>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-2 mb-1.5">
+                    <span v-if="item.pinned" class="badge badge-primary badge-sm border-0">置頂</span>
+                    <span class="font-heading uppercase tracking-wider text-xs font-semibold text-secondary">{{ item.category }}</span>
+                    <span class="text-base-content/25">/</span>
+                    <span class="font-heading text-xs tracking-wide text-base-content/50">{{ formatDate(item.publishedAt) }}</span>
                   </div>
-                  <p class="text-xs lg:text-sm text-base-content/60 lg:mt-1">{{ formatDate(item.publishedAt) }}</p>
-                </div>
-
-                <div class="min-w-0">
                   <h3
-                    class="text-base md:text-xl font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                    class="text-lg sm:text-2xl font-heading font-black leading-snug text-base-content transition-colors group-hover:text-primary line-clamp-1">
                     {{ item.title }}
                   </h3>
-                  <p
-                    class="mt-1 lg:mt-2 text-sm md:text-base text-base-content/60 leading-relaxed line-clamp-2 hidden sm:block">
-                    {{ item.summary }}
-                  </p>
-                  <div class="mt-3 lg:mt-4 hidden lg:inline-flex items-center gap-1 text-sm font-semibold text-primary">
-                    閱讀全文
-                    <span
-                      class="material-symbols-outlined text-base transition-transform group-hover:translate-x-1">arrow_forward</span>
-                  </div>
+                  <p class="mt-1 text-sm text-base-content/60 line-clamp-1 hidden sm:block">{{ item.summary }}</p>
                 </div>
-              </div>
-
-              <div
-                class="w-24 sm:w-32 lg:w-auto lg:max-w-36 shrink-0 aspect-square lg:aspect-4/3 overflow-hidden rounded-md lg:rounded-none bg-base-200 lg:justify-self-end">
-                <img v-if="item.imageUrl" :src="publicImageUrl(item.imageUrl)" :alt="item.title"
-                  class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                <div v-else class="flex h-full w-full items-center justify-center">
-                  <span class="material-symbols-outlined text-4xl text-base-content/20">campaign</span>
+                <div v-if="item.imageUrl"
+                  class="shrink-0 w-20 h-14 sm:w-28 sm:h-20 overflow-hidden rounded-md bg-base-200">
+                  <img :src="publicImageUrl(item.imageUrl)" :alt="item.title"
+                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                 </div>
-              </div>
-            </article>
-          </router-link>
+                <span
+                  class="material-symbols-outlined shrink-0 text-base-content/30 transition-all group-hover:text-primary group-hover:translate-x-1">arrow_forward</span>
+              </router-link>
+            </li>
+          </ol>
 
-          <div v-if="filteredNews.length === 0" class="bg-base-100 border border-base-200 p-10 text-center">
+          <div v-if="filteredNews.length === 0" class="border-t-2 border-base-content/10 p-10 text-center">
             <span class="material-symbols-outlined text-5xl text-base-content/25">campaign</span>
             <p class="font-semibold mt-3">此分類目前沒有消息</p>
           </div>
         </section>
       </div>
-    </div>
+
   </main>
 </template>
 

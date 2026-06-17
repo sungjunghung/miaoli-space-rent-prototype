@@ -1,12 +1,39 @@
 @layer vendor;
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Oswald:wght@500;600;700&display=swap');
 @import 'material-symbols/outlined.css' layer(vendor);
 @import "tailwindcss";
+
+/* 運動感 display 字:Oswald(拉丁/數字呈現體育場條紋字),中文 fallback 用 Noto Sans TC 黑體 */
+@theme {
+  --font-heading: "Oswald", "Noto Sans TC", sans-serif;
+}
 
 @layer base {
   html {
     font-family: "Noto Sans TC", sans-serif;
     scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* 運動感小標:Oswald 大寫條紋字 + 橘色短斜槓 */
+  .sport-eyebrow {
+    @apply inline-flex items-center gap-2.5 font-heading uppercase font-semibold text-sm tracking-[0.18em] text-primary;
+  }
+  .sport-eyebrow::before {
+    content: "";
+    @apply inline-block h-[3px] w-7 -skew-x-12 bg-primary;
+  }
+  /* 運動感大標:超粗斜體,帶速度感 */
+  .sport-title {
+    @apply font-heading font-black italic tracking-tight leading-[0.95];
+  }
+  /* 斜切色塊:區塊頂部斜邊,製造動態切割感 */
+  .diag-top {
+    clip-path: polygon(0 2.2rem, 100% 0, 100% 100%, 0 100%);
+  }
+  .diag-bottom {
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 2.2rem), 0 100%);
   }
 }
 
@@ -294,4 +321,12 @@
   dd {
     @apply text-base-content mb-4 ml-2;
   }
+}
+
+.basis-ccontainer {
+  @apply container mx-auto px-4 lg:px-0 pt-8 pb-32 lg:pb-12;
+}
+
+.basis-ccontainer-flush {
+  @apply container mx-auto pt-8 pb-32 lg:pb-12;
 }

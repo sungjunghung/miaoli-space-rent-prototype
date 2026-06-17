@@ -335,7 +335,7 @@ function formatMoney(value: number | null | undefined) {
     </div>
   </div>
 
-  <main v-else class="bg-base-200/60">
+  <main v-else>
     <section class="relative overflow-hidden bg-neutral flex flex-col h-[calc(100dvh-5rem-4rem)] pb-4 lg:block lg:h-auto lg:pb-16">
       <Transition name="hero-fade">
         <img :key="heroImage" :src="heroImage" :alt="venue.name" :style="heroParallaxStyle"
@@ -363,12 +363,12 @@ function formatMoney(value: number | null | undefined) {
           </p>
         </div>
 
-                <div class="mt-8 flex flex-wrap gap-3">
-          <button v-if="venue.status === 'available'" class="btn btn-primary btn-lg" @click="goToBooking">
+        <div class="mt-8 flex flex-wrap gap-3 fixed bottom-20 left-0 right-0 p-4 bg-base-100/90 backdrop-blur-sm border-t border-base-200 lg:hidden justify-center z-20">
+          <button v-if="venue.status === 'available'" class="btn btn-primary" @click="goToBooking">
             立即預約
             <span class="material-symbols-outlined">arrow_forward</span>
           </button>
-          <button class="btn btn-secondary btn-lg" @click="scrollToCalendar">
+          <button class="btn btn-secondary" @click="scrollToCalendar">
             查看可預約時段
           </button>
         </div>
@@ -399,7 +399,7 @@ function formatMoney(value: number | null | undefined) {
       </section>
     </section>
 
-    <div class="container mx-auto px-4 lg:px-8 pb-10 z-40 relative">
+    <div class="basis-ccontainer">
       <div class="flex flex-col lg:flex-row gap-8 lg:gap-10 mb-8">
 
         <aside class="w-full lg:w-1/3 space-y-8">
