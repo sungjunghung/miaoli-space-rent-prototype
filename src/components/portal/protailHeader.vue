@@ -230,7 +230,7 @@ function onSearchLeave(el: Element, done: () => void) {
             {{ pageTitle }}
           </div>
         </template>
-        <button v-if="!isQuickSearchVisible" type="button" @click="toggleQuickSearch"
+        <button v-if="!isQuickSearchVisible && (!isHomePage || isScrolled)" type="button" @click="toggleQuickSearch"
           class="hidden lg:flex group items-center gap-3 rounded-full border border-base-300 bg-base-100 pl-5 pr-2 py-2 shadow-sm hover:shadow-md hover:border-secondary/40 transition-all duration-200 cursor-pointer select-none">
           <img v-if="searchMethod === 'hourly'" src="../../assets/images/daily.svg" alt="" class="w-5 shrink-0">
           <img v-else-if="searchMethod === 'daily'" src="../../assets/images/multi.svg" alt="" class="w-5 shrink-0">

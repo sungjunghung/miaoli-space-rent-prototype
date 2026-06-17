@@ -5,15 +5,11 @@
 		<div class="absolute inset-0 z-0 bg-slate-900 overflow-hidden">
 			<div class="absolute -inset-y-[35%] inset-x-0 will-change-transform" :style="heroParallaxStyle">
 				<div v-for="(img, index) in shuffledImages" :key="img"
-					class="absolute inset-0 w-full h-full bg-cover bg-center scale-105 transition-transform duration-[20s]"
+					class="hero-img absolute inset-0 w-full h-full bg-cover bg-center"
 					:class="{
-						'opacity-100 z-0': index === currentImageIndex,
-						'opacity-0 -z-10': index !== currentImageIndex,
-						'animate-ken-burns': index === currentImageIndex || index === previousImageIndex
-					}" :style="{
-						backgroundImage: `url('${img}')`,
-						transition: 'opacity 2s ease-in-out'
-					}"></div>
+						'hero-img--active': index === currentImageIndex,
+						'hero-img--prev': index === previousImageIndex,
+					}" :style="{ backgroundImage: `url('${img}')` }"></div>
 			</div>
 			<div
 				class="absolute inset-0 bg-linear-to-r from-slate-900/70 via-slate-900/50 to-slate-900/20 z-10 pointer-events-none">
@@ -23,6 +19,11 @@
 			</div>
 		</div>
 
+		<!-- 手機版 hero 頂部 logo(桌機由頁首負責,故僅手機顯示) -->
+		<div class="lg:hidden absolute top-0 inset-x-0 z-20 flex items-center gap-2 px-4 py-3">
+			<img src="@/assets/images/logo.svg" alt="苗栗縣體育場館預約系統" class="w-9 h-9 shrink-0">
+			<span class="font-semibold text-white text-sm drop-shadow">苗栗縣體育場館預約系統</span>
+		</div>
 		<!-- Hero Content -->
 		<div class="container mx-auto px-4 z-10 relative">
 			<div class="flex flex-col items-center justify-center gap-10">
@@ -337,7 +338,7 @@ const searchMode = ref<'daily' | 'multi'>('daily')
 // ── 首頁內容區 ──
 // 精選場館:取頂層(無 parentId)、可租借的場館;首頁展示前 6 筆
 const topVenues = (mockVenues as any[]).filter(v => !v.parentId && v.status === 'available')
-const featuredVenues = topVenues.slice(0, 6)
+const featuredVenues = topVenues.slice(0, 3)
 
 // 數據信任條
 const heroStats = [
@@ -558,7 +559,7 @@ onMounted(() => {
 			}
 			previousImageIndex.value = currentImageIndex.value;
 			currentImageIndex.value = nextIndex;
-		}, 5000); // 每 5 秒切換一次
+		}, 7000); // 每 7 秒切換一次(較慢、有節奏)
 	}
 	window.addEventListener('scroll', onHeroParallaxScroll, { passive: true });
 });
