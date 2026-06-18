@@ -34,7 +34,8 @@ onBeforeUnmount(() => {
 <template>
   <div class="min-h-screen flex flex-col bg-base-200">
     <protailHeader />
-    <main class="flex flex-1 flex-col min-h-0">
+    <!-- 手機底部固定 dock 高度 5rem;統一在此預留,各頁不需各自處理 -->
+    <main class="flex flex-1 flex-col min-h-0 pb-20 md:pb-0">
       <router-view />
     </main>
     <protailFooter />

@@ -272,7 +272,7 @@
 
 	<!-- CTA -->
 	<section class="diag-top -mt-9 bg-linear-to-br from-primary to-primary-600 text-primary-content">
-		<div class="container mx-auto px-4 pt-24 pb-28 lg:pt-32 lg:pb-24">
+		<div class="container mx-auto px-4 pt-24 pb-16 lg:pt-32 lg:pb-24">
 			<div class="flex flex-col items-center text-center gap-6">
 				<h2 class="sport-title text-4xl lg:text-6xl max-w-3xl">準備好預約<span class="text-base-100/40">了嗎?</span></h2>
 				<p class="text-primary-content/85 max-w-xl text-base lg:text-lg">立即查詢可租借時段,線上完成苗栗縣體育場館預約。</p>

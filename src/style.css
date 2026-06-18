@@ -22,7 +22,7 @@
   }
   .sport-eyebrow::before {
     content: "";
-    @apply inline-block h-[3px] w-7 -skew-x-12 bg-primary;
+    @apply inline-block h-[3px] w-7 bg-primary;
   }
   /* 運動感大標:超粗斜體,帶速度感 */
   .sport-title {
@@ -154,7 +154,7 @@
   --color-base-100: oklch(100% 0 0);
   --color-base-200: oklch(97% 0 0);
   --color-base-300: oklch(94% 0 0);
-  --color-base-content: oklch(0% 0 0);
+  --color-base-content: oklch(40% 0.0081 61.42);
   --color-primary: oklch(0.616 0.161 40.67);
   --color-primary-content: oklch(0.958 0.018 26.18);
   --color-secondary: oklch(0.448 0.131 255.29);
@@ -363,9 +363,9 @@
 }
 
 .basis-ccontainer {
-  @apply container mx-auto px-4 lg:px-0 pt-8 pb-32 lg:pb-12;
+  @apply container mx-auto px-4 lg:px-0 pt-8 pb-6 lg:pb-12;
 }
 
 .basis-ccontainer-flush {
-  @apply container mx-auto pt-8 pb-32 lg:pb-12;
+  @apply container mx-auto pt-8 pb-6 lg:pb-12;
 }

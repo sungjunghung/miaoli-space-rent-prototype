@@ -1,47 +1,42 @@
 <template>
-  <!-- Header -->
-  <!-- <PageHeaderBasic
-    title="最新消息"
-    description="場館公告、系統更新與活動資訊不漏接。"
-    bg-image="/assets/images/bg_admin_login.jpg"
-  /> -->
-
   <header class="hidden lg:block">
-    <div class=" container mx-auto px-4 py-4 lg:py-10">
-      <h1 class="text-2xl lg:text-8xl text-secondary">NEWS</h1>
-      <p class="lg:text-xl ml-1 text-primary">最新消息</p>
+    <div class="container mx-auto px-4 lg:px-0 pt-12 lg:pt-16">
+      <p class="sport-eyebrow">NEWS</p>
+      <h1 class="mt-3 font-heading font-black text-5xl xl:text-6xl leading-none text-secondary">最新消息</h1>
+      <p class="mt-3 text-base-content/60">場館公告、活動資訊與維護通知,即時掌握不漏接。</p>
     </div>
   </header>
 
   <main class="basis-ccontainer-flush ">
 
-      <div class="grid lg:gap-8 lg:grid-cols-[12rem_minmax(0,1fr)]">
+      <div class="grid lg:gap-8 lg:grid-cols-[16rem_minmax(0,1fr)]">
 
         <!-- 左側目錄篩選 -->
-        <aside class="lg:sticky lg:top-24 lg:self-start">
-          <p class="uppercase tracking-[0.24em] text-base-content/40 mb-3 hidden lg:block">分類</p>
+        <aside class="lg:sticky lg:top-28 lg:self-start">
+          <p class="sport-eyebrow mb-4 hidden lg:flex">CATEGORIES</p>
 
           <!-- 手機:下拉選單 -->
           <div class="lg:hidden px-4 mb-4">
-            <select v-model="selectedCategory" class="select w-full ">
+            <select v-model="selectedCategory" class="select w-full">
               <option v-for="cat in categoryOptions" :key="cat.value" :value="cat.value">
                 {{ cat.label }}（{{ cat.count }}）
               </option>
             </select>
           </div>
 
-          <!-- 桌機:垂直清單 -->
-          <ul class="hidden lg:flex lg:flex-col gap-1">
-            <li v-for="cat in categoryOptions" :key="cat.value">
-              <button type="button"
-                class="w-full text-left whitespace-nowrap px-3 py-2 rounded-md text-sm transition-colors" :class="selectedCategory === cat.value
-                  ? 'bg-primary text-primary-content font-semibold'
-                  : 'hover:bg-base-200 text-base-content/70'" @click="selectedCategory = cat.value">
-                {{ cat.label }}
-                <span class="ml-1 text-xs opacity-70">({{ cat.count }})</span>
-              </button>
-            </li>
-          </ul>
+          <!-- 桌機:垂直清單(與 FAQ 同款) -->
+          <nav class="hidden lg:block space-y-1">
+            <button v-for="cat in categoryOptions" :key="cat.value" type="button"
+              class="flex w-full items-center gap-3 rounded-box px-3 py-2.5 text-left text-sm transition-colors"
+              :class="selectedCategory === cat.value
+                ? 'bg-primary text-primary-content font-semibold'
+                : 'text-base-content/70 hover:bg-base-200'"
+              @click="selectedCategory = cat.value">
+              <span class="material-symbols-outlined text-xl">{{ iconForCategory(cat.value) }}</span>
+              <span class="flex-1">{{ cat.label }}</span>
+              <span class="text-xs opacity-70">{{ cat.count }}</span>
+            </button>
+          </nav>
         </aside>
 
         <!-- 右側消息列表:一則一個獨立橫幅 -->
@@ -120,5 +115,13 @@ const filteredNews = computed(() => {
 
 function formatDate(date: string) {
   return date.replaceAll('-', '/')
+}
+
+function iconForCategory(value: string) {
+  if (value === 'all') return 'inbox'
+  if (value.includes('公告')) return 'campaign'
+  if (value.includes('活動')) return 'celebration'
+  if (value.includes('新聞')) return 'newspaper'
+  return 'label'
 }
 </script>

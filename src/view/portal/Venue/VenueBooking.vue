@@ -299,7 +299,7 @@ const sessionDefs = computed(() => (venue.value?.rentalModes.session?.sessions ?
   <template v-else>
     <!-- <PageHeaderBasic title="場地預約" /> -->
     <!-- Booking Content -->
-    <main class="container mx-auto px-4 max-w-5xl pt-8 pb-14">
+    <main class="container mx-auto px-4 max-w-5xl pt-8 pb-28 lg:pb-14">
       <div class="card bg-base-100 shadow-xl border border-base-200">
         <div class="card-body p-6 md:p-8 space-y-8">
           <h1 class="card-title">{{ venue.name }}</h1>

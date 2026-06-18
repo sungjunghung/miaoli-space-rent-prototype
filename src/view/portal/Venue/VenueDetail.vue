@@ -400,7 +400,7 @@ function formatMoney(value: number | null | undefined) {
       </section>
     </section>
 
-    <div class="basis-ccontainer">
+    <div class="basis-ccontainer pb-28 lg:pb-12">
       <div class="flex flex-col lg:flex-row gap-8 lg:gap-10 mb-8">
 
         <aside class="w-full lg:w-1/3 space-y-6">

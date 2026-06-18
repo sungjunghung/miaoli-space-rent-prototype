@@ -1,130 +1,117 @@
 <template>
-  <!-- Header -->
-  <PageHeaderBasic
-    title="我的預約"
-    description="查看預約紀錄、管理訂單與申請退費。"
-  />
-  <div class="container lg:max-w-4xl mx-auto py-10 px-4">
+  <div class="mx-auto container max-w-4xl px-4 py-8 lg:py-12">
+    <!-- 頁首(桌機;手機由頂部列顯示頁名) -->
+    <header class="hidden lg:block mb-8">
+      <p class="sport-eyebrow">MY BOOKINGS</p>
+      <h1 class="mt-3 font-heading font-black text-4xl xl:text-5xl leading-none text-secondary">我的預約</h1>
+      <p class="mt-3 text-base-content/60">查看預約紀錄、管理訂單與申請退費。</p>
+    </header>
 
-    <main>
-      <div class="flex items-center gap-2 mb-6">
-        <select v-model="selectedStatus" class="select select-bordered select-sm">
-          <option v-for="f in statusFilters" :key="f.value ?? 'all'" :value="f.value">
-            {{ f.label }}（{{ f.count }}）
-          </option>
-        </select>
-      </div>
+    <!-- 狀態篩選 -->
+    <div class="mb-6 flex flex-wrap gap-2">
+      <button v-for="f in statusFilters" :key="f.value ?? 'all'" type="button"
+        class="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors"
+        :class="selectedStatus === f.value
+          ? 'bg-primary text-primary-content'
+          : 'bg-base-100 border border-base-200 text-base-content/70 hover:border-primary/40'"
+        @click="selectedStatus = f.value">
+        {{ f.label }}
+        <span class="text-xs" :class="selectedStatus === f.value ? 'opacity-80' : 'opacity-60'">{{ f.count }}</span>
+      </button>
+    </div>
 
-      <div v-if="bookings.length === 0" class="text-center py-12">
-        <p class="">目前沒有預約紀錄</p>
-      </div>
+    <!-- 空狀態 -->
+    <div v-if="bookings.length === 0"
+      class="rounded-box border border-base-200 bg-base-100 p-12 text-center shadow-sm">
+      <span class="material-symbols-outlined text-5xl text-base-content/25">event_busy</span>
+      <p class="mt-3 font-semibold">目前沒有預約紀錄</p>
+      <router-link to="/venues" class="btn btn-primary btn-sm mt-5">前往租借場地</router-link>
+    </div>
 
-      <section v-else class="space-y-4">
-        <div v-for="booking in bookings" :key="booking.id"
-          :class="['card lg:card-side bg-base-100 shadow cursor-pointer border-t-4 hover:shadow-lg', statusBadge(booking).borderCls]"
-          @click="goToDetail(booking.id)">
-          <!-- <figure v-if="booking.venueImage"
-            class="flex justify-center items-center overflow-hidden  w-1/3 aspect-square  ">
-            <img :src="booking.venueImage" :alt="booking.venueName" class="w-full h-full object-cover" />
-          </figure> -->
-          <div class="card-body flex flex-col">
-            <h2 class="card-title flex justify-between">
-              <span class=" flex items-center gap-2">
-                <span class="material-symbols-outlined text-2xl">event</span>
-                {{ booking.reservationId }}
+    <!-- 訂單列表 -->
+    <section v-else class="space-y-4">
+      <article v-for="booking in bookings" :key="booking.id"
+        class="group cursor-pointer rounded-box border border-base-200 border-l-4 bg-base-100 shadow-sm transition-shadow hover:shadow-md"
+        :class="statusBadge(booking).borderCls"
+        @click="goToDetail(booking.id)">
+        <div class="flex flex-col gap-4 p-5 sm:flex-row sm:gap-6 sm:p-6">
+          <!-- 左:主要資訊 -->
+          <div class="min-w-0 flex-1">
+            <!-- 狀態列 -->
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold"
+                :class="statusBadge(booking).pill">
+                <span class="size-1.5 rounded-full bg-current"></span>{{ statusBadge(booking).label }}
               </span>
-              <div class="flex items-center gap-1.5">
-                <span v-if="activeStageLabel(booking)" class="badge badge-outline badge-warning">
-                  {{ activeStageLabel(booking) }}
-                </span>
-                <span v-if="booking.status === 'cancellation_requested'" class="badge badge-outline badge-success">
-                  申請取消中
-                </span>
-                <span v-if="cancelReasonLabel(booking)" class="badge badge-outline badge-error">
-                  {{ cancelReasonLabel(booking) }}
-                </span>
-                <span :class="['badge', statusBadge(booking).cls]">{{ statusBadge(booking).label }}</span>
-              </div>
-            </h2>
-            <div class="flex items-center justify-between">
-            </div>
-            <div class="flex-1">
-
-
-              <!-- 預約資訊 -->
-              <table class="table mb-2">
-                <tbody>
-                  <!-- <tr>
-                    <td class=" w-24">訂單編號</td>
-                    <td>{{ booking.reservationId }}</td>
-                  </tr> -->
-                  <tr>
-                    <td class=" w-24">場館名稱</td>
-                    <td><strong class=" text-lg font-semibold">{{ booking.venueName }}</strong></td>
-                  </tr>
-                  <!-- <tr>
-                  <td class=" w-20">地點</td>
-                  <td>{{ booking.venueLocation }}</td>
-                </tr> -->
-                  <tr>
-                    <td class="">預訂日期</td>
-                    <td>{{ formatDate(booking) }}</td>
-                  </tr>
-                  <tr
-                    v-if="booking.status === 'confirmed' && booking.cancelDeadline && booking.cancelDeadline >= today">
-                    <td class="">取消期限</td>
-                    <td class="text-error">{{ toZhDate(booking.cancelDeadline) }} 前可申請取消</td>
-                  </tr>
-                  <!-- <tr>
-                  <td class="">時間</td>
-                  <td>{{ formatTime(booking) }}</td>
-                </tr> -->
-                  <tr v-if="booking.startTime && booking.endTime">
-                    <td class="">使用時間</td>
-                    <td>{{ formatTime(booking) }}</td>
-                  </tr>
-                  <!-- <tr v-if="booking.purpose">
-                  <td class="">目的</td>
-                  <td>{{ booking.purpose }}</td>
-                </tr> -->
-                </tbody>
-              </table>
-
-              <!-- 預約進度條 -->
-              <div class="py-4 border border-base-300 rounded mb-2" v-if="ACTIVE_STATUSES.includes(booking.status)">
-                <BookingProgress :booking="booking" :compact="true" />
-              </div>
-
-            </div>
-            <!-- 底列：階段截止日 + 費用 -->
-            <div class="flex items-center justify-between text-sm">
-              <div v-if="stageDeadline(booking)"
-                class="flex items-center gap-1.5 text-sm font-medium px-2.5 py-1 rounded-lg bg-base-200">
-                <span class="material-symbols-outlined" style="font-size:16px;">schedule</span>
-                {{ stageDeadline(booking) }}
-              </div>
-              <span v-else></span>
-              <div class="text-right">
-                <span class="text-2xl font-bold">
-                  NT$ {{ booking.totalPrice.toLocaleString() }}
-                </span>
-                <p v-if="booking.deposit" class="text-xs">
-                  保證金 NT$ {{ booking.deposit.toLocaleString() }}
-                </p>
-              </div>
+              <span v-if="activeStageLabel(booking)"
+                class="rounded-full bg-base-200 px-2 py-0.5 text-xs font-medium text-base-content/60">
+                {{ activeStageLabel(booking) }}
+              </span>
+              <span v-if="booking.status === 'cancellation_requested'"
+                class="rounded-full bg-base-200 px-2 py-0.5 text-xs font-medium text-base-content/60">
+                申請取消中
+              </span>
+              <span v-if="cancelReasonLabel(booking)"
+                class="rounded-full bg-error/10 px-2 py-0.5 text-xs font-medium text-error">
+                {{ cancelReasonLabel(booking) }}
+              </span>
+              <span class="ml-auto font-heading text-xs tracking-wider text-base-content/40">{{ booking.reservationId }}</span>
             </div>
 
+            <!-- 場館名稱 -->
+            <h2 class="mt-3 font-heading font-black text-xl sm:text-2xl leading-snug text-secondary">{{ booking.venueName }}</h2>
+
+            <!-- 日期 / 時間 -->
+            <div class="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-base-content/60">
+              <span class="inline-flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-base text-base-content/40">calendar_today</span>
+                {{ formatDate(booking) }}
+              </span>
+              <span v-if="booking.startTime && booking.endTime" class="inline-flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-base text-base-content/40">schedule</span>
+                {{ formatTime(booking) }}
+              </span>
+            </div>
+
+            <!-- 取消期限 -->
+            <p v-if="booking.status === 'confirmed' && booking.cancelDeadline && booking.cancelDeadline >= today"
+              class="mt-2 inline-flex items-center gap-1.5 text-sm text-error">
+              <span class="material-symbols-outlined text-base">event_busy</span>
+              {{ toZhDate(booking.cancelDeadline) }} 前可申請取消
+            </p>
+
+            <!-- 預約進度 -->
+            <div v-if="ACTIVE_STATUSES.includes(booking.status)"
+              class="mt-4 rounded-box border border-base-200 bg-base-200/40 p-3">
+              <BookingProgress :booking="booking" :compact="true" />
+            </div>
+
+            <!-- 階段截止 -->
+            <div v-if="stageDeadline(booking)"
+              class="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-base-200 px-2.5 py-1 text-xs font-medium text-base-content/70">
+              <span class="material-symbols-outlined text-sm">schedule</span>
+              {{ stageDeadline(booking) }}
+            </div>
+          </div>
+
+          <!-- 右:金額 -->
+          <div
+            class="flex shrink-0 items-end justify-between border-t border-base-200 pt-4 sm:w-40 sm:flex-col sm:items-end sm:justify-center sm:border-l sm:border-t-0 sm:pt-0 sm:pl-6">
+            <span class="text-xs text-base-content/50 sm:mb-1">總金額</span>
+            <div class="text-right">
+              <p class="font-heading text-2xl font-bold leading-none text-base-content">NT$ {{ booking.totalPrice.toLocaleString() }}</p>
+              <p v-if="booking.deposit" class="mt-1.5 text-xs text-base-content/50">含保證金 NT$ {{ booking.deposit.toLocaleString() }}</p>
+            </div>
           </div>
         </div>
-      </section>
-    </main>
+      </article>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import PageHeaderBasic from '@/components/portal/PageHeaderBasic.vue'
 import { useAuthStore } from '../../../stores/auth'
 import { useBookingsStore, type Booking } from '../../../stores/bookings'
 import BookingProgress from '../../../components/portal/BookingProgress.vue'
@@ -167,14 +154,17 @@ function goToDetail(id: number) {
   router.push(`/member/bookings/${id}`)
 }
 
-function statusBadge(booking: Booking): { label: string; cls: string; borderCls: string } {
-  if (ACTIVE_STATUSES.includes(booking.status)) return { label: '預訂中', cls: 'badge-warning', borderCls: 'border-warning' }
-  if (booking.status === 'confirmed') return { label: '預訂成功', cls: 'badge-success', borderCls: 'border-success' }
-  if (booking.status === 'cancellation_requested') return { label: '預訂成功', cls: 'badge-success', borderCls: 'border-success' }
-  if (booking.status === 'completed') return { label: '已使用', cls: 'badge-neutral', borderCls: 'border-neutral' }
-  if (['cancelled', 'cancelled_expired', 'cancelled_rejected'].includes(booking.status))
-    return { label: '已取消', cls: 'badge-error', borderCls: 'border-error' }
-  return { label: booking.status, cls: 'badge-ghost', borderCls: 'border-base-300' }
+// 狀態樣態:label=文字、pill=狀態膠囊配色、borderCls=左側色條;四種狀態一眼分清
+function statusBadge(booking: Booking): { label: string; pill: string; borderCls: string } {
+  if (ACTIVE_STATUSES.includes(booking.status))
+    return { label: '預訂中', pill: 'bg-warning/15 text-warning', borderCls: 'border-warning' }
+  if (booking.status === 'confirmed' || booking.status === 'cancellation_requested')
+    return { label: '預訂成功', pill: 'bg-success/15 text-success', borderCls: 'border-success' }
+  if (booking.status === 'completed')
+    return { label: '已使用', pill: 'bg-base-300 text-base-content/70', borderCls: 'border-base-300' }
+  if (CANCELLED_STATUSES.includes(booking.status))
+    return { label: '已取消', pill: 'bg-error/15 text-error', borderCls: 'border-error' }
+  return { label: booking.status, pill: 'bg-base-200 text-base-content/60', borderCls: 'border-base-300' }
 }
 
 function cancelReasonLabel(booking: Booking): string | null {
