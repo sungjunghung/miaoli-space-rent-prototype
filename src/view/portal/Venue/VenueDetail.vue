@@ -355,7 +355,8 @@ function formatMoney(value: number | null | undefined) {
             場館列表
           </button>
 
-          <h1 class="text-3xl md:text-5xl font-bold leading-tight">
+          <p class="sport-eyebrow mt-2">VENUE</p>
+          <h1 class="mt-1 font-heading font-black text-3xl md:text-5xl leading-tight mb-4">
             {{ venue.name }}
           </h1>
           <p class="text-lg md:text-xl leading-relaxed text-white/85 max-w-3xl">
@@ -374,7 +375,7 @@ function formatMoney(value: number | null | undefined) {
         </div>
         
       </div>
-      <section v-if="galleryImages.length" class="shrink-0">
+      <section v-if="galleryImages.length" class="shrink-0 mb-24 lg:mb-0">
         <div
           ref="galleryTrack"
           class="flex gap-3 overflow-x-auto px-4 py-6 [justify-content:safe_center]"
@@ -402,40 +403,67 @@ function formatMoney(value: number | null | undefined) {
     <div class="basis-ccontainer">
       <div class="flex flex-col lg:flex-row gap-8 lg:gap-10 mb-8">
 
-        <aside class="w-full lg:w-1/3 space-y-8">
-          <section>
-            <h3 class="text-lg font-bold">場館資訊</h3>
-            <dl class="venues-detail-info">
-              <dt>位置</dt>
-              <dd>{{ venue.location }}</dd>
-              <dt>容納人數</dt>
-              <dd>{{ venue.capacity.toLocaleString() }} 人</dd>
-              <dt>場地類型</dt>
-              <dd>{{ venue.type }}</dd>
-              <dt>設備與服務</dt>
-              <dd class="flex flex-wrap gap-2">
-                <span v-for="item in venue.facilities" :key="item" class="badge badge-neutral badge-outline">
-                  {{ item }}
-                </span>
-              </dd>
-              <dt>開放時間</dt>
-              <dd>
-                <ul>
-                  <li v-for="{ label, key, isWeekend } in weekDays" :key="key" class="leading-relaxed">
-                    <span :class="isWeekend ? 'text-error' : ''">{{ label }}</span>
-                    <span class="ml-3">{{
-                      isWeeklyClosedDay(key)
-                        ? "固定休館"
-                        : (getHours(key) ?? "休館")
-                    }}</span>
-                  </li>
-                </ul>
-              </dd>
-            </dl>
+        <aside class="w-full lg:w-1/3 space-y-6">
+          <!-- 場館資訊 -->
+          <section class="bg-base-100 border border-base-200 rounded-box shadow-sm overflow-hidden">
+            <header class="border-b border-base-200 px-5 py-4">
+              <p class="sport-eyebrow">VENUE INFO</p>
+              <h3 class="mt-1 font-heading font-black text-lg text-secondary">場館資訊</h3>
+            </header>
+            <div class="divide-y divide-base-200">
+              <div class="flex items-start gap-3 px-5 py-3.5">
+                <span class="material-symbols-outlined text-xl text-base-content/40 shrink-0">location_on</span>
+                <div class="min-w-0">
+                  <p class="text-xs text-base-content/50">位置</p>
+                  <p class="font-medium">{{ venue.location }}</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 px-5 py-3.5">
+                <span class="material-symbols-outlined text-xl text-base-content/40 shrink-0">groups</span>
+                <div class="min-w-0">
+                  <p class="text-xs text-base-content/50">容納人數</p>
+                  <p class="font-medium">{{ venue.capacity.toLocaleString() }} 人</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 px-5 py-3.5">
+                <span class="material-symbols-outlined text-xl text-base-content/40 shrink-0">category</span>
+                <div class="min-w-0">
+                  <p class="text-xs text-base-content/50">場地類型</p>
+                  <p class="font-medium">{{ venue.type }}</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 px-5 py-3.5">
+                <span class="material-symbols-outlined text-xl text-base-content/40 shrink-0">build</span>
+                <div class="min-w-0">
+                  <p class="text-xs text-base-content/50">設備與服務</p>
+                  <div class="flex flex-wrap gap-1.5 mt-2">
+                    <span v-for="item in venue.facilities" :key="item" class="badge badge-sm badge-ghost border border-base-300">{{ item }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 px-5 py-3.5">
+                <span class="material-symbols-outlined text-xl text-base-content/40 shrink-0">schedule</span>
+                <div class="min-w-0 flex-1">
+                  <p class="text-xs text-base-content/50 mb-2">開放時間</p>
+                  <ul class="space-y-1">
+                    <li v-for="{ label, key, isWeekend } in weekDays" :key="key" class="flex items-center justify-between gap-3 text-sm">
+                      <span :class="isWeekend ? 'text-error font-medium' : 'text-base-content/70'">{{ label }}</span>
+                      <span class="font-medium tabular-nums" :class="isWeeklyClosedDay(key) ? 'text-base-content/40' : ''">{{ isWeeklyClosedDay(key) ? '固定休館' : (getHours(key) ?? '休館') }}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </section>
-          <section>
-            <h3 class="text-lg font-bold">租借費用</h3>
-            <div v-if="venue.status === 'available'" class="space-y-3 mt-3">
+
+          <!-- 租借費用 -->
+          <section class="bg-base-100 border border-base-200 rounded-box shadow-sm overflow-hidden">
+            <header class="border-b border-base-200 px-5 py-4">
+              <p class="sport-eyebrow">PRICING</p>
+              <h3 class="mt-1 font-heading font-black text-lg text-secondary">租借費用</h3>
+            </header>
+
+            <div v-if="venue.status === 'available'" class="p-5 space-y-4">
               <div v-if="feeModes.length > 1" role="tablist" class="tabs tabs-box tabs-sm">
                 <button v-for="m in feeModes" :key="m.value" type="button" role="tab" class="tab flex-1"
                   :class="{ 'tab-active': feeMode === m.value }" :aria-selected="feeMode === m.value"
@@ -443,143 +471,101 @@ function formatMoney(value: number | null | undefined) {
                   {{ m.label }}
                 </button>
               </div>
-              <div v-if="feeMode === 'daily'" class="border border-base-200 rounded-box overflow-hidden">
-                <table class="table table-sm">
-                  <thead>
-                    <tr>
-                      <th></th>
-                      <th class="text-right">平日</th>
-                      <th class="text-right">假日</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>整日</td>
-                      <td class="text-right font-semibold">
-                        NT$ {{ formatMoney(venue.pricing.daily.weekday) }}
-                      </td>
-                      <td class="text-right font-semibold">
-                        NT$ {{ formatMoney(venue.pricing.daily.weekend) }}
-                      </td>
-                    </tr>
-                    <tr v-if="(venue.rentalModes as any).daily?.depositEnabled">
-                      <td>保證金</td>
-                      <td colspan="2" class="text-right font-semibold">
-                        NT$ {{ formatMoney((venue.rentalModes as any).daily.depositAmount) }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+
+              <!-- daily -->
+              <div v-if="feeMode === 'daily'" class="overflow-hidden rounded-box border border-base-200">
+                <div class="grid grid-cols-[1fr_auto_auto] gap-x-4 bg-base-200/60 px-4 py-2 text-xs font-semibold text-base-content/60">
+                  <span></span><span class="text-right">平日</span><span class="text-right">假日</span>
+                </div>
+                <div class="grid grid-cols-[1fr_auto_auto] gap-x-4 items-center px-4 py-3 border-t border-base-200">
+                  <span class="text-sm">整日</span>
+                  <span class="text-right font-heading font-bold text-secondary">NT$ {{ formatMoney(venue.pricing.daily.weekday) }}</span>
+                  <span class="text-right font-heading font-bold text-primary">NT$ {{ formatMoney(venue.pricing.daily.weekend) }}</span>
+                </div>
+                <div v-if="(venue.rentalModes as any).daily?.depositEnabled" class="flex items-center justify-between px-4 py-3 border-t border-base-200 bg-base-200/30">
+                  <span class="text-sm text-base-content/70">保證金</span>
+                  <span class="font-heading font-bold">NT$ {{ formatMoney((venue.rentalModes as any).daily.depositAmount) }}</span>
+                </div>
               </div>
 
-              <div v-if="feeMode === 'session'" class="border border-base-200 rounded-box overflow-hidden">
-                <table class="table table-sm">
-                  <thead>
-                    <tr>
-                      <th></th>
-                      <th class="text-right">平日</th>
-                      <th class="text-right">假日</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="s in venue.rentalModes.session.sessions" :key="s.name">
-                      <td>{{ s.name }}</td>
-                      <td class="text-right font-semibold">
-                        NT$ {{ formatMoney(s.weekday) }}
-                      </td>
-                      <td class="text-right font-semibold">
-                        NT$ {{ formatMoney(s.weekend) }}
-                      </td>
-                    </tr>
-                    <tr v-if="(venue.rentalModes as any).session?.depositEnabled">
-                      <td>保證金</td>
-                      <td colspan="2" class="text-right font-semibold">
-                        NT$ {{ formatMoney((venue.rentalModes as any).session.depositAmount) }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              <!-- session -->
+              <div v-if="feeMode === 'session'" class="overflow-hidden rounded-box border border-base-200">
+                <div class="grid grid-cols-[1fr_auto_auto] gap-x-4 bg-base-200/60 px-4 py-2 text-xs font-semibold text-base-content/60">
+                  <span></span><span class="text-right">平日</span><span class="text-right">假日</span>
+                </div>
+                <div v-for="ses in venue.rentalModes.session.sessions" :key="ses.name" class="grid grid-cols-[1fr_auto_auto] gap-x-4 items-center px-4 py-3 border-t border-base-200">
+                  <span class="text-sm">{{ ses.name }}</span>
+                  <span class="text-right font-heading font-bold text-secondary">NT$ {{ formatMoney(ses.weekday) }}</span>
+                  <span class="text-right font-heading font-bold text-primary">NT$ {{ formatMoney(ses.weekend) }}</span>
+                </div>
+                <div v-if="(venue.rentalModes as any).session?.depositEnabled" class="flex items-center justify-between px-4 py-3 border-t border-base-200 bg-base-200/30">
+                  <span class="text-sm text-base-content/70">保證金</span>
+                  <span class="font-heading font-bold">NT$ {{ formatMoney((venue.rentalModes as any).session.depositAmount) }}</span>
+                </div>
               </div>
 
-              <div v-if="feeMode === 'hourly'" class="border border-base-200 rounded-box overflow-hidden">
-                <table class="table table-sm">
-                  <thead>
-                    <tr>
-                      <th></th>
-                      <th class="text-right">平日</th>
-                      <th class="text-right">假日</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>每小時</td>
-                      <td class="text-right font-semibold">
-                        NT$ {{ formatMoney(venue.pricing.hourly.weekday) }}
-                      </td>
-                      <td class="text-right font-semibold">
-                        NT$ {{ formatMoney(venue.pricing.hourly.weekend) }}
-                      </td>
-                    </tr>
-                    <tr v-if="(venue.rentalModes as any).hourly?.depositEnabled">
-                      <td>保證金</td>
-                      <td colspan="2" class="text-right font-semibold">
-                        NT$ {{ formatMoney((venue.rentalModes as any).hourly.depositAmount) }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              <!-- hourly -->
+              <div v-if="feeMode === 'hourly'" class="overflow-hidden rounded-box border border-base-200">
+                <div class="grid grid-cols-[1fr_auto_auto] gap-x-4 bg-base-200/60 px-4 py-2 text-xs font-semibold text-base-content/60">
+                  <span></span><span class="text-right">平日</span><span class="text-right">假日</span>
+                </div>
+                <div class="grid grid-cols-[1fr_auto_auto] gap-x-4 items-center px-4 py-3 border-t border-base-200">
+                  <span class="text-sm">每小時</span>
+                  <span class="text-right font-heading font-bold text-secondary">NT$ {{ formatMoney(venue.pricing.hourly.weekday) }}</span>
+                  <span class="text-right font-heading font-bold text-primary">NT$ {{ formatMoney(venue.pricing.hourly.weekend) }}</span>
+                </div>
+                <div v-if="(venue.rentalModes as any).hourly?.depositEnabled" class="flex items-center justify-between px-4 py-3 border-t border-base-200 bg-base-200/30">
+                  <span class="text-sm text-base-content/70">保證金</span>
+                  <span class="font-heading font-bold">NT$ {{ formatMoney((venue.rentalModes as any).hourly.depositAmount) }}</span>
+                </div>
               </div>
-              <div v-if="pricedRentalItems.length" class="border border-base-200 rounded-box overflow-hidden">
-                <div class="px-4 py-3 bg-base-200/60 flex items-center gap-2 font-bold">
-                  <span class="material-symbols-outlined text-base">add_circle</span>
+
+              <!-- 額外費用 -->
+              <div v-if="pricedRentalItems.length" class="overflow-hidden rounded-box border border-base-200">
+                <div class="flex items-center gap-2 bg-base-200/60 px-4 py-2 text-sm font-semibold">
+                  <span class="material-symbols-outlined text-base text-primary">add_circle</span>
                   額外費用
                 </div>
-                <table class="table table-sm">
-                  <tbody>
-                    <tr v-for="fee in pricedRentalItems" :key="fee.label">
-                      <td>{{ fee.label }}</td>
-                      <td class="text-right font-semibold">
-                        NT$ {{ fee.amount.toLocaleString() }} / {{ fee.unit }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                <div v-for="fee in pricedRentalItems" :key="fee.label" class="flex items-center justify-between gap-3 px-4 py-3 border-t border-base-200">
+                  <span class="text-sm">{{ fee.label }}</span>
+                  <span class="font-heading font-bold whitespace-nowrap">NT$ {{ fee.amount.toLocaleString() }} <span class="text-xs font-normal text-base-content/50">/ {{ fee.unit }}</span></span>
+                </div>
               </div>
+
               <button @click="goToBooking" class="btn btn-primary btn-lg w-full">
                 立即預約
                 <span class="material-symbols-outlined">arrow_forward</span>
               </button>
             </div>
 
-            <div v-else class="bg-base-100 border border-base-200 rounded-box shadow-sm p-6">
+            <div v-else class="p-6 text-center">
               <span class="material-symbols-outlined text-3xl text-warning">construction</span>
-              <h2 class="text-xl font-bold mt-3">場館維護中</h2>
-              <p class="text-base-content/60 mt-2">此場館目前暫不開放預約。</p>
+              <h2 class="text-lg font-bold mt-3">場館維護中</h2>
+              <p class="text-base-content/60 mt-2 text-sm">此場館目前暫不開放預約。</p>
             </div>
           </section>
         </aside>
         <div class="w-full lg:w-2/3 space-y-6">
 
-          <section id="calendar-section" class="bg-base-100 border border-base-200 rounded-box shadow-sm scroll-mt-28">
-            <div class="p-6 md:p-8">
-              <div class="flex items-center justify-between gap-4 flex-wrap mb-6">
-                <div>
-                  <h2 class="text-2xl font-bold">預約狀況</h2>
-                </div>
-                <div v-if="hasWeekView" class="tabs tabs-box">
-                  <button class="tab gap-2" :class="rentalMode === 'hourly' ? 'tab-active' : ''"
-                    @click="rentalMode = 'hourly'">
-                    <span class="material-symbols-outlined text-sm">schedule</span>
-                    週曆
-                  </button>
-                  <button class="tab gap-2" :class="rentalMode === 'daily' ? 'tab-active' : ''"
-                    @click="rentalMode = 'daily'">
-                    <span class="material-symbols-outlined text-sm">date_range</span>
-                    月曆
-                  </button>
-                </div>
+          <!-- 預約狀況 -->
+          <section id="calendar-section" class="bg-base-100 border border-base-200 rounded-box shadow-sm overflow-hidden scroll-mt-28">
+            <header class="flex items-center justify-between gap-3 flex-wrap border-b border-base-200 px-5 py-4">
+              <div>
+                <p class="sport-eyebrow">AVAILABILITY</p>
+                <h2 class="mt-1 font-heading font-black text-lg text-secondary">預約狀況</h2>
               </div>
-
+              <div v-if="hasWeekView" role="tablist" class="tabs tabs-box tabs-sm">
+                <button type="button" role="tab" class="tab gap-1.5" :class="rentalMode === 'hourly' ? 'tab-active' : ''" @click="rentalMode = 'hourly'">
+                  <span class="material-symbols-outlined text-sm">schedule</span>
+                  週曆
+                </button>
+                <button type="button" role="tab" class="tab gap-1.5" :class="rentalMode === 'daily' ? 'tab-active' : ''" @click="rentalMode = 'daily'">
+                  <span class="material-symbols-outlined text-sm">date_range</span>
+                  月曆
+                </button>
+              </div>
+            </header>
+            <div class="p-4 md:p-6">
               <div v-if="hasWeekView && rentalMode === 'hourly'">
                 <WeekCalendar :closed-weekdays="closedWeekdays" :closed-dates="closedDates" :bookings="venueBookings"
                   :session-defs="sessionDefs" @select-date="selectDate" />
@@ -590,59 +576,58 @@ function formatMoney(value: number | null | undefined) {
               </div>
             </div>
           </section>
-          <section class="space-y-6">
-            <div class="bg-base-100 border border-base-200 rounded-box shadow-sm p-6">
-              <h2 class="text-xl font-bold mb-4">預約注意事項</h2>
-              <ul class="space-y-3">
-                <li class="flex gap-3 text-sm leading-relaxed">
-                  <span class="material-symbols-outlined text-base text-warning shrink-0 mt-0.5">info</span>
-                  <span>最早可於使用日前
-                    {{ venue.advanceBookingDays }} 天提出申請。</span>
-                </li>
-                <li class="flex gap-3 text-sm leading-relaxed">
-                  <span class="material-symbols-outlined text-base text-warning shrink-0 mt-0.5">info</span>
-                  <span>文件需於申請後
-                    {{ venue.documentUploadDeadlineDays }} 天內完成提交。</span>
-                </li>
-                <li class="flex gap-3 text-sm leading-relaxed">
-                  <span class="material-symbols-outlined text-base text-warning shrink-0 mt-0.5">info</span>
-                  <span>費用需於申請後
-                    {{ venue.receiptUploadDeadlineDays }} 天內完成繳納。</span>
-                </li>
-                <li class="flex gap-3 text-sm leading-relaxed">
-                  <span class="material-symbols-outlined text-base text-warning shrink-0 mt-0.5">info</span>
-                  <span>如需取消，最晚需於使用日前
-                    {{ venue.cancellationDeadlineDays }} 天完成取消申請。</span>
-                </li>
-                <li v-for="(item, idx) in venue.notices" :key="idx" class="flex gap-3 text-sm leading-relaxed">
-                  <span class="material-symbols-outlined text-base text-warning shrink-0 mt-0.5">info</span>
-                  <span>{{ item }}</span>
-                </li>
-              </ul>
-            </div>
 
-            <div v-if="allRequiredDocuments.length"
-              class="bg-base-100 border border-base-200 rounded-box shadow-sm p-6">
-              <h2 class="text-xl font-bold mb-4">預約文件下載</h2>
-              <div class="space-y-3">
-                <div v-for="doc in allRequiredDocuments" :key="doc.key"
-                  class="flex items-center gap-3 rounded-box border border-base-200 bg-base-200/40 p-4">
-                  <span class="material-symbols-outlined text-xl text-secondary">assignment</span>
-                  <div class="min-w-0 flex-1">
-                    <p class="font-semibold">{{ doc.label }}</p>
-                    <p v-if="doc.hint" class="text-sm text-base-content/60 mt-1">
-                      {{ doc.hint }}
-                    </p>
-                  </div>
-                  <button class="btn btn-ghost btn-square">
-                    <span class="material-symbols-outlined text-2xl">download</span>
-                  </button>
+          <!-- 預約注意事項 -->
+          <div class="bg-base-100 border border-base-200 rounded-box shadow-sm overflow-hidden">
+            <header class="border-b border-base-200 px-5 py-4">
+              <p class="sport-eyebrow">NOTICE</p>
+              <h2 class="mt-1 font-heading font-black text-lg text-secondary">預約注意事項</h2>
+            </header>
+            <ul class="p-5 md:p-6 space-y-3">
+              <li class="flex gap-2.5 text-sm leading-relaxed">
+                <span class="material-symbols-outlined text-base text-primary shrink-0 mt-0.5">chevron_right</span>
+                <span>最早可於使用日前 {{ venue.advanceBookingDays }} 天提出申請。</span>
+              </li>
+              <li class="flex gap-2.5 text-sm leading-relaxed">
+                <span class="material-symbols-outlined text-base text-primary shrink-0 mt-0.5">chevron_right</span>
+                <span>文件需於申請後 {{ venue.documentUploadDeadlineDays }} 天內完成提交。</span>
+              </li>
+              <li class="flex gap-2.5 text-sm leading-relaxed">
+                <span class="material-symbols-outlined text-base text-primary shrink-0 mt-0.5">chevron_right</span>
+                <span>費用需於申請後 {{ venue.receiptUploadDeadlineDays }} 天內完成繳納。</span>
+              </li>
+              <li class="flex gap-2.5 text-sm leading-relaxed">
+                <span class="material-symbols-outlined text-base text-primary shrink-0 mt-0.5">chevron_right</span>
+                <span>如需取消,最晚需於使用日前 {{ venue.cancellationDeadlineDays }} 天完成取消申請。</span>
+              </li>
+              <li v-for="(item, idx) in venue.notices" :key="idx" class="flex gap-2.5 text-sm leading-relaxed">
+                <span class="material-symbols-outlined text-base text-primary shrink-0 mt-0.5">chevron_right</span>
+                <span>{{ item }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- 預約文件下載 -->
+          <div v-if="allRequiredDocuments.length" class="bg-base-100 border border-base-200 rounded-box shadow-sm overflow-hidden">
+            <header class="border-b border-base-200 px-5 py-4">
+              <p class="sport-eyebrow">DOCUMENTS</p>
+              <h2 class="mt-1 font-heading font-black text-lg text-secondary">預約文件下載</h2>
+            </header>
+            <div class="p-5 md:p-6 space-y-3">
+              <div v-for="doc in allRequiredDocuments" :key="doc.key"
+                class="flex items-center gap-3 rounded-box border border-base-200 bg-base-200/40 p-4 transition-colors hover:border-primary/40 hover:bg-base-200/70">
+                <span class="material-symbols-outlined text-xl text-secondary shrink-0">assignment</span>
+                <div class="min-w-0 flex-1">
+                  <p class="font-semibold">{{ doc.label }}</p>
+                  <p v-if="doc.hint" class="text-sm text-base-content/60 mt-1">{{ doc.hint }}</p>
                 </div>
+                <button class="btn btn-ghost btn-square" aria-label="下載文件">
+                  <span class="material-symbols-outlined text-2xl">download</span>
+                </button>
               </div>
             </div>
+          </div>
 
-
-          </section>
         </div>
       </div>
 

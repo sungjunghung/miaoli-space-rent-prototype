@@ -1,6 +1,6 @@
 <template>
 	<!-- Hero Section -->
-	<div class="relative min-h-[calc(100dvh-5rem-env(safe-area-inset-bottom))] lg:min-h-[calc(100dvh-5rem)] flex items-start justify-center pt-[14vh] lg:pt-[15vh] pb-10 ">
+	<div class="relative min-h-[calc(100dvh-5rem-env(safe-area-inset-bottom))] lg:min-h-[calc(100dvh-5rem)] flex items-start justify-center pt-[14vh] lg:pt-[24vh] pb-12 ">
 		<!-- Background Image with Overlay -->
 		<div class="absolute inset-0 z-0 bg-slate-900 overflow-hidden">
 			<div class="absolute -inset-y-[35%] inset-x-0 will-change-transform" :style="heroParallaxStyle">
@@ -25,67 +25,56 @@
 			<span class="font-semibold text-white text-sm drop-shadow">苗栗縣體育場館預約系統</span>
 		</div>
 		<!-- Hero Content -->
-		<div class="container mx-auto px-4 z-10 relative">
-			<div class="flex flex-col items-center justify-center gap-10">
-				<!-- Text Content -->
-				<div class="text-center space-y-8 max-w-3xl">
-					
-					<div class="space-y-5">
-							<p class="sport-eyebrow justify-center animate-fade-in-up [animation-delay:100ms]">MIAOLI SPORTS VENUE</p>
-						<h1
-							class="sport-title text-white whitespace-nowrap text-4xl sm:text-5xl lg:text-7xl animate-fade-in-up [animation-delay:200ms]">
-							苗栗
-							<span
-								class="text-primary">最佳活動空間</span>
-						</h1>
-						<p
-							class="text-lg lg:text-xl text-slate-200 font-medium max-w-xl mx-auto leading-relaxed text-balance animate-fade-in-up [animation-delay:400ms]">
-							國際賽事、商務會議、親子活動,多元專業場地一站式租借。
-						</p>
-					</div>
-					<!-- 首頁搜尋:hero 主導,桌機與手機皆顯示(桌機放大) -->
-					<div class="rounded-box bg-base-100/95 backdrop-blur-md p-4 lg:p-6 shadow-2xl text-left space-y-3 lg:max-w-2xl lg:mx-auto">
-						<div role="tablist" class="relative flex w-full rounded-full bg-base-200 p-1">
-							<span
-								class="absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-secondary shadow transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
-								:class="searchMode === 'multi' ? 'translate-x-full' : 'translate-x-0'"></span>
-							<button type="button" role="tab"
-								class="relative z-10 flex-1 flex items-center justify-center rounded-full py-2 transition-colors duration-300"
-								:class="searchMode === 'daily' ? 'text-secondary-content' : 'text-base-content/60'"
-								:aria-selected="searchMode === 'daily'" @click="searchMode = 'daily'">
-								<img src="@/assets/images/daily.svg" alt="" class="w-5 mr-2">
-								時段租借
-							</button>
-							<button type="button" role="tab"
-								class="relative z-10 flex-1 flex items-center justify-center rounded-full py-2 transition-colors duration-300"
-								:class="searchMode === 'multi' ? 'text-secondary-content' : 'text-base-content/60'"
-								:aria-selected="searchMode === 'multi'" @click="searchMode = 'multi'">
-								<img src="@/assets/images/multi.svg" alt="" class="w-5 mr-2">
-								多日租借
-							</button>
+		<div class="container mx-auto px-4 z-10 relative w-full">
+			<div class="grid items-center gap-10 lg:grid-cols-[1fr_32rem] lg:gap-24 lg:max-w-5xl lg:mx-auto">
+				<!-- 左:價值主張 + 數據 -->
+				<div class="text-center lg:text-left max-w-2xl mx-auto lg:mx-0 space-y-6">
+					<p class="sport-eyebrow justify-center lg:justify-start animate-fade-in-up [animation-delay:100ms]">MIAOLI SPORTS VENUE</p>
+					<h1
+						class="sport-title text-white whitespace-nowrap text-4xl sm:text-5xl lg:text-6xl animate-fade-in-up [animation-delay:200ms]">
+						苗栗 <span class="text-primary">最佳活動空間</span>
+					</h1>
+					<p
+						class="text-lg lg:text-xl text-slate-200 font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed text-balance animate-fade-in-up [animation-delay:400ms]">
+						國際賽事、商務會議、親子活動,多元專業場地一站式租借。
+					</p>
+					<!-- 數據:整併進 hero,不再獨立成帶 -->
+					<dl class="flex items-stretch justify-center lg:justify-start divide-x divide-white/20 pt-1 animate-fade-in-up [animation-delay:600ms]">
+						<div v-for="s in heroStats" :key="s.label" class="px-5 first:pl-0 last:pr-0">
+							<dd class="flex items-baseline gap-1 justify-center lg:justify-start">
+								<span class="font-heading italic font-bold leading-none text-3xl lg:text-4xl text-white">{{ s.value }}</span>
+								<span class="font-heading text-base lg:text-lg font-semibold text-primary">{{ s.unit }}</span>
+							</dd>
+							<dt class="mt-1 text-xs lg:text-sm text-slate-300">{{ s.label }}</dt>
 						</div>
-						<QuickSearch v-model:mode="searchMode" />
+					</dl>
+				</div>
+				<!-- 右:搜尋面板 -->
+				<div class="rounded-box bg-base-100/80 backdrop-blur-xl backdrop-saturate-150 border border-white/30 p-4 lg:p-6 shadow-2xl text-left space-y-3 w-full max-w-md lg:max-w-none mx-auto lg:mx-0 animate-fade-in-up [animation-delay:300ms]">
+					<div role="tablist" class="relative flex w-full rounded-full bg-base-200 p-1">
+						<span
+							class="absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-secondary shadow transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+							:class="searchMode === 'multi' ? 'translate-x-full' : 'translate-x-0'"></span>
+						<button type="button" role="tab"
+							class="relative z-10 flex-1 flex items-center justify-center rounded-full py-2 transition-colors duration-300"
+							:class="searchMode === 'daily' ? 'text-secondary-content' : 'text-base-content/60'"
+							:aria-selected="searchMode === 'daily'" @click="searchMode = 'daily'">
+							<img src="@/assets/images/daily.svg" alt="" class="w-5 mr-2">
+							時段租借
+						</button>
+						<button type="button" role="tab"
+							class="relative z-10 flex-1 flex items-center justify-center rounded-full py-2 transition-colors duration-300"
+							:class="searchMode === 'multi' ? 'text-secondary-content' : 'text-base-content/60'"
+							:aria-selected="searchMode === 'multi'" @click="searchMode = 'multi'">
+							<img src="@/assets/images/multi.svg" alt="" class="w-5 mr-2">
+							多日租借
+						</button>
 					</div>
+					<QuickSearch v-model:mode="searchMode" />
 				</div>
 			</div>
 		</div>
 	</div>
-
-	<!-- 數據信任條 -->
-	<section class="bg-secondary text-secondary-content">
-		<div class="container mx-auto px-4 py-10 lg:py-12">
-			<dl class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-secondary-content/15">
-				<div v-for="s in heroStats" :key="s.label" class="flex flex-col items-center text-center gap-2 px-4 py-6 sm:py-3 lg:py-4">
-					<span class="material-symbols-outlined text-3xl lg:text-4xl text-primary">{{ s.icon }}</span>
-					<dd class="flex items-baseline gap-2.5">
-						<span class="font-heading italic font-bold leading-none text-5xl lg:text-6xl tracking-tight">{{ s.value }}</span>
-						<span class="font-heading text-xl lg:text-2xl font-semibold text-secondary-content/60">{{ s.unit }}</span>
-					</dd>
-					<dt class="text-sm lg:text-base tracking-wide text-secondary-content/80">{{ s.label }}</dt>
-				</div>
-			</dl>
-		</div>
-	</section>
 
 	<!-- 精選場館 -->
 	<section class="bg-base-200">
@@ -170,7 +159,7 @@
 				</select>
 			</header>
 	
-			<div class="bg-base-100 border border-base-200 p-6 rounded-box">
+			<div class="bg-base-100 border border-base-200 p-6 rounded-box mb-8">
 	
 				<MonthCalendar
 					:bookings="filteredBookings"
@@ -199,23 +188,26 @@
 	<!-- 預約流程:運動感流程軌道(深藍底 + 巨大橘色號碼坐在連接軌道線上) -->
 	<section class="diag-top -mt-9 bg-secondary text-secondary-content">
 		<div class="container mx-auto px-4 pt-24 pb-16 lg:pt-28 lg:pb-24">
-			<div class="text-center max-w-2xl mx-auto mb-12 lg:mb-16">
+			<div class="text-center max-w-2xl mx-auto mb-8 lg:mb-16">
 				<p class="sport-eyebrow justify-center">HOW IT WORKS</p>
 				<h2 class="mt-3 sport-title text-3xl lg:text-5xl">四步驟完成預約</h2>
 				<p class="mt-3 text-secondary-content/70">從搜尋到入場,全程線上完成,簡單又快速。</p>
 			</div>
-			<ol class="relative grid gap-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+			<ol class="relative grid gap-7 lg:grid-cols-4 lg:gap-6">
 				<!-- 連接軌道線(桌機;被各號碼的底色切成區段) -->
-				<span class="hidden lg:block absolute top-8 lg:top-9 left-0 right-0 h-0.5 bg-secondary-content/15"></span>
-				<li v-for="(step, i) in bookingSteps" :key="step.title" class="relative flex flex-col items-center text-center">
-					<span class="relative z-10 inline-flex items-center justify-center bg-secondary px-4">
-						<span class="font-heading italic font-bold leading-none text-6xl lg:text-7xl text-primary">{{ String(i + 1).padStart(2, '0') }}</span>
+				<span class="hidden lg:block absolute top-9 left-0 right-0 h-0.5 bg-secondary-content/15"></span>
+				<li v-for="(step, i) in bookingSteps" :key="step.title"
+					class="relative flex flex-row items-center gap-4 text-left lg:flex-col lg:items-center lg:gap-0 lg:text-center">
+					<span class="relative z-10 inline-flex items-center justify-center bg-secondary shrink-0 w-16 lg:w-auto lg:px-4">
+						<span class="font-heading italic font-bold leading-none text-5xl lg:text-7xl text-primary">{{ String(i + 1).padStart(2, '0') }}</span>
 					</span>
-					<h3 class="mt-5 inline-flex items-center gap-2 text-lg lg:text-xl font-heading font-black">
-						<span class="material-symbols-outlined text-xl text-primary">{{ step.icon }}</span>
-						{{ step.title }}
-					</h3>
-					<p class="mt-2 max-w-[15rem] text-sm leading-relaxed text-secondary-content/70">{{ step.desc }}</p>
+					<div class="min-w-0 lg:contents">
+						<h3 class="inline-flex items-center gap-1.5 text-base lg:text-xl font-heading font-black lg:mt-5">
+							<span class="material-symbols-outlined text-lg lg:text-xl text-primary">{{ step.icon }}</span>
+							{{ step.title }}
+						</h3>
+						<p class="mt-1 lg:mt-2 max-w-60 text-xs lg:text-sm leading-relaxed text-secondary-content/70">{{ step.desc }}</p>
+					</div>
 				</li>
 			</ol>
 		</div>
@@ -280,7 +272,7 @@
 
 	<!-- CTA -->
 	<section class="diag-top -mt-9 bg-linear-to-br from-primary to-primary-600 text-primary-content">
-		<div class="container mx-auto px-4 pt-24 pb-16 lg:pt-32 lg:pb-24">
+		<div class="container mx-auto px-4 pt-24 pb-28 lg:pt-32 lg:pb-24">
 			<div class="flex flex-col items-center text-center gap-6">
 				<h2 class="sport-title text-4xl lg:text-6xl max-w-3xl">準備好預約<span class="text-base-100/40">了嗎?</span></h2>
 				<p class="text-primary-content/85 max-w-xl text-base lg:text-lg">立即查詢可租借時段,線上完成苗栗縣體育場館預約。</p>
@@ -342,9 +334,9 @@ const featuredVenues = topVenues.slice(0, 3)
 
 // 數據信任條
 const heroStats = [
-  { icon: 'stadium', value: String(topVenues.length), unit: '座', label: '可租借場館' },
-  { icon: 'event_available', value: '3', unit: '種', label: '彈性租借方式' },
-  { icon: 'bolt', value: '24', unit: 'h', label: '線上即時預約' },
+  { value: String(topVenues.length), unit: '座', label: '可租借場館' },
+  { value: '3', unit: '種', label: '彈性租借方式' },
+  { value: '24', unit: 'h', label: '線上即時預約' },
 ]
 
 // 預約流程

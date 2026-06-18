@@ -350,6 +350,21 @@ const sessionDefs = computed(() => (venue.value?.rentalModes.session?.sessions ?
           <AdditionalItemsSection v-if="venue.rentalItems?.length"
             :items="venue.rentalItems" v-model="feeQuantities" />
 
+          <!-- 桌機版:預估費用與下一步(手機改用下方 sticky footer) -->
+          <div class="hidden lg:flex items-center justify-between gap-4 border-t border-base-200 pt-6">
+            <div>
+              <div v-if="totalPrice > 0" class="space-y-0.5">
+                <p class="text-xs">場館預估費用</p>
+                <p class="text-2xl font-black">${{ totalPrice.toLocaleString() }}</p>
+              </div>
+              <p v-else class="text-sm">請選擇租借日期與時段</p>
+            </div>
+            <button class="btn btn-neutral btn-lg min-w-40" :disabled="!canBook" @click="goToConfirm">
+              <span class="material-symbols-outlined">check_circle</span>
+              下一步
+            </button>
+          </div>
+
         </div>
       </div>
     </main>
